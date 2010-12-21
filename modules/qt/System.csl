@@ -1,0 +1,7 @@
+/*
+	Static component that provides the qt.ISystem service.
+ */
+component System
+{
+	provides ISystem system;
+};

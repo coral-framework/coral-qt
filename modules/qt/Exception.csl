@@ -1,0 +1,2 @@
+// Raised to indicate generic Qt errors.
+exception Exception;

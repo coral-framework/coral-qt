@@ -1,0 +1,9 @@
+/*
+	Interface to most of Qt's top-level operations.
+ */
+interface ISystem
+{
+	void loadUi( in string filePath, out Object widget ) raises Exception;
+
+	bool processEvents();
+};
