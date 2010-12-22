@@ -4,13 +4,12 @@
  */
 
 #include "System_Base.h"
+#include "ConnectionHub.h"
 #include <qt/Exception.h>
-
 #include <QApplication>
 #include <QUiLoader>
 #include <QWidget>
 #include <QFile>
-
 #include <sstream>
 
 class System : public qt::System_Base
@@ -20,6 +19,7 @@ public:
 	{
 		int a = 0;
 		_app = new QApplication( a, NULL );
+		_appObj.set( _app );
 	}
 
 	virtual ~System()
@@ -27,11 +27,7 @@ public:
 		delete _app;
 	}
 
-	bool processEvents()
-	{
-		_app->processEvents();
-		return true;
-	}
+	const qt::Object& getApp() { return _appObj; }
 
 	void loadUi( const std::string& filePath, qt::Object& widget )
 	{
@@ -48,8 +44,35 @@ public:
 		widget.set( resWidget );
 	}
 
+	co::int32 connect( const qt::Object& sender, const std::string& signal, qt::IConnectionHandler* handler )
+	{
+		return _connectionHub.connect( sender, signal, handler );
+	}
+
+	void disconnect( co::int32 cookie )
+	{
+		_connectionHub.disconnect( cookie );
+	}
+	
+	void exec()
+	{
+		_app->exec();
+	}
+
+	void processEvents()
+	{
+		_app->processEvents();
+	}
+
+	void quit()
+	{
+		_app->quit();
+	}
+
 private:
 	QApplication* _app;
+	qt::Object _appObj;
+	ConnectionHub _connectionHub;
 };
 
 CORAL_EXPORT_COMPONENT( System, System )

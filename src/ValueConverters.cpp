@@ -4,10 +4,10 @@
  */
 
 #include "ValueConverters.h"
-#include <QVariant>
 #include <co/Any.h>
-#include <sstream>
 #include <co/IllegalCastException.h>
+#include <QVariant>
+#include <sstream>
 
 QVariant anyToVariant( const co::Any& value )
 {

@@ -1,9 +1,32 @@
 /*
-	Interface to most of Qt's top-level operations.
+	Exposes system-wide Qt operations.
  */
 interface ISystem
 {
+	// The 'qApp' object.
+	readonly attribute Object app;
+
+	// Loads a QWidget from a .ui file created in Qt Designer.
 	void loadUi( in string filePath, out Object widget ) raises Exception;
 
-	bool processEvents();
+	/*
+		Connects a \a signal from \a sender to a \a handler, and returns the connection cookie.
+		\note To undo the connection, call disconnect() passing the returned connection cookie.
+		\throw co.IllegalArgumentException if the \a sender or \a handler are invalid.
+		\throw qt.Exception if the sender does not have such signal or the connection cannot be made.
+	 */
+	int32 connect( in Object sender, in string signal, in IConnectionHandler handler )
+		raises co.IllegalArgumentException, Exception;
+
+	// Removes the connection identified by the given \a cookie.
+	void disconnect( in int32 cookie ) raises co.IllegalArgumentException;
+
+	// Runs the Qt event loop until quit() is called.
+	void exec();
+
+	// Executes a single iteration of the Qt event loop.
+	void processEvents();
+
+	// Quits the Qt event loop.
+	void quit();
 };

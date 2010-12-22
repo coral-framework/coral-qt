@@ -3,8 +3,8 @@
  * See copyright notice in LICENSE.md
  */
 
-#ifndef _QOBJECT_WRAPPER_H_
-#define _QOBJECT_WRAPPER_H_
+#ifndef _QOBJECTWRAPPER_H_
+#define _QOBJECTWRAPPER_H_
 
 #include <QObject>
 
@@ -19,10 +19,10 @@ public:
 	{;}
 
 	void set( QObject* obj ) { _obj = obj; }
-	QObject* get() { return _obj; }
+	QObject* get() const { return _obj; }
 
 private:
 	QObject* _obj;
 };
 
-#endif //_QOBJECT_WRAPPER_H_
+#endif //_QOBJECTWRAPPER_H_

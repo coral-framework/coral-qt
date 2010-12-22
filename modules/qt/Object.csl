@@ -6,6 +6,5 @@ native class Object ( <QObjectWrapper.h> QObjectWrapper )
 	void getPropertyOrChild( in string name, out any value ) raises co.IllegalCastException;
 	void setProperty( in string name, in any value ) raises co.IllegalCastException;
 
-	void invoke( in string name, in any p1, in any p2, in any p3, in any p4, in any p5, in any p6, in any p7 );
+	void invoke( in string name, in any a1, in any a2, in any a3, in any a4, in any a5, in any a6, in any a7 );
 };
-

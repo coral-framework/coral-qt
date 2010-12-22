@@ -6,11 +6,8 @@
 #include "Object_Adapter.h"
 #include "ValueConverters.h"
 #include <co/IllegalArgumentException.h>
-
 #include <qt/Object.h>
-
 #include <QVariant>
-
 #include <sstream>
 
 void qt::Object_Adapter::getPropertyOrChild( qt::Object& instance, const std::string& name, co::Any& value )
