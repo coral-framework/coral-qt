@@ -17,6 +17,8 @@ namespace {
 	const char* dummy_argv[] = { "", "" };
 }
 
+namespace qt {
+
 class System : public qt::System_Base
 {
 public:
@@ -79,4 +81,6 @@ private:
 	ConnectionHub _connectionHub;
 };
 
-CORAL_EXPORT_COMPONENT( System, System )
+} // namespace qt
+
+CORAL_EXPORT_COMPONENT( qt::System, System )
