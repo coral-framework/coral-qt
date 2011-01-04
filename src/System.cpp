@@ -12,13 +12,17 @@
 #include <QFile>
 #include <sstream>
 
+namespace {
+	int dummy_argc = 1;
+	const char* dummy_argv[] = { "", "" };
+}
+
 class System : public qt::System_Base
 {
 public:
 	System()
 	{
-		int a = 0;
-		_app = new QApplication( a, NULL );
+		_app = new QApplication( dummy_argc, const_cast<char**>( dummy_argv ) );
 		_appObj.set( _app );
 	}
 
