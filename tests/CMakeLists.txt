@@ -7,5 +7,5 @@ CORAL_GET_PATH_STRING( coralPathStr )
 
 ADD_TEST(
 	NAME tests
-	COMMAND ${CORAL_LAUNCHER} -p ${coralPathStr} lua.Launcher testkit.ModuleLauncher tests -o ./output/unittests.xml
+	COMMAND ${CORAL_LAUNCHER} -p ${coralPathStr} lua.Launcher testkit.ModuleLauncher tests -o ./output/unitTests.xml
 )
