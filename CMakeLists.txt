@@ -11,7 +11,7 @@ PROJECT( CORAL_QT )
 ################################################################################
 
 # Add Coral's cmake dir to the CMAKE_MODULE_PATH
-FILE( TO_CMAKE_PATH $ENV{CORAL_ROOT} CORAL_ROOT )
+FILE( TO_CMAKE_PATH "$ENV{CORAL_ROOT}" CORAL_ROOT )
 
 SET( CMAKE_MODULE_PATH ${CORAL_ROOT}/cmake ${CMAKE_MODULE_PATH} )
 
