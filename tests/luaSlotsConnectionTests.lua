@@ -10,7 +10,6 @@ local path = require "path"
 -- the file actually exists inside corresponding module folder.
 -------------------------------------------------------------------------------
 local function findModuleFile( moduleName, moduleFilename )
-	print ("Finding in module ", moduleName )
 	-- Initializes commmon paths
 	local moduleDirPath = moduleName:gsub( '%.', '/' )
 	local coralPaths = co.getPaths()

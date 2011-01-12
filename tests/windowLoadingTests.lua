@@ -10,7 +10,6 @@ local path = require "path"
 -- the file actually exists inside corresponding module folder.
 -------------------------------------------------------------------------------
 local function findModuleFile( moduleName, moduleFilename )
-	print ("Finding in module ", moduleName )
 	-- Initializes commmon paths
 	local moduleDirPath = moduleName:gsub( '%.', '/' )
 	local coralPaths = co.getPaths()
@@ -32,4 +31,13 @@ function aWindowShouldBeInvisibleWhenLoaded()
 	local widget = qt.loadUi( file )
 	assertTrue( not widget.visible, "widget visible when opened" )
 end
+
+function shouldThrowAnExceptionWithAnInexistantFile()
+	expectException( "could not open", qt.loadUi, "inexistant.ui" )
+end
+
+function shouldThrowAnExceptionWithAnInvalidFile()
+	expectException( "error loading ui file", qt.loadUi, findModuleFile( "tests", "invalid.ui" ) )
+end
+
 
