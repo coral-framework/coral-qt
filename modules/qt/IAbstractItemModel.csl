@@ -1,0 +1,8 @@
+/*
+	Interface for qt's AbstractItemModel.
+ */
+interface IAbstractItemModel
+{
+	// Data delegate for model instance
+	attribute IAbstractItemModelDelegate delegate;
+};

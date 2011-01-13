@@ -1,3 +1,5 @@
+local path = require "path"
+
 local M = {}
 
 -- for now we're manually registering the qt.ISystem service here
@@ -73,8 +75,35 @@ function M.processEvents()
 	return system:processEvents()
 end
 
+function M.assignModelToView( view, model )
+	return system:assignModelToView( view._obj, model )
+end
+
 function M.quit()
 	return system:quit()
+end
+
+-------------------------------------------------------------------------------
+-- Utility method:
+-- Converts a module name and a module filename into a string representing the 
+-- absolute file path  file inside module's folder. It does not checks whether 
+-- the file actually exists inside corresponding module folder.
+-------------------------------------------------------------------------------
+function M.findModuleFile( moduleName, moduleFilename )
+
+	-- Initializes commmon paths
+	local moduleDirPath = moduleName:gsub( '%.', '/' )
+	local coralPaths = co.getPaths()
+
+	-- For each repository
+	for i, repositoryDir in ipairs( coralPaths ) do
+		local moduleDir = repositoryDir .. '/' .. moduleDirPath
+		if path.isDir( moduleDir ) then
+			return moduleDir .. '/' .. moduleFilename
+		end
+	end
+
+	error( "cannot find folder path for module '" .. moduleName .. "'" )
 end
 
 return M

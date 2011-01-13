@@ -1,6 +1,7 @@
 local qt = require "qt"
 
 local widget = qt.loadUi( ( ... ) or "tests/TestWindow.ui" )
+assert( widget )
 
 widget.visible = true
 assert( widget.visible == true, "widget not visible" )

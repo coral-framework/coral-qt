@@ -11,3 +11,4 @@ widget.btnOk.enabled = false
 widget.visible = true
 
 qt.exec()
+

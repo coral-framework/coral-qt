@@ -21,6 +21,9 @@ interface ISystem
 	// Removes the connection identified by the given \a cookie.
 	void disconnect( in int32 cookie ) raises co.IllegalArgumentException;
 
+	// Sets the given IAbstractItemModel as the model for the given view instance.
+	void assignModelToView( inout Object view, in IAbstractItemModel model );
+
 	// Runs the Qt event loop until quit() is called.
 	void exec();
 

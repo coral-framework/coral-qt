@@ -6,6 +6,13 @@
 #include "System_Base.h"
 #include "ConnectionHub.h"
 #include <qt/Exception.h>
+#include <qt/ItemDataRole.h>
+#include <qt/IAbstractItemModel.h>
+#include <QAbstractItemView>
+#include <QAbstractItemModel>
+
+#include <QStringListModel>
+
 #include <QApplication>
 #include <QUiLoader>
 #include <QWidget>
@@ -34,6 +41,22 @@ public:
 	}
 
 	const qt::Object& getApp() { return _appObj; }
+
+	qt::ItemDataRole getDataRoles() { return _dataRoles; }
+
+	void assignModelToView( qt::Object& view, qt::IAbstractItemModel* model )
+	{
+		QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );
+		if( !qtView )
+			CORAL_THROW( qt::Exception, "cannot assign model to view: 'view' object is not a subclass of QAbstractItemView" );
+
+		QAbstractItemModel* qtModel = dynamic_cast<QAbstractItemModel*>( model );
+		if( !qtModel )
+			CORAL_THROW( qt::Exception, "cannot assign model to view: 'model' object is not a subclass of QAbstractItemModel" );
+
+
+		qtView->setModel( qtModel );
+	}
 
 	void loadUi( const std::string& filePath, qt::Object& widget )
 	{
@@ -78,6 +101,7 @@ public:
 private:
 	QApplication* _app;
 	qt::Object _appObj;
+	qt::ItemDataRole _dataRoles;
 	ConnectionHub _connectionHub;
 };
 
