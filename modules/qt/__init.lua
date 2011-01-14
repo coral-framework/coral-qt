@@ -86,8 +86,8 @@ end
 -------------------------------------------------------------------------------
 -- Utility method:
 -- Converts a module name and a module filename into a string representing the 
--- absolute file path  file inside module's folder. It does not checks whether 
--- the file actually exists inside corresponding module folder.
+-- absolute file path to the file inside module's folder. It does not checks 
+-- whether file actually exists inside corresponding module folder.
 -------------------------------------------------------------------------------
 function M.findModuleFile( moduleName, moduleFilename )
 

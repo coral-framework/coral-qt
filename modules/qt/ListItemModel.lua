@@ -34,6 +34,12 @@ function ItemModelDelegate.delegate:getParentIndex( itemIndex )
 	return 0;
 end
 
+function ItemModelDelegate.delegate:getRow( itemIndex )
+end
+
+function ItemModelDelegate.delegate:getColumn( itemIndex )
+end
+
 function ListItemModel( list )
 	-- creates the model instance
 	local model = co.new( "qt.AbstractItemModel" ).itemModel

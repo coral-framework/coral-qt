@@ -9,6 +9,16 @@
 #include <qt/ItemDataRole.h>
 #include <ValueConverters.h>
 
+namespace
+{
+	const int ID_INVALID = -1;
+}
+
+inline co::int32 getInternalId( const QModelIndex& index )
+{
+	return index.isValid() ? static_cast<co::int32>( index.internalId() ) : ID_INVALID;
+}
+
 namespace qt {
 
 class AbstractItemModel : public QAbstractItemModel, public qt::AbstractItemModel_Base
@@ -19,24 +29,21 @@ public:
 		_delegate = 0;
 	}
 
-	virtual int	rowCount( const QModelIndex & parent = QModelIndex() ) const
+	virtual int	rowCount( const QModelIndex& parent = QModelIndex() ) const
 	{
-		if( parent.isValid() )
-			return 0;
-
-		return 3;
+		_delegate->getRowCount( getInternalId( parent ) );
 	}
 
-	virtual int	columnCount( const QModelIndex & parent = QModelIndex() ) const
+	virtual int	columnCount( const QModelIndex& parent = QModelIndex() ) const
 	{
-		return parent.isValid() ? 0 : 1;
+		return _delegate->getColumnCount( getInternalId( parent ) );
 	}
 
 	virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const
 	{
 		qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
 
-		co::Any value = _delegate->getData( index.row(), itemRole );
+		co::Any value = _delegate->getData( getInternalId( index ), itemRole );
 
 		if( !value.isValid() )
 			return QVariant();
@@ -46,21 +53,35 @@ public:
 
 	virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const
 	{
+		qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
 		co::Any value = ( orientation == Qt::Horizontal ) ?
-						_delegate->getHorizontalHeaderData( section, static_cast<qt::ItemDataRole>( role ) ) :
-						_delegate->getVerticalHeaderData( section, static_cast<qt::ItemDataRole>( role ) );
+						_delegate->getHorizontalHeaderData( section, itemRole ) :
+						_delegate->getVerticalHeaderData( section, itemRole );
+
+		if( !value.isValid() )
+			return QVariant();
 
 		return anyToVariant( value );
 	}
 
 	virtual QModelIndex	index( int row, int column, const QModelIndex& parent = QModelIndex() ) const
 	{
-		return createIndex( row, column, 0 );
+		co::int32 itemIndex = _delegate->getIndex( row, column, getInternalId( parent ) );
+
+		if( itemIndex == ID_INVALID )
+			return QModelIndex();
+
+		return createIndex( row, column, itemIndex );
 	}
 
 	virtual QModelIndex	parent( const QModelIndex& index ) const
 	{
-		return QModelIndex();
+		co::int32 parentIndex = _delegate->getParentIndex( getInternalId( index ) );
+
+		if( parentIndex == ID_INVALID )
+			return QModelIndex();
+
+		return createIndex( _delegate->getRow( parentIndex ), 0, parentIndex );
 	}
 
 	virtual Qt::ItemFlags flags( const QModelIndex & index ) const

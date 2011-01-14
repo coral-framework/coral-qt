@@ -1,30 +1,44 @@
 /*
 	Delegate for IAbstractItemModel interface.
+
+	Like Qt's AbstractItemModel class, this interface has a convention that 
+	underlying data model is exposed as a hierarchy of tables. However,
+	unlike Qt, the item handle is a single integer that maps a user data
+	element. Each element is located relative to its parent index in a
+	specific row and column. All top-level element contains an invalid 
+	parent index handle of -1.
+
+	A common convention used in models that expose tree data structures is 
+	that only items in the first column have children. For that case, when 
+	reimplementing getParentIndex() function the column of the returned parent
+	(obtained by getColumn()) will be 0.
  */
 interface IAbstractItemModelDelegate
 {
 	/*
 		Returns the data stored under the given role for the item referred to 
-		by index. If you do not have a value to return, return 
-		an invalid any instead.
+		by index. If you do not have a value to return, return nil instead.
 	 */
 	any getData( in int32 index, in ItemDataRole role );
 
 	/*
 		Returns the number of columns for the children of the given parent.
 		In many models, the number of columns is independent of the parent.
+		An invalid parentIndex (i.e -1) represents the root item.
+		\see getRowCount()
      */
 	int32 getColumnCount( in int32 parentIndex );
 
 	/*
 		Returns the number of rows for the children of the given parent. 
 		In many models, the number of columns is independent of the parent.
-		For example, a constant number of rows or 0 in a list model. 
+		For example, a constant number of rows or 0 in a list model.
+		An invalid parentIndex (i.e -1) represents the root item. 
 		\see columnCount().
      */
 	int32 getRowCount( in int32 parentIndex );
 
-	/*
+	/* TODO:: create flags
 		Returns the item flags for the given index as an array of flags that 
 		enables the item (ItemIsEnabled) and allows it to be selected 
 		(ItemIsSelectable).		
@@ -35,13 +49,19 @@ interface IAbstractItemModelDelegate
 	//  column and parent index. 
 	int32 getIndex( in int32 row, in int32 col, in int32 parentIndex );
 
+	// Returns the current row of the item specified by the given indexItem.
+	uint32 getRow( in int32 itemIndex );
+
+	// Returns the current column of the item specified by the given indexItem.
+	uint32 getColumn( in int32 itemIndex );
+
 	// Returns the data for the given role and column in the horizontal header.
-	any getHorizontalHeaderData( in int32 col, in ItemDataRole role );
+	any getHorizontalHeaderData( in int32 section, in ItemDataRole role );
 
 	// Returns the data for the given role and row in the vertical header.
-	any getVerticalHeaderData( in int32 row, in ItemDataRole role );
+	any getVerticalHeaderData( in int32 section, in ItemDataRole role );
 
-	// Returns the parent of the model item with the given index. If the item has no parent, 
-	// an invalid index is returned (i.e -1).
+	//	Returns the parent of the model item with the given itemIndex. If the 
+	// item has no parent, an invalid index is returned (i.e -1).
 	int32 getParentIndex( in int32 itemIndex );
 };
