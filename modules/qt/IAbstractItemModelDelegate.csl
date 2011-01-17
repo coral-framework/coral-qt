@@ -15,11 +15,24 @@
  */
 interface IAbstractItemModelDelegate
 {
-	/*
-		Returns the data stored under the given role for the item referred to 
-		by index. If you do not have a value to return, return nil instead.
-	 */
-	any getData( in int32 index, in ItemDataRole role );
+	// Returns the index of the item in the model specified by the given row, 
+	// column and parent index. 
+	int32 getIndex( in int32 row, in int32 col, in int32 parentIndex );
+
+
+	// Returns the parent of the model item with the given itemIndex. If the 
+	// item has no parent, an invalid index is returned (i.e -1).
+	int32 getParentIndex( in int32 index );
+
+	// Returns the data stored under the given role for the item referred to 
+	// by index. If you do not have a value to return, return nil instead.
+	void getData( in int32 index, in ItemDataRole role, out any data );
+
+	// Returns the data for the given role and column in the horizontal header.
+	void getHorizontalHeaderData( in int32 section, in ItemDataRole role, out any data );
+
+	// Returns the data for the given role and row in the vertical header.
+	void getVerticalHeaderData( in int32 section, in ItemDataRole role, out any data );
 
 	/*
 		Returns the number of columns for the children of the given parent.
@@ -38,30 +51,9 @@ interface IAbstractItemModelDelegate
      */
 	int32 getRowCount( in int32 parentIndex );
 
-	/* TODO:: create flags
-		Returns the item flags for the given index as an array of flags that 
-		enables the item (ItemIsEnabled) and allows it to be selected 
-		(ItemIsSelectable).		
-	 */
-	//int32[] getFlags( in int32 index );
-
-	//	Returns the index of the item in the model specified by the given row, 
-	//  column and parent index. 
-	int32 getIndex( in int32 row, in int32 col, in int32 parentIndex );
-
 	// Returns the current row of the item specified by the given indexItem.
-	uint32 getRow( in int32 itemIndex );
+	uint32 getRow( in int32 index );
 
 	// Returns the current column of the item specified by the given indexItem.
-	uint32 getColumn( in int32 itemIndex );
-
-	// Returns the data for the given role and column in the horizontal header.
-	any getHorizontalHeaderData( in int32 section, in ItemDataRole role );
-
-	// Returns the data for the given role and row in the vertical header.
-	any getVerticalHeaderData( in int32 section, in ItemDataRole role );
-
-	//	Returns the parent of the model item with the given itemIndex. If the 
-	// item has no parent, an invalid index is returned (i.e -1).
-	int32 getParentIndex( in int32 itemIndex );
+	uint32 getColumn( in int32 index );
 };

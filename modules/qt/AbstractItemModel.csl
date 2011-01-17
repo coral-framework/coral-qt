@@ -1,7 +1,7 @@
 /*
 	Component that provides IAbstractItemModel service and degates all methods
 	to its internal delegate interface IAbstractItemModelDelegate. This allows 
-	fully-lua implementation of Qt's item models.
+	lua implementations of Qt's item models.
  */
 component AbstractItemModel
 {

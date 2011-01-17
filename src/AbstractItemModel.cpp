@@ -29,9 +29,12 @@ public:
 		_delegate = 0;
 	}
 
+	virtual ~AbstractItemModel()
+	{;}
+
 	virtual int	rowCount( const QModelIndex& parent = QModelIndex() ) const
 	{
-		_delegate->getRowCount( getInternalId( parent ) );
+		return _delegate->getRowCount( getInternalId( parent ) );
 	}
 
 	virtual int	columnCount( const QModelIndex& parent = QModelIndex() ) const
@@ -43,8 +46,8 @@ public:
 	{
 		qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
 
-		co::Any value = _delegate->getData( getInternalId( index ), itemRole );
-
+		co::Any value;
+		_delegate->getData( getInternalId( index ), itemRole, value );
 		if( !value.isValid() )
 			return QVariant();
 
@@ -54,9 +57,11 @@ public:
 	virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const
 	{
 		qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
-		co::Any value = ( orientation == Qt::Horizontal ) ?
-						_delegate->getHorizontalHeaderData( section, itemRole ) :
-						_delegate->getVerticalHeaderData( section, itemRole );
+		co::Any value;
+		if( orientation == Qt::Horizontal )
+			_delegate->getHorizontalHeaderData( section, itemRole, value );
+		else
+			_delegate->getVerticalHeaderData( section, itemRole, value );
 
 		if( !value.isValid() )
 			return QVariant();

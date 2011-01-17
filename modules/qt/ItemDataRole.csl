@@ -2,8 +2,7 @@
 	Bind for Qt's item data role.
 	From Qt's documentation: Each item in the model has a set of data elements
 	associated with it, each with its own role. The roles are used by the view
-	to indicate to the model which type of data it needs. Custom models should 
-	return data in these types.
+	to indicate to the model which type of data it needs.
  */
 enum ItemDataRole
 {
