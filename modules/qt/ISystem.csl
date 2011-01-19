@@ -9,6 +9,9 @@ interface ISystem
 	// Loads a QWidget from a .ui file created in Qt Designer.
 	void loadUi( in string filePath, out Object widget ) raises Exception;
 
+	// Opens a directory dialog and returns the selected file.
+	void getExistingDirectory( in Object parent, in string caption, in string initialDir, out string selectedDir );
+
 	/*
 		Connects a \a signal from \a sender to a \a handler, and returns the connection cookie.
 		\note To undo the connection, call disconnect() passing the returned connection cookie.

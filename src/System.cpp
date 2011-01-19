@@ -14,6 +14,7 @@
 #include <QStringListModel>
 
 #include <QApplication>
+#include <QFileDialog>
 #include <QUiLoader>
 #include <QWidget>
 #include <QFile>
@@ -42,8 +43,6 @@ public:
 
 	const qt::Object& getApp() { return _appObj; }
 
-	qt::ItemDataRole getDataRoles() { return _dataRoles; }
-
 	void assignModelToView( qt::Object& view, qt::IAbstractItemModel* model )
 	{
 		QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );
@@ -56,6 +55,9 @@ public:
 
 
 		qtView->setModel( qtModel );
+
+		// connect AbstractItemView slots to model signals (to allow signal forwarding to delegate of IAbstractItemModel)
+		QObject::connect( qtView, SIGNAL( clicked( const QModelIndex& ) ), qtModel, SLOT( clicked( const QModelIndex& ) ) );
 	}
 
 	void loadUi( const std::string& filePath, qt::Object& widget )
@@ -72,6 +74,16 @@ public:
 
 		widget.set( resWidget );
 	}
+
+	void getExistingDirectory( const qt::Object& parent, const std::string& caption, const std::string& initialDir,
+							   std::string& selectedDir )
+	{
+		QString dir = QFileDialog::getExistingDirectory( qobject_cast<QWidget*>( parent.get() ),
+														 QString::fromStdString( caption ),
+														 QString::fromStdString( initialDir ) );
+		selectedDir = dir.toStdString();
+	}
+
 
 	co::int32 connect( const qt::Object& sender, const std::string& signal, qt::IConnectionHandler* handler )
 	{
@@ -101,7 +113,6 @@ public:
 private:
 	QApplication* _app;
 	qt::Object _appObj;
-	qt::ItemDataRole _dataRoles;
 	ConnectionHub _connectionHub;
 };
 

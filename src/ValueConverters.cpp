@@ -9,6 +9,8 @@
 #include <QVariant>
 #include <sstream>
 
+static QString s_qtAuxBuffer;
+
 QVariant anyToVariant( const co::Any& value )
 {
 	QVariant v;
@@ -87,9 +89,13 @@ QGenericArgument anyToArgument( const co::Any& value )
 	case co::TK_UINT64:		return Q_ARG( quint64, value.get<co::uint64>() );
 	case co::TK_FLOAT:      return Q_ARG( float, value.get<float>() );
 	case co::TK_DOUBLE:		return Q_ARG( int, value.get<int>() );
-	case co::TK_STRING:		return Q_ARG( const char*, value.get<std::string&>().c_str() );
+	case co::TK_STRING:
+		// fills an auxilary QString buffer to avoid temporary variable
+		// creation when using Q_ARG( Type, const Type& value )
+		s_qtAuxBuffer = QString::fromStdString( value.get<std::string&>() );
+		return Q_ARG( QString, s_qtAuxBuffer );
 	default:
-		 CORAL_THROW( co::IllegalCastException, "cannot convert " << value << " to a QGenericArgument." );
+		CORAL_THROW( co::IllegalCastException, "cannot convert " << value << " to a QGenericArgument." );
 		break;
 	}
 }

@@ -1,5 +1,8 @@
 /*
-	Delegate for IAbstractItemModel interface.
+	Delegate for IAbstractItemModel interface and for Qt AbstractItemView
+	signals.
+
+	IAbstractItemModel behavior:
 
 	Like Qt's AbstractItemModel class, this interface has a convention that 
 	underlying data model is exposed as a hierarchy of tables. However,
@@ -12,9 +15,17 @@
 	that only items in the first column have children. For that case, when 
 	reimplementing getParentIndex() function the column of the returned parent
 	(obtained by getColumn()) will be 0.
+
+	Qt AbstractItemView signals:
+
+	This delegate also works as a bridge between AbstractItemView signals and
+	a coral component. For that to work it defines 5 methods called whenever
+	a view that uses the the model emits a signal.
  */
 interface IAbstractItemModelDelegate
 {
+	// IAbstractItemModel methods:
+
 	// Returns the index of the item in the model specified by the given row, 
 	// column and parent index. 
 	int32 getIndex( in int32 row, in int32 col, in int32 parentIndex );
@@ -56,4 +67,11 @@ interface IAbstractItemModelDelegate
 
 	// Returns the current column of the item specified by the given indexItem.
 	uint32 getColumn( in int32 index );
+
+	// AbstractItemView signals (see QAbstractItemView documentation for details).
+	void itemActivated( in Object view, in int32 index );
+	void itemClicked( in Object view, in int32 index );
+	void itemDoubleClicked( in Object view, in int32 index );
+	void itemEntered( in Object view, in int32 index );
+	void itemPressed( in Object view, in int32 index );
 };

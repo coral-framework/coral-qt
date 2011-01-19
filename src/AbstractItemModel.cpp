@@ -3,10 +3,7 @@
  * See copyright notice in LICENSE.md
  */
 
-#include "AbstractItemModel_Base.h"
-#include <QAbstractItemModel>
-#include <qt/IAbstractItemModelDelegate.h>
-#include <qt/ItemDataRole.h>
+#include "AbstractItemModel.h"
 #include <ValueConverters.h>
 
 namespace
@@ -21,95 +18,126 @@ inline co::int32 getInternalId( const QModelIndex& index )
 
 namespace qt {
 
-class AbstractItemModel : public QAbstractItemModel, public qt::AbstractItemModel_Base
+AbstractItemModel::AbstractItemModel()
 {
-public:
-	AbstractItemModel()
-	{
-		_delegate = 0;
-	}
+	_delegate = 0;
+}
 
-	virtual ~AbstractItemModel()
-	{;}
+AbstractItemModel::~AbstractItemModel()
+{;}
 
-	virtual int	rowCount( const QModelIndex& parent = QModelIndex() ) const
-	{
-		return _delegate->getRowCount( getInternalId( parent ) );
-	}
+int	AbstractItemModel::rowCount( const QModelIndex& parent ) const
+{
+	return _delegate->getRowCount( getInternalId( parent ) );
+}
 
-	virtual int	columnCount( const QModelIndex& parent = QModelIndex() ) const
-	{
-		return _delegate->getColumnCount( getInternalId( parent ) );
-	}
+int	AbstractItemModel::columnCount( const QModelIndex& parent ) const
+{
+	return _delegate->getColumnCount( getInternalId( parent ) );
+}
 
-	virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const
-	{
-		qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
+QVariant AbstractItemModel::data( const QModelIndex& index, int role ) const
+{
+	qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
 
-		co::Any value;
-		_delegate->getData( getInternalId( index ), itemRole, value );
-		if( !value.isValid() )
-			return QVariant();
+	co::Any value;
+	_delegate->getData( getInternalId( index ), itemRole, value );
+	if( !value.isValid() )
+		return QVariant();
 
-		return anyToVariant( value );
-	}
+	return anyToVariant( value );
+}
 
-	virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const
-	{
-		qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
-		co::Any value;
-		if( orientation == Qt::Horizontal )
-			_delegate->getHorizontalHeaderData( section, itemRole, value );
-		else
-			_delegate->getVerticalHeaderData( section, itemRole, value );
+QVariant AbstractItemModel::headerData( int section, Qt::Orientation orientation, int role ) const
+{
+	qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
+	co::Any value;
+	if( orientation == Qt::Horizontal )
+		_delegate->getHorizontalHeaderData( section, itemRole, value );
+	else
+		_delegate->getVerticalHeaderData( section, itemRole, value );
 
-		if( !value.isValid() )
-			return QVariant();
+	if( !value.isValid() )
+		return QVariant();
 
-		return anyToVariant( value );
-	}
+	return anyToVariant( value );
+}
 
-	virtual QModelIndex	index( int row, int column, const QModelIndex& parent = QModelIndex() ) const
-	{
-		co::int32 itemIndex = _delegate->getIndex( row, column, getInternalId( parent ) );
+QModelIndex	AbstractItemModel::index( int row, int column, const QModelIndex& parent ) const
+{
+	co::int32 itemIndex = _delegate->getIndex( row, column, getInternalId( parent ) );
 
-		if( itemIndex == ID_INVALID )
-			return QModelIndex();
+	if( itemIndex == ID_INVALID )
+		return QModelIndex();
 
-		return createIndex( row, column, itemIndex );
-	}
+	return createIndex( row, column, itemIndex );
+}
 
-	virtual QModelIndex	parent( const QModelIndex& index ) const
-	{
-		co::int32 parentIndex = _delegate->getParentIndex( getInternalId( index ) );
+QModelIndex	AbstractItemModel::parent( const QModelIndex& index ) const
+{
+	co::int32 parentIndex = _delegate->getParentIndex( getInternalId( index ) );
 
-		if( parentIndex == ID_INVALID )
-			return QModelIndex();
+	if( parentIndex == ID_INVALID )
+		return QModelIndex();
 
-		return createIndex( _delegate->getRow( parentIndex ), 0, parentIndex );
-	}
+	return createIndex( _delegate->getRow( parentIndex ), 0, parentIndex );
+}
 
-	virtual Qt::ItemFlags flags( const QModelIndex & index ) const
-	{
-		if( !index.isValid() )
-			return QAbstractItemModel::flags( index ) | Qt::ItemIsDropEnabled;
+Qt::ItemFlags AbstractItemModel::flags( const QModelIndex& index ) const
+{
+	if( !index.isValid() )
+		return QAbstractItemModel::flags( index ) | Qt::ItemIsDropEnabled;
 
-		return QAbstractItemModel::flags( index ) | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
-	}
+	return QAbstractItemModel::flags( index ) | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+}
 
-	virtual qt::IAbstractItemModelDelegate* getDelegate()
-	{
-		return _delegate;
-	}
+qt::IAbstractItemModelDelegate* AbstractItemModel::getDelegate()
+{
+	return _delegate;
+}
 
-	virtual void setDelegate( qt::IAbstractItemModelDelegate* delegate )
-	{
-		_delegate = delegate;
-	}
+void AbstractItemModel::setDelegate( qt::IAbstractItemModelDelegate* delegate )
+{
+	_delegate = delegate;
+}
 
-private:
-	qt::IAbstractItemModelDelegate* _delegate;
-};
+void AbstractItemModel::notifyDataChanged( co::int32 fromIndex, co::int32 toIndex )
+{
+	QModelIndex from = createIndex( _delegate->getRow( fromIndex ), _delegate->getColumn( fromIndex ), fromIndex );
+	QModelIndex to = createIndex( _delegate->getRow( toIndex ), _delegate->getColumn( toIndex ), fromIndex );
+
+	emit dataChanged( from, to );
+}
+
+void AbstractItemModel::showMessage( const QString& message, int timeout )
+{
+
+}
+
+void AbstractItemModel::activated( const QModelIndex& index )
+{
+	_delegate->itemActivated( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
+}
+
+void AbstractItemModel::clicked( const QModelIndex& index )
+{
+	_delegate->itemClicked( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
+}
+
+void AbstractItemModel::doubleClicked( const QModelIndex& index )
+{
+	_delegate->itemDoubleClicked( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
+}
+
+void AbstractItemModel::entered( const QModelIndex& index )
+{
+	_delegate->itemEntered( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
+}
+
+void AbstractItemModel::pressed( const QModelIndex& index )
+{
+	_delegate->itemPressed( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
+}
 
 } // namespace qt
 

@@ -67,6 +67,10 @@ function M.loadUi( uiFile )
 	return ObjectWrapper( system:loadUi( uiFile ) )
 end
 
+function M.getExistingDirectory( parent, caption, initialDir )
+	return system:getExistingDirectory( parent._obj, caption, initialDir )
+end
+
 function M.exec()
 	return system:exec()
 end
@@ -81,29 +85,6 @@ end
 
 function M.quit()
 	return system:quit()
-end
-
--------------------------------------------------------------------------------
--- Utility method:
--- Converts a module name and a module filename into a string representing the 
--- absolute file path to the file inside module's folder. It does not checks 
--- whether file actually exists inside corresponding module folder.
--------------------------------------------------------------------------------
-function M.findModuleFile( moduleName, moduleFilename )
-
-	-- Initializes commmon paths
-	local moduleDirPath = moduleName:gsub( '%.', '/' )
-	local coralPaths = co.getPaths()
-
-	-- For each repository
-	for i, repositoryDir in ipairs( coralPaths ) do
-		local moduleDir = repositoryDir .. '/' .. moduleDirPath
-		if path.isDir( moduleDir ) then
-			return moduleDir .. '/' .. moduleFilename
-		end
-	end
-
-	error( "cannot find folder path for module '" .. moduleName .. "'" )
 end
 
 return M
