@@ -8,6 +8,7 @@
 #include <co/IllegalArgumentException.h>
 #include <qt/Object.h>
 #include <QVariant>
+#include <QMetaMethod>
 #include <sstream>
 
 void qt::Object_Adapter::getPropertyOrChild( qt::Object& instance, const std::string& name, co::Any& value )
@@ -29,16 +30,33 @@ void qt::Object_Adapter::setProperty( qt::Object& instance, const std::string& n
 	instance.get()->setProperty( name.c_str(), anyToVariant( value ) );
 }
 
-void qt::Object_Adapter::invoke( qt::Object& instance, const std::string& name, const co::Any& p1,
+void qt::Object_Adapter::invoke( qt::Object& instance, const std::string& methodSignature, const co::Any& p1,
 								 const co::Any& p2, const co::Any& p3, const co::Any& p4,
 								 const co::Any& p5, const co::Any& p6, const co::Any& p7 )
 {
 	QObject* obj = instance.get();
-	bool ok = obj->metaObject()->invokeMethod( obj, name.c_str(), anyToArgument( p1 ), anyToArgument( p2 ),
-											   anyToArgument( p3 ), anyToArgument( p4 ), anyToArgument( p5 ),
-											   anyToArgument( p6 ), anyToArgument( p7 ) );
+	const QMetaObject* metaObj = obj->metaObject();
+	int methodIdx = metaObj->indexOfMethod( methodSignature.c_str() );
+	if( methodIdx < 0 )
+		CORAL_THROW( co::IllegalArgumentException, "no such method " << metaObj->className() << "::" << methodSignature );		
 
-	if( !ok )
-		CORAL_THROW( co::IllegalArgumentException, "could not invoke method " << name << " for "
-												   << obj->objectName().toLatin1().data() );
+	QMetaMethod mm = metaObj->method( methodIdx );
+	QList<QByteArray> paramTypes = mm.parameterTypes();
+
+	const int MAX_NUM_ARGS = 7;
+	int numArgs = paramTypes.size();
+	if( numArgs > MAX_NUM_ARGS )
+		CORAL_THROW( co::IllegalArgumentException, "method " << metaObj->className() << "::" << methodSignature <<
+					 "exceeds the limit of " << MAX_NUM_ARGS << " parameters" );
+
+	// prepare arguments
+	const co::Any* any[] = { &p1, &p2, &p3, &p4, &p5, &p6, &p7 };
+	QVariant var[MAX_NUM_ARGS];
+	QGenericArgument arg[MAX_NUM_ARGS];
+	for( int i = 0; i < numArgs; ++i )
+		anyToArgument( *any[i], paramTypes[i], var[i], arg[i] );
+
+	bool ok = mm.invoke( obj, arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6] );
+	if( !ok ) 
+		CORAL_THROW( co::IllegalArgumentException, "could not invoke " << metaObj->className() << "::" << methodSignature );
 }

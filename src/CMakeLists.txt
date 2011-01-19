@@ -27,4 +27,4 @@ TARGET_LINK_LIBRARIES( qt ${CORAL_LIBRARIES} ${QT_LIBRARIES} )
 # Source Groups
 ################################################################################
 
-SOURCE_GROUP( "@Generated" FILES ${_MODULE_SOURCES} )
+SOURCE_GROUP( "@Generated" FILES ${_MODULE_SOURCES} ${_MOC_SOURCES} )

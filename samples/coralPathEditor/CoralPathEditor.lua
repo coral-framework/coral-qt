@@ -53,7 +53,7 @@ function createCoralPathListModel()
 
 	-- creates a new instance of item model delegate along with a data setter function
 	local listDelegate = CoralPathListModel{}
-	
+
 	-- sets the list delegate into the model
 	model.delegate = listDelegate.delegate
 
