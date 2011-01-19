@@ -72,7 +72,7 @@ function createCoralPathListModel()
 
 	-- creates a new instance of item model delegate along with a data setter function
 	local listDelegate = CoralPathListModel{}
-	
+
 	-- sets the list delegate into the model
 	model.delegate = listDelegate.delegate
 
@@ -113,7 +113,7 @@ end
 
 local function onBtnSavePathClicked()
 	mainWindow.btnSave.enabled = false
-	mainWindow.statusbar:invoke( "showMessage", "Coral Path Saved!", 5000 )
+	mainWindow.statusbar:invoke( "showMessage(QString,int)", "Coral Path Saved!", 5000 )
 end
 -------------------------------------------------------------------------------
 --- Initializations

@@ -6,10 +6,9 @@
 #include "ValueConverters.h"
 #include <co/Any.h>
 #include <co/IllegalCastException.h>
+#include <co/IllegalArgumentException.h>
 #include <QVariant>
 #include <sstream>
-
-static QString s_qtAuxBuffer;
 
 QVariant anyToVariant( const co::Any& value )
 {
@@ -69,33 +68,36 @@ void variantToAny( const QVariant& v, co::Any& value )
 	}
 }
 
-QGenericArgument anyToArgument( const co::Any& value )
+void anyToArgument( const co::Any& any, const QByteArray& argType, QVariant& var, QGenericArgument& arg )
 {
-	switch( value.getKind() )
+	int typeId = QMetaType::type( argType.constData() );
+	switch( typeId )
 	{
-	case co::TK_NONE:
-		return QGenericArgument();
-	case co::TK_BOOLEAN:
-		return Q_ARG( bool, value.get<bool>() );
-	case co::TK_INT8:
-	case co::TK_INT16:
-	case co::TK_INT32:
-		return Q_ARG( int, value.get<co::int32>() );
-	case co::TK_UINT8:
-	case co::TK_UINT16:
-	case co::TK_UINT32:
-		return Q_ARG( int, value.get<co::uint32>() );
-	case co::TK_INT64:		return Q_ARG( qint64, value.get<co::int64>() );
-	case co::TK_UINT64:		return Q_ARG( quint64, value.get<co::uint64>() );
-	case co::TK_FLOAT:      return Q_ARG( float, value.get<float>() );
-	case co::TK_DOUBLE:		return Q_ARG( int, value.get<int>() );
-	case co::TK_STRING:
-		// fills an auxilary QString buffer to avoid temporary variable
-		// creation when using Q_ARG( Type, const Type& value )
-		s_qtAuxBuffer = QString::fromStdString( value.get<std::string&>() );
-		return Q_ARG( QString, s_qtAuxBuffer );
+	case QMetaType::Void:
+		CORAL_THROW( co::IllegalArgumentException, "illegal Qt type '" << argType.constData() << "'" );
+		break;
+	case QMetaType::Bool:
+		var.setValue( any.get<bool>() );
+		arg = Q_ARG( bool, *reinterpret_cast<bool*>( var.data() ) );
+		break;
+	case QMetaType::Int:
+		var.setValue( any.get<int>() );
+		arg = Q_ARG( int, *reinterpret_cast<int*>( var.data() ) );
+		break;
+	case QMetaType::UInt:
+		var.setValue( any.get<unsigned int>() );
+		arg = Q_ARG( unsigned int, *reinterpret_cast<unsigned int*>( var.data() ) );
+		break;
+	case QMetaType::Double:
+		var.setValue( any.get<double>() );
+		arg = Q_ARG( double, *reinterpret_cast<double*>( var.data() ) );
+		break;
+	case QMetaType::QString:
+		var.setValue<QString>( any.get<const std::string&>().c_str() );
+		arg = Q_ARG( QString, *reinterpret_cast<QString*>( var.data() ) );
+		break;
 	default:
-		CORAL_THROW( co::IllegalCastException, "cannot convert " << value << " to a QGenericArgument." );
+		CORAL_THROW( co::IllegalArgumentException, "no conversion from " << any << " to " << argType.constData() );
 		break;
 	}
 }

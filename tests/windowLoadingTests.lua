@@ -2,7 +2,7 @@ require "testkit.unitTests"
 
 local qt = require "qt"
 
-local file = qt.findModuleFile( "tests", "TestWindow.ui" ) 
+local file = co.findModuleFile( "tests", "TestWindow.ui" )
 
 function aWindowShouldBeInvisibleWhenLoaded()
 	local widget = qt.loadUi( file )
@@ -14,7 +14,7 @@ function shouldThrowAnExceptionWithAnInexistantFile()
 end
 
 function shouldThrowAnExceptionWithAnInvalidFile()
-	expectException( "error loading ui file", qt.loadUi, qt.findModuleFile( "tests", "invalid.ui" ) )
+	expectException( "error loading ui file", qt.loadUi, co.findModuleFile( "tests", "invalid.ui" ) )
 end
 
 

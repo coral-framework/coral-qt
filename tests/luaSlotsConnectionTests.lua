@@ -2,7 +2,7 @@ require "testkit.unitTests"
 
 local qt = require "qt"
 
-local file = qt.findModuleFile( "tests", "TestWindow.ui" ) 
+local file = co.findModuleFile( "tests", "TestWindow.ui" )
 
 local mockState = false
 local function slotCheckedMock( checked )
@@ -29,4 +29,3 @@ function multipleLuaFunctionCouldBeUsedAsSlotsTest()
 
 	assertEquals( hits, 3, "2 slots where connected to a signal but they where not both signaled." )
 end
-
