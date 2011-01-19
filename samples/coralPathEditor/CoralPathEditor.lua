@@ -7,7 +7,7 @@ local AbstractListModel = require "qt.AbstractListModel"
 local currentSelected = -1
 
 -- loads main form
-local mainWindow = qt.loadUi( co.findModuleFile( "samples.coralPathEditor", "MainWindow.ui" ) )
+local editorDialog = qt.loadUi( co.findModuleFile( "samples.coralPathEditor", "EditorDialog.ui" ) )
 
 -- gets coral path list
 local coralPathList = co.getPaths()
@@ -15,26 +15,8 @@ local coralPathList = co.getPaths()
 -------------------------------------------------------------------------------
 --- Utility functions
 -------------------------------------------------------------------------------
-local function getPathString( pathList )
-	if #pathList == 0 then
-		return ""
-	end
-
-	local path = pathList[1]
-	for i = 2, #pathList do
-		path = path .. ":" .. pathList[i]
-
-	end
-
-	return path
-end
-
-local function checkCoPathHasChanged( currentPath )
-	return currentPath ~= getPathString( co.getPaths() );
-end
-
 local function selectDirectory()
-	return qt.getExistingDirectory( mainWindow, "Open Directory", "" )
+	return qt.getExistingDirectory( editorDialog, "Open Directory", "" )
 end
 
 -------------------------------------------------------------------------------
@@ -49,6 +31,10 @@ function CoralPathListModel:getData( index, role )
 	return nil
 end
 
+function CoralPathListModel:getFlags( index )
+	return qt.ItemIsSelectable + qt.ItemIsEnabled;	
+end
+
 function CoralPathListModel:getHorizontalHeaderData( section, role )
 	return nil
 end
@@ -59,11 +45,6 @@ end
 
 function CoralPathListModel:getRowCount( parentIndex )
 	return #coralPathList
-end
-
-function CoralPathListModel:itemClicked( view, index )
-	currentSelected = index
-	mainWindow.btnRemoveFolder.enabled = true
 end
 
 function createCoralPathListModel()
@@ -83,52 +64,35 @@ end
 local listModel = createCoralPathListModel()
 
 function update()
-	local currentPath = getPathString( coralPathList )
-	mainWindow.coralPath.text = currentPath
 	listModel:notifyDataChanged( 0, #coralPathList )
-
-	mainWindow.btnSave.enabled = checkCoPathHasChanged( currentPath )
 end
 
 -------------------------------------------------------------------------------
 --- Slots
 -------------------------------------------------------------------------------
 local function onBtnAddFolderClicked()
-	table.insert( coralPathList, selectDirectory() )
-	update()
-end
-
-local function onbtnRemoveFolderClicked()
-	if currentSelected == -1 then
+	local dir = selectDirectory()
+	if dir == "" then
 		return
 	end
 
-	table.remove( coralPathList, currentSelected )
+	table.insert( coralPathList, dir )
+	co.addPath( dir )
 	update()
-
-	if #coralPathList == 0 then
-		mainWindow.btnRemoveFolder.enabled = false
-	end
 end
 
-local function onBtnSavePathClicked()
-	mainWindow.btnSave.enabled = false
-	mainWindow.statusbar:invoke( "showMessage", "Coral Path Saved!", 5000 )
-end
 -------------------------------------------------------------------------------
 --- Initializations
 -------------------------------------------------------------------------------
-mainWindow.coralPath.text = getPathString( coralPathList )
 
 -- connect signals to module's slots
-mainWindow.btnAddFolder:connect( "clicked()", onBtnAddFolderClicked )
-mainWindow.btnRemoveFolder:connect( "clicked()", onbtnRemoveFolderClicked )
-mainWindow.btnSave:connect( "clicked()", onBtnSavePathClicked )
+editorDialog.btnAddFolder:connect( "clicked()", onBtnAddFolderClicked )
 
 -- assign my model to ui view
-qt.assignModelToView( mainWindow.listView, listModel )
+qt.assignModelToView( editorDialog.listView, listModel )
 
-mainWindow.visible = true
+editorDialog.windowTitle = "Coral Path Editor"
+editorDialog.visible = true
 
 qt.exec()
 

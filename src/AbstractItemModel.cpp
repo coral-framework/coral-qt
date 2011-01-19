@@ -86,10 +86,35 @@ QModelIndex	AbstractItemModel::parent( const QModelIndex& index ) const
 Qt::ItemFlags AbstractItemModel::flags( const QModelIndex& index ) const
 {
 	if( !index.isValid() )
-		return QAbstractItemModel::flags( index ) | Qt::ItemIsDropEnabled;
+		return Qt::NoItemFlags;
 
-	return QAbstractItemModel::flags( index ) | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+	co::int32 flags = _delegate->getFlags( getInternalId( index ) );
+
+	Qt::ItemFlags qtFlags;
+	if( flags & Qt::ItemIsSelectable )
+		qtFlags |= Qt::ItemIsSelectable;
+
+	if( flags & Qt::ItemIsEditable )
+		qtFlags |= Qt::ItemIsEditable;
+
+	if( flags & Qt::ItemIsDragEnabled )
+		qtFlags |= Qt::ItemIsDragEnabled;
+
+	if( flags & Qt::ItemIsDropEnabled )
+		qtFlags |= Qt::ItemIsDropEnabled;
+
+	if( flags & Qt::ItemIsUserCheckable )
+		qtFlags |= Qt::ItemIsUserCheckable;
+
+	if( flags & Qt::ItemIsEnabled )
+		qtFlags |= Qt::ItemIsEnabled;
+
+	if( flags & Qt::ItemIsTristate )
+		qtFlags |= Qt::ItemIsTristate;
+
+	return qtFlags;
 }
+
 
 qt::IAbstractItemModelDelegate* AbstractItemModel::getDelegate()
 {

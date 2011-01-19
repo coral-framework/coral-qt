@@ -59,6 +59,18 @@ function MT.__newindex( wrapper, name, value )
 end
 
 -------------------------------------------------------------------------------
+-- Export AbstractItemModel flags
+-------------------------------------------------------------------------------
+M.NoItemFlags			= 0
+M.ItemIsSelectable		= 1
+M.ItemIsEditable		= 2
+M.ItemIsDragEnabled		= 4
+M.ItemIsDropEnabled		= 8
+M.ItemIsUserCheckable	= 16
+M.ItemIsEnabled			= 32
+M.ItemIsTristate		= 64
+
+-------------------------------------------------------------------------------
 -- Export Module
 -------------------------------------------------------------------------------
 M.app = ObjectWrapper( system.app )
