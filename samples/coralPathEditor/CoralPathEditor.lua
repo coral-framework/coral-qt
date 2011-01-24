@@ -26,10 +26,17 @@ end
 -------------------------------------------------------------------------------
 local CoralPathListModel = AbstractListModel( "qt.samples.coralPathEditor.CoralPathListModel" )
 
+local defaultIcon = qt.Icon( "coral:/samples/coralPathEditor/png/folder.png" )
+
 function CoralPathListModel:getData( index, role )
 	if role == "DisplayRole" or role == "EditRole" then
 		return coralPathList[index]
 	end
+
+	if role == "DecorationRole" then
+		return defaultIcon
+	end
+
 	return nil
 end
 

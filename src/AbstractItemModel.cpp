@@ -5,6 +5,7 @@
 
 #include "AbstractItemModel.h"
 #include <ValueConverters.h>
+#include <qt/Icon.h>
 
 namespace
 {
@@ -42,8 +43,15 @@ QVariant AbstractItemModel::data( const QModelIndex& index, int role ) const
 
 	co::Any value;
 	_delegate->getData( getInternalId( index ), itemRole, value );
+
 	if( !value.isValid() )
 		return QVariant();
+
+	// by now only Icons supported for decoration roles
+	if( role == Qt::DecorationRole )
+	{
+		return QVariant::fromValue( value.get<qt::Icon&>() );
+	}
 
 	return anyToVariant( value );
 }
