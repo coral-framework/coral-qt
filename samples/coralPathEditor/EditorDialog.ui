@@ -47,7 +47,7 @@
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>png/addFolder.png</normaloff>png/addFolder.png</iconset>
+              <normaloff>png/save.png</normaloff>png/save.png</iconset>
             </property>
            </widget>
           </item>

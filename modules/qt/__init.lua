@@ -83,6 +83,10 @@ function M.getExistingDirectory( parent, caption, initialDir )
 	return system:getExistingDirectory( parent._obj, caption, initialDir )
 end
 
+function M.setSearchPaths( prefix, paths )
+	return system:setSearchPaths( prefix, paths )
+end
+
 function M.exec()
 	return system:exec()
 end

@@ -115,7 +115,6 @@ Qt::ItemFlags AbstractItemModel::flags( const QModelIndex& index ) const
 	return qtFlags;
 }
 
-
 qt::IAbstractItemModelDelegate* AbstractItemModel::getDelegate()
 {
 	return _delegate;

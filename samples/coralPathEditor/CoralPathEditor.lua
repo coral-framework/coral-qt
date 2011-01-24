@@ -6,11 +6,13 @@ local AbstractListModel = require "qt.AbstractListModel"
 
 local currentSelected = -1
 
--- loads main form
-local editorDialog = qt.loadUi( co.findModuleFile( "samples.coralPathEditor", "EditorDialog.ui" ) )
-
 -- gets coral path list
 local coralPathList = co.getPaths()
+
+qt.setSearchPaths( "coral", coralPathList )
+
+-- loads main form
+local editorDialog = qt.loadUi( "coral:/samples/coralPathEditor/EditorDialog.ui" )
 
 -------------------------------------------------------------------------------
 --- Utility functions

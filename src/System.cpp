@@ -84,6 +84,18 @@ public:
 		selectedDir = dir.toStdString();
 	}
 
+	void setSearchPaths( const std::string& prefix, co::ArrayRange<std::string const> searchPaths )
+	{
+		QStringList qtSearchPaths;
+		while( searchPaths )
+		{
+			std::string path = searchPaths.getLast();
+			qtSearchPaths.push_back( QString::fromStdString( path ) );
+			searchPaths.popLast();
+		}
+
+		QDir::setSearchPaths( QString::fromStdString( prefix ), qtSearchPaths );
+	}
 
 	co::int32 connect( const qt::Object& sender, const std::string& signal, qt::IConnectionHandler* handler )
 	{

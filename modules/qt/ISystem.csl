@@ -12,6 +12,10 @@ interface ISystem
 	// Opens a directory dialog and returns the selected file.
 	void getExistingDirectory( in Object parent, in string caption, in string initialDir, out string selectedDir );
 
+	// Sets or replaces Qt's search paths for file names with the prefix 'prefix'
+	// to 'searchPaths'. \see Qt's documentation of QDir::setSearchPaths().
+	void setSearchPaths( in string prefix, in string[] searchPaths );
+
 	/*
 		Connects a \a signal from \a sender to a \a handler, and returns the connection cookie.
 		\note To undo the connection, call disconnect() passing the returned connection cookie.
