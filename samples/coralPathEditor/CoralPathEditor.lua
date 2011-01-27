@@ -4,21 +4,13 @@
 local qt = require "qt"
 local AbstractListModel = require "qt.AbstractListModel"
 
-local currentSelected = -1
-
--- gets coral path list
-local coralPathList = co.getPaths()
-
-qt.setSearchPaths( "coral", coralPathList )
-
--- loads main form
-local editorDialog = qt.loadUi( "coral:/samples/coralPathEditor/EditorDialog.ui" )
+local M = {}
 
 -------------------------------------------------------------------------------
 --- Utility functions
 -------------------------------------------------------------------------------
 local function selectDirectory()
-	return qt.getExistingDirectory( editorDialog, "Open Directory", "" )
+	return qt.getExistingDirectory( M.editorDialog, "Open Directory", "" )
 end
 
 -------------------------------------------------------------------------------
@@ -26,15 +18,13 @@ end
 -------------------------------------------------------------------------------
 local CoralPathListModel = AbstractListModel( "qt.samples.coralPathEditor.CoralPathListModel" )
 
-local defaultIcon = qt.Icon( "coral:/samples/coralPathEditor/png/folder.png" )
-
 function CoralPathListModel:getData( index, role )
 	if role == "DisplayRole" or role == "EditRole" then
-		return coralPathList[index]
+		return M.coralPathList[index]
 	end
 
 	if role == "DecorationRole" then
-		return defaultIcon
+		return M.defaultIcon
 	end
 
 	return nil
@@ -53,7 +43,7 @@ function CoralPathListModel:getVerticalHeaderData( section, role )
 end
 
 function CoralPathListModel:getRowCount( parentIndex )
-	return #coralPathList
+	return #M.coralPathList
 end
 
 function createCoralPathListModel()
@@ -69,11 +59,9 @@ function createCoralPathListModel()
 	return model
 end
 
--- creates the list model
-local listModel = createCoralPathListModel()
-
 function update()
-	listModel:notifyDataChanged( 0, #coralPathList )
+	M.listModel:notifyDataChanged( 0, #M.coralPathList )
+	M.editorDialog.labelStatus.text = "Total of " .. #M.coralPathList .. " folders in path."
 end
 
 -------------------------------------------------------------------------------
@@ -85,7 +73,7 @@ local function onBtnAddFolderClicked()
 		return
 	end
 
-	table.insert( coralPathList, dir )
+	table.insert( M.coralPathList, dir )
 	co.addPath( dir )
 	update()
 end
@@ -93,15 +81,35 @@ end
 -------------------------------------------------------------------------------
 --- Initializations
 -------------------------------------------------------------------------------
+local function initialize()
+	-- initialize coral path list
+	M.coralPathList = co.getPaths()
 
--- connect signals to module's slots
-editorDialog.btnAddFolder:connect( "clicked()", onBtnAddFolderClicked )
+	-- update Qt search paths
+	qt.setSearchPaths( "coral", M.coralPathList )
 
--- assign my model to ui view
-qt.assignModelToView( editorDialog.listView, listModel )
+	-- load default folder icon (or clause to avoid re-initializations)
+	M.defaultIcon = M.defaultIcon or qt.Icon( "coral:/coralPathEditor/png/folder_256.png" )
 
-editorDialog.windowTitle = "Coral Path Editor"
-editorDialog.visible = true
+	M.editorDialog = qt.loadUi( "coral:/coralPathEditor/EditorDialog.ui" )
 
-qt.exec()
+	M.listModel = createCoralPathListModel()
+
+	-- connect signals to module's slots
+	M.editorDialog.btnAddFolder:connect( "clicked()", onBtnAddFolderClicked )
+
+	-- assign my model to ui view
+	qt.assignModelToView( M.editorDialog.listView, M.listModel )
+
+	M.editorDialog.windowTitle = "Coral Path Editor"
+	
+	update()
+end
+
+function M:show()
+	initialize()
+	self.editorDialog:invoke( "exec()" )
+end
+
+return M
 

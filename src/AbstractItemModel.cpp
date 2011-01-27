@@ -136,14 +136,9 @@ void AbstractItemModel::setDelegate( qt::IAbstractItemModelDelegate* delegate )
 void AbstractItemModel::notifyDataChanged( co::int32 fromIndex, co::int32 toIndex )
 {
 	QModelIndex from = createIndex( _delegate->getRow( fromIndex ), _delegate->getColumn( fromIndex ), fromIndex );
-	QModelIndex to = createIndex( _delegate->getRow( toIndex ), _delegate->getColumn( toIndex ), fromIndex );
+	QModelIndex to = createIndex( _delegate->getRow( toIndex ), _delegate->getColumn( toIndex ), toIndex );
 
 	emit dataChanged( from, to );
-}
-
-void AbstractItemModel::showMessage( const QString& message, int timeout )
-{
-
 }
 
 void AbstractItemModel::activated( const QModelIndex& index )

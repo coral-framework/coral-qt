@@ -38,8 +38,6 @@ public:
 	virtual void notifyDataChanged( co::int32 fromIndex, co::int32 toIndex );
 
 public slots:
-	void showMessage( const QString& message, int timeout = 0 );
-
 	void activated( const QModelIndex& index );
 
 	void clicked( const QModelIndex& index );

@@ -15,6 +15,7 @@
 
 #include <QApplication>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QUiLoader>
 #include <QWidget>
 #include <QFile>
@@ -57,7 +58,11 @@ public:
 		qtView->setModel( qtModel );
 
 		// connect AbstractItemView slots to model signals (to allow signal forwarding to delegate of IAbstractItemModel)
+		QObject::connect( qtView, SIGNAL( activated( const QModelIndex& ) ), qtModel, SLOT( activated( const QModelIndex& ) ) );
 		QObject::connect( qtView, SIGNAL( clicked( const QModelIndex& ) ), qtModel, SLOT( clicked( const QModelIndex& ) ) );
+		QObject::connect( qtView, SIGNAL( doubleClicked( const QModelIndex& ) ), qtModel, SLOT( doubleClicked( const QModelIndex& ) ) );
+		QObject::connect( qtView, SIGNAL( entered( const QModelIndex& ) ), qtModel, SLOT( entered( const QModelIndex& ) ) );
+		QObject::connect( qtView, SIGNAL( pressed( const QModelIndex& ) ), qtModel, SLOT( pressed( const QModelIndex& ) ) );
 	}
 
 	void loadUi( const std::string& filePath, qt::Object& widget )
@@ -68,9 +73,23 @@ public:
 		if( !uiFile.exists() )
 			CORAL_THROW( qt::Exception, "could not open '" << filePath << "'" );
 
+		// change app work directory to ui's base directory
+		// so the ui loader can find relative icon paths
+		QString savedWorkDir = QDir::currentPath();
+
+		QFileInfo fi( filePath.c_str() );
+		QDir::setCurrent( fi.absolutePath() );
+
 		QWidget* resWidget = loader.load( &uiFile, NULL );
+
+		// restore workdir
+		QDir::setCurrent( savedWorkDir );
+
 		if( !resWidget )
+		{
 			CORAL_THROW( qt::Exception, "error loading ui file '" << filePath << "'"  );
+
+		}
 
 		widget.set( resWidget );
 	}

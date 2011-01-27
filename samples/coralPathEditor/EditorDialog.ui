@@ -11,57 +11,88 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Coral Path Editor</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../coralTypeBrowser/png/coral_32.png</normaloff>../coralTypeBrowser/png/coral_32.png</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Coral Path Folders:</string>
+      <string/>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QListView" name="listView">
-          <property name="iconSize">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
            <size>
-            <width>24</width>
-            <height>24</height>
+            <width>40</width>
+            <height>20</height>
            </size>
           </property>
-          <property name="viewMode">
-           <enum>QListView::ListMode</enum>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnAddFolder">
+          <property name="text">
+           <string>Add Folder...</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>png/add_folder_256.png</normaloff>png/add_folder_256.png</iconset>
           </property>
          </widget>
         </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QListView" name="listView">
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="viewMode">
+         <enum>QListView::ListMode</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelStatus">
+        <property name="text">
+         <string>Total of 0 folder(s)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="btnAddFolder">
-            <property name="text">
-             <string>Add Folder...</string>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>png/save.png</normaloff>png/save.png</iconset>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="text">
+           <string>Close</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -71,5 +102,22 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>698</x>
+     <y>584</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>698</x>
+     <y>611</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
