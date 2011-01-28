@@ -17,10 +17,11 @@ local mainWindow = qt.loadUi( "coral:/coralTypeBrowser/MainWindow.ui" )
 
 local icons = 
 {
-	namespace 		= qt.Icon( "coral:/coralTypeBrowser/png/package_256.png" ),
+	namespace 		= qt.Icon( "coral:/coralTypeBrowser/png/package_64.png" ),
 	complexType 	= qt.Icon( "coral:/coralTypeBrowser/png/complex_type_64.png" ),
 	primitiveType 	= qt.Icon( "coral:/coralTypeBrowser/png/primitive_type_64.png" ),
-	attribute 		= qt.Icon( "coral:/coralTypeBrowser/png/attribute.png" )
+	attribute 		= qt.Icon( "coral:/coralTypeBrowser/png/attribute.png" ),
+	method 			= qt.Icon( "coral:/coralTypeBrowser/png/method_64.png" )
 }
 
 local typeIcons =
@@ -92,10 +93,47 @@ local TypeTree = {}
 -- TypeTree is used as metatable for new TypeTree instances
 TypeTree.__index = TypeTree
 
+local function getGroupName( groupName, numberOfElements )
+	local name = numberOfElements .. " " .. groupName
+	if numberOfElements > 1 then
+		name = name .. "s"
+	end
+
+	return name
+end
+
+-- Returns a string with the full method signature extracted from methodInfo
+local function extractMethodSignature( methodInfo )
+	local signature = methodInfo.name .. "("
+	for i, v in ipairs( methodInfo.parameters ) do
+		local parameter = ""
+		if v.isIn and v.isOut then
+			parameter = parameter .. " inout "
+		elseif v.IsIn then
+			parameter = parameter .. " in "
+		else
+			parameter = parameter .. " out "
+		end
+		parameter = parameter .. v.type.name .. " " .. v.name
+		if i ~= #methodInfo.parameters then
+			parameter = parameter .. ","
+		else
+			parameter = parameter .. " "
+		end
+		signature = signature .. parameter .. " "		
+	end
+	if methodInfo.returnType then
+		return methodInfo.returnType.name .. " " .. signature .. ")"
+	end
+
+	return "void " .. signature .. ")"
+end
+
 local function isValidIndex( index )
 	return index >= 0
 end
 
+-- Add an element (method, attribute, type or namespace)
 function TypeTree:add( element, icon, parentIndex )
 	-- creates a node data
 	local node = { data = element, icon = icon, index = self.nextIndex, parent = parentIndex, children = {} }
@@ -119,15 +157,51 @@ function TypeTree:add( element, icon, parentIndex )
 	return node.index
 end
 
+-- Creates a group of members (if any), extracted from field 'fieldName' of table currentType,
+-- and adds it to type tree as child of index parentIndex.
+function TypeTree:addMemberGroup( currentType, fieldName, groupName, icon, parentIndex )
+	if currentType[fieldName] and #currentType[fieldName] > 0 then
+		local groupIndex = self:add( { name = getGroupName( groupName, #currentType[fieldName] ) }, icon, parentIndex or -1 )
+		for i, v in ipairs( currentType[fieldName] ) do
+			self:add( { name = v.name .. " : " .. v.type.name }, icons.complexType, groupIndex )
+		end
+	end
+end
+
+-- Creates a group of methods, extracted from field 'fieldName' of table currentType,
+-- and adds it to type tree as child of index parentIndex
+function TypeTree:addMethodGroup( currentType, fieldName, groupName, icon, parentIndex )
+	if currentType[fieldName] and #currentType[fieldName] > 0 then
+		local groupIndex = self:add( { name = getGroupName( groupName, #currentType[fieldName] ) }, icon, parentIndex or -1 )
+		for i, v in ipairs( currentType[fieldName] ) do
+			self:add( { name = extractMethodSignature( v ) }, icons.complexType, groupIndex )
+		end
+	end
+end
+
+function TypeTree:addMembers( currentType, parentIndex )
+	-- add facets and receptacles (components only)
+	self:addMemberGroup( currentType, "facets", "facet", icons.complexType, parentIndex )
+	self:addMemberGroup( currentType, "receptacles", "receptacle", icons.complexType, parentIndex )
+
+	-- add methods (native class and interface only)
+	self:addMethodGroup( currentType, "memberMethods", "method", icons.complexType, parentIndex )
+	
+	-- add attributes (all types)
+	self:addMemberGroup( currentType, "memberAttributes", "attribute", icons.attribute, parentIndex )
+end
+
 function TypeTree:addType( currentType, parentIndex )
 	local currentIndex = self:add( currentType, typeIcons[currentType.kind], parentIndex or -1 )
+
 	local childTypes = currentType.types
-
-	if not childTypes then return end
-
-	for i, v in ipairs( childTypes ) do
-		self:addType( v, currentIndex )
+	if childType then
+		for i, v in ipairs( childTypes ) do
+			self:addType( v, currentIndex )
+		end
 	end
+
+	self:addMembers( currentType, currentIndex )
 end
 
 function TypeTree:addNamespace( namespace, parentIndex )
@@ -135,10 +209,10 @@ function TypeTree:addNamespace( namespace, parentIndex )
 	local currentIndex = self:add( namespace, icons.namespace, parentIndex or -1 )
 	
 	local childNS = namespace.childNamespaces
-	if not childNS then return end
-
-	for i, v in ipairs( childNS ) do
-		self:addNamespace( v, currentIndex )
+	if childNS then
+		for i, v in ipairs( childNS ) do
+			self:addNamespace( v, currentIndex )
+		end
 	end
 
 	-- adds all namespace types recursively

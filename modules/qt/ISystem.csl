@@ -6,6 +6,9 @@ interface ISystem
 	// The 'qApp' object.
 	readonly attribute Object app;
 
+	// Creates a new widget with the given parent and name using the class specified by className.
+	void createWidget( in string className, in Object parent, in string widgetName, out Object widget );
+
 	// Loads a QWidget from a .ui file created in Qt Designer.
 	void loadUi( in string filePath, out Object widget ) raises Exception;
 

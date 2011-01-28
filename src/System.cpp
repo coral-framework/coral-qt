@@ -65,6 +65,18 @@ public:
 		QObject::connect( qtView, SIGNAL( pressed( const QModelIndex& ) ), qtModel, SLOT( pressed( const QModelIndex& ) ) );
 	}
 
+	void createWidget( const std::string& className, const qt::Object& parent, const std::string& widgetName, qt::Object& widget )
+	{
+		QWidget* parentWidget = qobject_cast<QWidget*>( parent.get() );
+		if( !parentWidget )
+		{
+			CORAL_THROW( qt::Exception, "cannot set parent for the new widget: the given parent instance is not a widget instance" );
+		}
+
+		QUiLoader loader;
+		widget.set( loader.createWidget( className.c_str(), parentWidget, widgetName.c_str() ) );
+	}
+
 	void loadUi( const std::string& filePath, qt::Object& widget )
 	{
 		QUiLoader loader;

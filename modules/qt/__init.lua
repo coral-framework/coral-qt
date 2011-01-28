@@ -105,6 +105,10 @@ M.ItemIsTristate		= 64
 -------------------------------------------------------------------------------
 M.app = ObjectWrapper( system.app )
 
+function M.createWidget( className, parent, widgetName, widget )
+	return ObjectWrapper( system:createWidget( className, ( parent or {} )._obj, widgetName or "" ) )
+end
+
 function M.loadUi( uiFile )
 	return ObjectWrapper( system:loadUi( uiFile ) )
 end
