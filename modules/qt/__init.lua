@@ -59,6 +59,42 @@ function MT.__newindex( wrapper, name, value )
 end
 
 -------------------------------------------------------------------------------
+-- Constructor for qt.Color using qt.Variant
+-------------------------------------------------------------------------------
+function M.Color( r, g, b, a )
+	local variant = co.new( "qt.Variant" )
+	variant:setColor( r, g, b, a or 255 )
+	return variant
+end
+
+-------------------------------------------------------------------------------
+-- Constructor for qt.Brush using qt.Variant
+-------------------------------------------------------------------------------
+function M.Brush( r, g, b, a, style )
+	local variant = co.new( "qt.Variant" )
+	variant:setBrush( r, g, b, a or 1, style or 1 )
+	return variant
+end
+
+-------------------------------------------------------------------------------
+-- Constructor for qt.Size using qt.Variant
+-------------------------------------------------------------------------------
+function M.Size( width, height )
+	local variant = co.new( "qt.Variant" )
+	variant:setSize( width or -1, height or -1 )
+	return variant
+end
+
+-------------------------------------------------------------------------------
+-- Constructor for qt.Font using qt.Variant
+-------------------------------------------------------------------------------
+function M.Font( family, pointSize, weight, italic )
+	local variant = co.new( "qt.Variant" )
+	variant:setFont( family, pointSize or -1, weight or -1, italic or false )
+	return variant
+end
+
+-------------------------------------------------------------------------------
 -- QIcon enums and a Lua constructor for qt.Icon
 -------------------------------------------------------------------------------
 M.Icon = {}
@@ -81,15 +117,18 @@ function IconMT.__call( qtIconTable, filename, width, height, mode, state )
 	local h = height or -1
 	local m = mode or M.Icon.Off
 	local s = state or M.Icon.Normal
-
 	icon:addFile( filename, w, h, m, s )
-	return icon
+
+	local variant = co.new( "qt.Variant" )
+	variant:setIcon( icon )
+
+	return variant
 end
 
 setmetatable( M.Icon, IconMT )
 
 -------------------------------------------------------------------------------
--- Export AbstractItemModel flags
+-- Export Qt::ItemFlag enum (see AbstractItemModelDelegate:getData())
 -------------------------------------------------------------------------------
 M.NoItemFlags			= 0
 M.ItemIsSelectable		= 1
@@ -99,6 +138,41 @@ M.ItemIsDropEnabled		= 8
 M.ItemIsUserCheckable	= 16
 M.ItemIsEnabled			= 32
 M.ItemIsTristate		= 64
+
+-------------------------------------------------------------------------------
+-- Export Qt::BrushStyle enum
+-------------------------------------------------------------------------------
+M.NoBrush 					= 0
+M.SolidPattern 				= 1
+M.Dense1Pattern				= 2
+M.Dense2Pattern				= 3
+M.Dense3Pattern				= 4
+M.Dense4Pattern				= 5
+M.Dense5Pattern				= 6
+M.Dense6Pattern				= 7
+M.Dense7Pattern				= 8
+M.HorPattern				= 9
+M.VerPattern				= 10
+M.CrossPattern				= 11
+M.BDiagPattern				= 12
+M.FDiagPattern				= 13
+M.DiagCrossPattern			= 14
+M.LinearGradientPattern		= 15
+M.ConicalGradientPattern	= 17
+M.RadialGradientPattern		= 16
+M.TexturePattern			= 24
+
+-------------------------------------------------------------------------------
+-- Export Qt::AlignmentFlag enum
+-------------------------------------------------------------------------------
+M.AlignLeft		= 0x0001
+M.AlignRight	= 0x0002
+M.AlignHCenter	= 0x0004
+M.AlignJustify	= 0x0008
+M.AlignTop		= 0x0020
+M.AlignBottom	= 0x0040
+M.AlignVCenter	= 0x0080
+M.AlignAbsolute	= 0x0010
 
 -------------------------------------------------------------------------------
 -- Export Module

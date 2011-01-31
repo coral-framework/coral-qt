@@ -5,6 +5,8 @@
 
 #include "AbstractItemModel.h"
 #include <ValueConverters.h>
+#include <QTextDocument>
+#include <qt/Variant.h>
 #include <qt/Icon.h>
 
 namespace
@@ -47,13 +49,16 @@ QVariant AbstractItemModel::data( const QModelIndex& index, int role ) const
 	if( !value.isValid() )
 		return QVariant();
 
-	// by now only Icons supported for decoration roles
-	if( role == Qt::DecorationRole )
-	{
-		return QVariant::fromValue( value.get<qt::Icon&>() );
-	}
+	// assume display role data is always a string
+	if( role == Qt::DisplayRole )
+		return QString( value.get<std::string&>().c_str() );
 
-	return anyToVariant( value );
+	// text alignment role is an enum (double in lua)
+	if( role == Qt::TextAlignmentRole )
+		return QVariant::fromValue( value.get<double>() );
+	
+	// other roles are handled as a QVariant
+	return QVariant( value.get<qt::Variant&>() );
 }
 
 QVariant AbstractItemModel::headerData( int section, Qt::Orientation orientation, int role ) const
