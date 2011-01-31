@@ -54,6 +54,10 @@ local typeIcons =
 -------------------------------------------------------------------------------
 --- Utility functions
 -------------------------------------------------------------------------------
+local function loadType( typeName, parentModuleName )
+	return co.Type[parentModuleName .. '.' .. typeName]
+end
+
 -- Recursively loads all types from the given directory by 
 -- locating CSL files
 local function loadTypesIn( dir, parentModuleName )
@@ -69,7 +73,7 @@ local function loadTypesIn( dir, parentModuleName )
 		else
 			local typeName = filename:match( "(.+)%.csl$" )
 			if typeName then 
-				local t = co.Type[parentModuleName .. '.' .. typeName]
+				pcall( loadType, typeName, parentModuleName )
 			end
 		end
 	end	
@@ -81,7 +85,7 @@ local function loadAllTypes()
 
 	for i, repositoryDir in ipairs( coralPaths ) do
 		-- avoid fatal CSL parsing errors
-		pcall( loadTypesIn, repositoryDir, "" )
+		loadTypesIn( repositoryDir, "" )
 	end
 end
 
@@ -109,11 +113,12 @@ local function extractMethodSignature( methodInfo )
 		local parameter = ""
 		if v.isIn and v.isOut then
 			parameter = parameter .. " inout "
-		elseif v.IsIn then
+		elseif v.isIn then
 			parameter = parameter .. " in "
 		else
 			parameter = parameter .. " out "
 		end
+
 		parameter = parameter .. v.type.name .. " " .. v.name
 		if i ~= #methodInfo.parameters then
 			parameter = parameter .. ","
@@ -157,13 +162,28 @@ function TypeTree:add( element, icon, parentIndex )
 	return node.index
 end
 
+-- Creates a group with all docs for the given member or type with name 'fullName'
+-- (e.g: types.MyType:myMethod or type.MyType)
+function TypeTree:addDocs( fullName, parentIndex )
+	local docs = co.system.types:getDocumentation( fullName )
+	if not docs or docs == "" then
+		return
+	end
+
+	local docsGroupIndex = self:add( { name = "docs" }, icons.attribute, parentIndex )
+	self:add( { name = docs }, nil, docsGroupIndex )
+end
+
 -- Creates a group of members (if any), extracted from field 'fieldName' of table currentType,
 -- and adds it to type tree as child of index parentIndex.
 function TypeTree:addMemberGroup( currentType, fieldName, groupName, icon, parentIndex )
 	if currentType[fieldName] and #currentType[fieldName] > 0 then
 		local groupIndex = self:add( { name = getGroupName( groupName, #currentType[fieldName] ) }, icon, parentIndex or -1 )
 		for i, v in ipairs( currentType[fieldName] ) do
-			self:add( { name = v.name .. " : " .. v.type.name }, icons.complexType, groupIndex )
+			local memberIndex = self:add( { name = v.name .. " : " .. v.type.name }, icons.complexType, groupIndex )
+			
+			-- adds documentation for member attribute
+			self:addDocs( currentType.fullName .. ":" .. v.name, memberIndex )
 		end
 	end
 end
@@ -174,7 +194,18 @@ function TypeTree:addMethodGroup( currentType, fieldName, groupName, icon, paren
 	if currentType[fieldName] and #currentType[fieldName] > 0 then
 		local groupIndex = self:add( { name = getGroupName( groupName, #currentType[fieldName] ) }, icon, parentIndex or -1 )
 		for i, v in ipairs( currentType[fieldName] ) do
-			self:add( { name = extractMethodSignature( v ) }, icons.complexType, groupIndex )
+			local methodIndex = self:add( { name = extractMethodSignature( v ) }, icons.complexType, groupIndex )
+
+			-- adds documentation for member method
+			self:addDocs( currentType.fullName .. ":" .. v.name, methodIndex )
+
+			-- extracts method exceptions
+			if v.exceptions and #v.exceptions > 0 then
+				local exceptionsIndex = self:add( { name = "throws" }, icons.complexType, methodIndex )
+				for j, v2 in ipairs( v.exceptions ) do
+					self:add( { name = v2.name }, icons.complexType, exceptionsIndex )
+				end
+			end
 		end
 	end
 end
@@ -193,6 +224,9 @@ end
 
 function TypeTree:addType( currentType, parentIndex )
 	local currentIndex = self:add( currentType, typeIcons[currentType.kind], parentIndex or -1 )
+
+	-- adds documentation for type
+	self:addDocs( currentType.fullName, currentIndex )
 
 	local childTypes = currentType.types
 	if childType then
@@ -243,6 +277,9 @@ local typeTree = TypeTree:new()
 -------------------------------------------------------------------------------
 function TypeTreeModel:getIndex( row, col, parentIndex )
 	if isValidIndex( parentIndex ) then
+		if #typeTree[parentIndex].children == 0 then
+			return -1
+		end
 		return typeTree[parentIndex].children[row+1].index
 	else
 		return typeTree.toplevelElements[row+1].index
@@ -316,7 +353,6 @@ function TypeTreeModel:getRowCount( parentIndex )
 	if not isValidIndex( parentIndex ) then
 		return #typeTree.toplevelElements
 	end
-	
 	return #typeTree[parentIndex].children
 end
 
@@ -344,7 +380,12 @@ local function onActionEditCoralPathTriggered()
 
 	-- updates type tree
 	typeTree = TypeTree:new()
+	mainWindow.treeView:invoke( "reset()" )
 	treeModel:notifyDataChanged( 1, typeTree.nextIndex - 1 )
+end
+
+local function onButtonCloseClicked()
+	mainWindow:invoke( "close()" )
 end
 
 -------------------------------------------------------------------------------
@@ -355,6 +396,7 @@ end
 qt.assignModelToView( mainWindow.treeView, treeModel )
 
 mainWindow.actionEditCoralPath:connect( "triggered()", onActionEditCoralPathTriggered )
+mainWindow.btnClose:connect( "clicked()", onButtonCloseTriggered )
 
 mainWindow.visible = true
 
