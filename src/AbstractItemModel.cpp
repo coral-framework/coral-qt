@@ -43,37 +43,23 @@ QVariant AbstractItemModel::data( const QModelIndex& index, int role ) const
 {
 	qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
 
-	co::Any value;
+	QVariant value;
 	_delegate->getData( getInternalId( index ), itemRole, value );
 
-	if( !value.isValid() )
-		return QVariant();
-
-	// assume display role data is always a string
-	if( role == Qt::DisplayRole )
-		return QString( value.get<std::string&>().c_str() );
-
-	// text alignment role is an enum (double in lua)
-	if( role == Qt::TextAlignmentRole )
-		return QVariant::fromValue( value.get<double>() );
-	
-	// other roles are handled as a QVariant
-	return QVariant( value.get<qt::Variant&>() );
+	return value;
 }
 
 QVariant AbstractItemModel::headerData( int section, Qt::Orientation orientation, int role ) const
 {
 	qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
-	co::Any value;
+
+	QVariant value;
 	if( orientation == Qt::Horizontal )
 		_delegate->getHorizontalHeaderData( section, itemRole, value );
 	else
 		_delegate->getVerticalHeaderData( section, itemRole, value );
 
-	if( !value.isValid() )
-		return QVariant();
-
-	return anyToVariant( value );
+	return value;
 }
 
 QModelIndex	AbstractItemModel::index( int row, int column, const QModelIndex& parent ) const

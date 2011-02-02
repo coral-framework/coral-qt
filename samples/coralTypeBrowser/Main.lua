@@ -7,68 +7,56 @@ local path = require "path"
 local AbstractItemModel = require "qt.AbstractItemModel"
 local coralPathEditor = require "coralPathEditor.CoralPathEditor"
 
+local M = {}
+
 local TypeTreeModel = AbstractItemModel( "qt.samples.coralTypeBrowser.TypeTreeModel" )
 
 -- configure search paths
 qt.setSearchPaths( "coral", co.getPaths() )
 
 -- loads main form
-local mainWindow = qt.loadUi( "coral:/coralTypeBrowser/MainWindow.ui" )
+M.mainWindow = qt.loadUi( "coral:/coralTypeBrowser/MainWindow.ui" )
 
-local icons = 
+-- icon files
+M.icons = 
 {
-	attribute 		= qt.Icon( "coral:/coralTypeBrowser/png/attribute.png" ),
-	component 		= qt.Icon( "coral:/coralTypeBrowser/png/component.png" ),
-	enum		 	= qt.Icon( "coral:/coralTypeBrowser/png/enum.png" ),
-	exception	 	= qt.Icon( "coral:/coralTypeBrowser/png/exception.png" ),
-	facet		 	= qt.Icon( "coral:/coralTypeBrowser/png/facet.png" ),
-	interface	 	= qt.Icon( "coral:/coralTypeBrowser/png/interface.png" ),
-	method 			= qt.Icon( "coral:/coralTypeBrowser/png/method.png" ),
-	namespace 		= qt.Icon( "coral:/coralTypeBrowser/png/package_64.png" ),
-	nativeClass		= qt.Icon( "coral:/coralTypeBrowser/png/native_class.png" ),
-	primitiveType 	= qt.Icon( "coral:/coralTypeBrowser/png/primitive_type.png" ),
-	receptable	 	= qt.Icon( "coral:/coralTypeBrowser/png/receptable.png" ),
-	struct		 	= qt.Icon( "coral:/coralTypeBrowser/png/struct.png" )
+	attribute 		= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/attribute.png" ),
+	component 		= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/component.png" ),
+	enum		 	= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/enum.png" ),
+	exception	 	= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/exception.png" ),
+	facet		 	= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/facet.png" ),
+	interface	 	= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/interface.png" ),
+	method 			= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/method.png" ),
+	namespace 		= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/package_64.png" ),
+	nativeClass		= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/native_class.png" ),
+	primitiveType 	= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/primitive_type.png" ),
+	receptable	 	= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/receptable.png" ),
+	struct		 	= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/struct.png" ),
+	docs			= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/docs.png" )
 }
 
-local typeIcons =
+M.typeIcons =
 {
-	-- map icons for primitive types
-	["TK_BOOLEAN"] 		= icons.primitiveType,
-	["TK_INT8"] 		= icons.primitiveType,
-	["TK_UINT8"] 		= icons.primitiveType,
-	["TK_INT16"] 		= icons.primitiveType,
-	["TK_UINT16"] 		= icons.primitiveType,
-	["TK_INT32"] 		= icons.primitiveType,
-	["TK_UINT32"] 		= icons.primitiveType,
-	["TK_INT64"] 		= icons.primitiveType,
-	["TK_UINT64"] 		= icons.primitiveType,
-	["TK_FLOAT"] 		= icons.primitiveType,
-	["TK_DOUBLE"] 		= icons.primitiveType,
-	["TK_STRING"] 		= icons.primitiveType,
-	["TK_ANY"] 			= icons.primitiveType,
-	["TK_ARRAY"] 		= icons.primitiveType,
-
 	-- map icons for complex types
-	["TK_ENUM"] 		= icons.enum,
-	["TK_EXCEPTION"] 	= icons.exception,
-	["TK_STRUCT"] 		= icons.struct,
-	["TK_NATIVECLASS"] 	= icons.nativeClass,
-	["TK_INTERFACE"] 	= icons.interface,
-	["TK_COMPONENT"] 	= icons.component
+	["TK_ENUM"] 		= M.icons.enum,
+	["TK_EXCEPTION"] 	= M.icons.exception,
+	["TK_STRUCT"] 		= M.icons.struct,
+	["TK_NATIVECLASS"] 	= M.icons.nativeClass,
+	["TK_INTERFACE"] 	= M.icons.interface,
+	["TK_COMPONENT"] 	= M.icons.component
 }
 
 -- fonts for some specific item data in the view
-local fonts =
+M.fonts =
 {
 	-- font used to render doc items
-	docs = qt.Font( "Arial", 11, 50, true ) 
+	docs = qt.Variant:fromFont( "Arial", 11, 50, true ) 
 }
 
-local colors =
+M.colors =
 {
 	-- color for doc items
-	docs = qt.Color( 85, 200, 85 )
+	docs = qt.Variant:fromColor( 85, 200, 85 )
 }
 
 -------------------------------------------------------------------------------
@@ -109,7 +97,8 @@ local function loadAllTypes()
 	end
 end
 
-
+-- Gets the group name base on the number of elements in it.
+-- Used by TypeTree::addMethodGroup() and TypeTree::addMemberGroup()
 local function getGroupName( groupName, numberOfElements )
 	local name = numberOfElements .. " " .. groupName
 	if numberOfElements > 1 then
@@ -199,8 +188,8 @@ function TypeTree:addDocs( fullName, parentIndex )
 		return
 	end
 
-	local docsGroupIndex = self:add( { data = "docs", icon = icons.attribute }, parentIndex )
-	self:add( { data = docs, font = fonts.docs, color = colors.docs }, docsGroupIndex )
+	local docsGroupIndex = self:add( { data = "docs", icon = M.icons.docs }, parentIndex )
+	self:add( { data = docs, font = M.fonts.docs, color = M.colors.docs }, docsGroupIndex )
 end
 
 -- Creates a group of members (if any), extracted from field 'fieldName' of table currentType,
@@ -232,9 +221,9 @@ function TypeTree:addMethodGroup( currentType, fieldName, groupName, icon, paren
 
 			-- extracts method exceptions
 			if v.exceptions and #v.exceptions > 0 then
-				local exceptionsIndex = self:add( { data = "throws", icon = icons.exception }, methodIndex )
+				local exceptionsIndex = self:add( { data = "throws", icon = M.icons.exception }, methodIndex )
 				for j, v2 in ipairs( v.exceptions ) do
-					self:add( { data = v2.name, icon = icons.exception }, exceptionsIndex )
+					self:add( { data = v2.name, icon = M.icons.exception }, exceptionsIndex )
 				end
 			end
 		end
@@ -243,18 +232,18 @@ end
 
 function TypeTree:addMembers( currentType, parentIndex )
 	-- add facets and receptacles (components only)
-	self:addMemberGroup( currentType, "facets", "facet", icons.facet, parentIndex )
-	self:addMemberGroup( currentType, "receptacles", "receptacle", icons.receptacle, parentIndex )
+	self:addMemberGroup( currentType, "facets", "facet", M.icons.facet, parentIndex )
+	self:addMemberGroup( currentType, "receptacles", "receptacle", M.icons.receptacle, parentIndex )
 
 	-- add methods (native class and interface only)
-	self:addMethodGroup( currentType, "memberMethods", "method", icons.method, parentIndex )
+	self:addMethodGroup( currentType, "memberMethods", "method", M.icons.method, parentIndex )
 	
 	-- add attributes (all types)
-	self:addMemberGroup( currentType, "memberAttributes", "attribute", icons.attribute, parentIndex )
+	self:addMemberGroup( currentType, "memberAttributes", "attribute", M.icons.attribute, parentIndex )
 end
 
 function TypeTree:addType( currentType, parentIndex )
-	local currentIndex = self:add( { data = currentType.name, icon = typeIcons[currentType.kind] }, parentIndex or -1 )
+	local currentIndex = self:add( { data = currentType.name, icon = M.typeIcons[currentType.kind] or M.icons.primitiveType }, parentIndex or -1 )
 
 	-- adds documentation for type
 	self:addDocs( currentType.fullName, currentIndex )
@@ -271,7 +260,7 @@ end
 
 function TypeTree:addNamespace( namespace, parentIndex )
 	-- adds namespace to type tree
-	local currentIndex = self:add( { data = namespace.name, icon = icons.namespace }, parentIndex or -1 )
+	local currentIndex = self:add( { data = namespace.name, icon = M.icons.namespace }, parentIndex or -1 )
 	
 	local childNS = namespace.childNamespaces
 	if childNS then
@@ -330,31 +319,24 @@ function TypeTreeModel:getColumn( index )
 end
 
 function TypeTreeModel:getData( index, role )
+	local data = nil
 	if role == "DisplayRole" or role == "EditRole" then
 		-- check whether this is the root namespace (empty name)
 		if typeTree[index].data == "" then
-			return  "<root namespace>"
+			data = qt.Variant( "<root namespace>" )
+		else
+			data = qt.Variant( typeTree[index].data )
 		end
-		return typeTree[index].data
+	elseif role == "TextAlignmentRole" then
+		data = qt.Variant( qt.AlignLeft + qt.AlignJustify )
+	elseif role == "DecorationRole" then
+		data = typeTree[index].icon
+	elseif role == "FontRole" then
+		data = typeTree[index].font
+	elseif role == "ForegroundRole" then
+		data = typeTree[index].color
 	end
-
-	if role == "TextAlignmentRole" then
-		return qt.AlignLeft + qt.AlignJustify
-	end
-
-	if role == "DecorationRole" then
-		return typeTree[index].icon
-	end
-
-	if role == "FontRole" then
-		return typeTree[index].font
-	end
-
-	if role == "ForegroundRole" then
-		return typeTree[index].color
-	end
-
-	return nil
+	return data or qt.Variant()
 end
 
 function TypeTreeModel:getFlags( index )
@@ -363,10 +345,10 @@ end
 
 function TypeTreeModel:getHorizontalHeaderData( section, role )
 	if section == 0 and role == "DisplayRole" then
-		return "Coral Type Hierarchy"
+		return qt.Variant( "Coral Type Hierarchy" )
 	end
 
-	return nil
+	return qt.Variant()
 end
 
 function TypeTreeModel:getVerticalHeaderData( section, role )
@@ -399,6 +381,10 @@ function TypeTreeModel:getRowCount( parentIndex )
 	return #typeTree[parentIndex].children
 end
 
+function TypeTreeModel:itemClicked( view, index )
+	local action = M.menu:exec()
+end
+
 function createTypeTreeModel()
 	-- creates the model instance
 	local model = co.new( "qt.AbstractItemModel" ).itemModel
@@ -423,25 +409,37 @@ local function onActionEditCoralPathTriggered()
 
 	-- updates type tree
 	typeTree = TypeTree:new()
-	mainWindow.treeView:invoke( "reset()" )
+	M.mainWindow.treeView:invoke( "reset()" )
 	treeModel:notifyDataChanged( 1, typeTree.nextIndex - 1 )
 end
 
 local function onButtonCloseClicked()
-	mainWindow:invoke( "close()" )
+	M.mainWindow:invoke( "close()" )
 end
 
 -------------------------------------------------------------------------------
 --- Initializations
 -------------------------------------------------------------------------------
+local function createMenu()
+	M.menu = qt.Menu()
+
+	-- adds a new action using the given menu and text
+	local newAction = M.menu:addAction( M.icons.docs, "test" )
+	newAction.data = "Action0"
+	
+	newAction = M.menu:addAction( M.icons.docs, "test2" )
+	newAction.data = "Action1"
+end
+
+createMenu()
 
 -- assigns my model to ui view
-qt.assignModelToView( mainWindow.treeView, treeModel )
+qt.assignModelToView( M.mainWindow.treeView, treeModel )
 
-mainWindow.actionEditCoralPath:connect( "triggered()", onActionEditCoralPathTriggered )
-mainWindow.btnClose:connect( "clicked()", onButtonCloseTriggered )
+M.mainWindow.actionEditCoralPath:connect( "triggered()", onActionEditCoralPathTriggered )
+M.mainWindow.btnClose:connect( "clicked()", onButtonCloseTriggered )
 
-mainWindow.visible = true
+M.mainWindow.visible = true
 
 qt.exec()
 

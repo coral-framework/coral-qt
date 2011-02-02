@@ -7,11 +7,8 @@
 #include "ValueConverters.h"
 #include <co/IllegalArgumentException.h>
 #include <qt/Object.h>
+#include <qt/Variant.h>
 #include <qt/Exception.h>
-#include <QMenu>
-#include <QAction>
-#include <QToolBar>
-#include <QMenuBar>
 #include <QVariant>
 #include <QMetaMethod>
 #include <sstream>
@@ -30,9 +27,9 @@ void qt::Object_Adapter::getPropertyOrChild( qt::Object& instance, const std::st
 	value.createComplexValue<qt::Object>().set( child );
 }
 
-void qt::Object_Adapter::setProperty( qt::Object& instance, const std::string& name, const co::Any& value )
+void qt::Object_Adapter::setProperty( qt::Object& instance, const std::string& name, const qt::Variant& value )
 {
-	instance.get()->setProperty( name.c_str(), anyToVariant( value ) );
+	instance.get()->setProperty( name.c_str(), value );
 }
 
 void qt::Object_Adapter::invoke( qt::Object& instance, const std::string& methodSignature, const co::Any& p1,
@@ -64,48 +61,4 @@ void qt::Object_Adapter::invoke( qt::Object& instance, const std::string& method
 	bool ok = mm.invoke( obj, arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6] );
 	if( !ok ) 
 		CORAL_THROW( co::IllegalArgumentException, "could not invoke " << metaObj->className() << "::" << methodSignature );
-}
-
-void qt::Object_Adapter::exec( qt::Object& instance, co::int32 posX, co::int32 posY, qt::Object& selectedAction )
-{
-	QMenu* menu = qobject_cast<QMenu*>( instance.get() );
-	if( !menu )
-		CORAL_THROW( qt::Exception, "exec() method not supported for the given object instance" );
-
-	QPoint p( posX, posY );
-	if( posX < 0 || posY < 0 )
-		p = QCursor::pos();
-
-	QAction* selected = menu->exec( p );
-	selectedAction.set( selected );
-}
-
-void qt::Object_Adapter::addAction( qt::Object& instance, const qt::Object& action )
-{
-	QAction* qaction = qobject_cast<QAction*>( action.get() );
-	if( !qaction )
-		CORAL_THROW( qt::Exception, "the given action is not a QAction instance" );
-
-
-	QObject* obj = instance.get();
-	if( obj->inherits( "QToolBar" ) )
-	{
-		QToolBar* toolbar = qobject_cast<QToolBar*>( obj );
-		toolbar->addAction( qaction );
-	}
-	else if( obj->inherits( "QMenuBar" ) )
-	{
-		QMenuBar* menubar = qobject_cast<QMenuBar*>( obj );
-		menubar->addAction( qaction );
-	}
-	else if( obj->inherits( "QMenu" ) )
-	{
-		QMenu* menu = qobject_cast<QMenu*>( obj );
-		menu->addAction( qaction );
-	}
-	else if( obj->inherits( "QWidget" ) )
-	{
-		QWidget* widget = qobject_cast<QWidget*>( obj );
-		widget->addAction( qaction );
-	}
 }

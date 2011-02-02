@@ -37,16 +37,16 @@ interface IAbstractItemModelDelegate
 
 	// Returns the data stored under the given role for the item referred to 
 	// by index. If you do not have a value to return, return nil instead.
-	void getData( in int32 index, in ItemDataRole role, out any data );
+	void getData( in int32 index, in ItemDataRole role, out Variant data );
 
 	// Returns the flags for the given index.
 	int32 getFlags( in int32 index );
 
 	// Returns the data for the given role and column in the horizontal header.
-	void getHorizontalHeaderData( in int32 section, in ItemDataRole role, out any data );
+	void getHorizontalHeaderData( in int32 section, in ItemDataRole role, out Variant data );
 
 	// Returns the data for the given role and row in the vertical header.
-	void getVerticalHeaderData( in int32 section, in ItemDataRole role, out any data );
+	void getVerticalHeaderData( in int32 section, in ItemDataRole role, out Variant data );
 
 	/*
 		Returns the number of columns for the children of the given parent.

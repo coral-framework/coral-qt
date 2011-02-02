@@ -17,8 +17,12 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QUiLoader>
+#include <QAction>
+#include <QCursor>
+#include <QLayout>
 #include <QWidget>
 #include <QFile>
+#include <QMenu>
 #include <sstream>
 
 namespace {
@@ -65,16 +69,40 @@ public:
 		QObject::connect( qtView, SIGNAL( pressed( const QModelIndex& ) ), qtModel, SLOT( pressed( const QModelIndex& ) ) );
 	}
 
-	void createWidget( const std::string& className, const qt::Object& parent, const std::string& widgetName, qt::Object& widget )
+	void newInstanceOf( const std::string& className, qt::Object& object )
 	{
-		QWidget* parentWidget = qobject_cast<QWidget*>( parent.get() );
-		if( !parentWidget )
-		{
-			CORAL_THROW( qt::Exception, "cannot set parent for the new widget: the given parent instance is not a widget instance" );
-		}
-
 		QUiLoader loader;
-		widget.set( loader.createWidget( className.c_str(), parentWidget, widgetName.c_str() ) );
+		QString name = className.c_str();
+		// check whether the className is a supported widget
+		if( loader.availableWidgets().contains( name, Qt::CaseInsensitive ) )
+		{
+			object.set( loader.createWidget( name ) );
+		}
+		else if( loader.availableLayouts().contains( name, Qt::CaseInsensitive ) )
+		{
+			object.set( loader.createLayout( name ) );
+		}
+		else if( name == "QAction" )
+		{
+			object.set( loader.createAction() );
+		}
+		else
+		{
+			CORAL_THROW( qt::Exception, "cannot create new instance for class name '" << className << "': class not supported" );
+		}
+	}
+
+	void addAction( const qt::Object& widget, const qt::Object& action )
+	{
+		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
+		if( !qwidget )
+			CORAL_THROW( qt::Exception, "cannot add action: first argument is not an instace of QWidget" );
+
+		QAction* qaction = qobject_cast<QAction*>( action.get() );
+		if( !qaction )
+			CORAL_THROW( qt::Exception, "cannot add action: second argument is not an instace of QAction" );
+
+		qwidget->addAction( qaction );
 	}
 
 	void loadUi( const std::string& filePath, qt::Object& widget )
@@ -115,6 +143,18 @@ public:
 		selectedDir = dir.toStdString();
 	}
 
+	void getOpenFileNames( const qt::Object& parent, const std::string& caption, const std::string& initialDir,
+								  std::vector<std::string>& selectedFiles )
+	{
+		QStringList files = QFileDialog::getOpenFileNames( qobject_cast<QWidget*>( parent.get() ),
+														 QString::fromStdString( caption ),
+														 QString::fromStdString( initialDir ) );
+		for( int i = 0; i < files.size(); ++i )
+		{
+			selectedFiles.push_back( files[i].toStdString() );
+		}
+	}
+
 	void setSearchPaths( const std::string& prefix, co::ArrayRange<std::string const> searchPaths )
 	{
 		QStringList qtSearchPaths;
@@ -141,6 +181,20 @@ public:
 	void exec()
 	{
 		_app->exec();
+	}
+
+	void execMenu( const qt::Object& menu, co::int32 posX, co::int32 posY, qt::Object& selectedAction )
+	{
+		QMenu* qmenu = qobject_cast<QMenu*>( menu.get() );
+		if( !qmenu )
+			CORAL_THROW( qt::Exception, "exec() method not supported for the given object instance" );
+
+		QPoint p( posX, posY );
+		if( posX < 0 || posY < 0 )
+			p = QCursor::pos();
+
+		QAction* selected = qmenu->exec( p );
+		selectedAction.set( selected );
 	}
 
 	void processEvents()

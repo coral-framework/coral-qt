@@ -6,14 +6,28 @@ interface ISystem
 	// The 'qApp' object.
 	readonly attribute Object app;
 
-	// Creates a new widget with the given parent and name using the class specified by className.
-	void createWidget( in string className, in Object parent, in string widgetName, out Object widget );
+	/* 
+		Creates a new object using the class specified by className.
+		This function supports creation of any widget class,
+		QActions and any QLayout subclass such as QStackedLayout.
+
+		\throw qt.Exception if className is not supported.
+	 */
+	void newInstanceOf( in string className, out Object object ) raises Exception;
+
+	//! Adds an action to the given widget
+	void addAction( in Object widget, in Object action );
 
 	// Loads a QWidget from a .ui file created in Qt Designer.
 	void loadUi( in string filePath, out Object widget ) raises Exception;
 
-	// Opens a directory dialog and returns the selected file.
+	// Opens a directory selection dialog and returns the selected directory or an empty string if no
+	// directory was selected
 	void getExistingDirectory( in Object parent, in string caption, in string initialDir, out string selectedDir );
+
+	// Opens a file selection dialog and returns the selected files or an empty list if no
+	// file was selected
+	void getOpenFileNames( in Object parent, in string caption, in string initialDir, out string[] selectedFiles );
 
 	// Sets or replaces Qt's search paths for file names with the prefix 'prefix'
 	// to 'searchPaths'. \see Qt's documentation of QDir::setSearchPaths().
@@ -36,6 +50,19 @@ interface ISystem
 
 	// Runs the Qt event loop until quit() is called.
 	void exec();
+
+	/*! 
+		Performs exec() calls to QMenu instances (\see QMenu::exec()).
+		The exec() call is performed at position (posX, posY). If posX or posY is
+		invalid (i.e -1) the exec() call is performed at current cursor position.
+
+		Returns the triggered action or a null object if no action was triggered.
+
+		\throw co.IllegalArgumentException if the given menu instance is not an
+		instance of QMenu class.
+	 */
+	void execMenu( in Object menu, in int32 posX, in int32 posY, out Object selectedAction )
+		raises co.IllegalArgumentException;
 
 	// Executes a single iteration of the Qt event loop.
 	void processEvents();

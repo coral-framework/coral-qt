@@ -3,13 +3,35 @@
 #include <QBrush>
 #include <QColor>
 #include <qt/Icon.h>
+#include <ValueConverters.h>
 
 namespace qt
 {
 
+bool Variant_Adapter::isValid( qt::Variant& instance )
+{
+	return instance.isValid();
+}
+
+void Variant_Adapter::setAny( qt::Variant& instance, const co::Any& value )
+{
+	if( !value.isValid() || !canConvert( value ) )
+	{
+		instance = qt::Variant();
+		return;
+	}
+
+	instance.setValue( anyToVariant( value ) );
+}
+
 void Variant_Adapter::setIcon( qt::Variant& instance, const qt::Icon& icon )
 {
 	instance.setValue( icon );
+}
+
+void Variant_Adapter::setIconFile( qt::Variant& instance, const std::string& filename )
+{
+	instance.setValue( QIcon( filename.c_str() ) );
 }
 
 void Variant_Adapter::setBrush( qt::Variant& instance, co::int32 r, co::int32 g, co::int32 b, co::int32 a, co::int32 style )

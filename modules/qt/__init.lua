@@ -55,47 +55,109 @@ function MT.__index( wrapper, name )
 end
 
 function MT.__newindex( wrapper, name, value )
-	wrapper._obj:setProperty( name, value )
+	local variantValue = value
+	if type( value ) ~= "userdata" then
+		-- assume that all non-user data are primitive types
+		-- convertable to co::any
+		variantValue = M.Variant( value )
+	end
+	wrapper._obj:setProperty( name, variantValue )
 end
 
 -------------------------------------------------------------------------------
--- Constructor for qt.Color using qt.Variant
+-- Constructor and utility functions for qt.Variant
 -------------------------------------------------------------------------------
-function M.Color( r, g, b, a )
+M.Variant = {}
+
+-- Constructs a qt number instance using qt.Variant
+function M.Variant:fromAny( value )
+	local variant = co.new( "qt.Variant" )
+	variant:setAny( value )
+	return variant
+end
+
+-- Constructs a qt icon instance using qt.Variant
+function M.Variant:fromIconFile( filename )
+	local variant = co.new( "qt.Variant" )
+	variant:setIconFile( filename )
+	return variant
+end
+
+-- Constructs a qt color instance using qt.Variant
+function M.Variant:fromColor( r, g, b, a )
 	local variant = co.new( "qt.Variant" )
 	variant:setColor( r, g, b, a or 255 )
 	return variant
 end
 
--------------------------------------------------------------------------------
--- Constructor for qt.Brush using qt.Variant
--------------------------------------------------------------------------------
-function M.Brush( r, g, b, a, style )
+-- Constructs a qt brush instance using qt.Variant
+function M.Variant:fromBrush( r, g, b, a, style )
 	local variant = co.new( "qt.Variant" )
 	variant:setBrush( r, g, b, a or 1, style or 1 )
 	return variant
 end
 
--------------------------------------------------------------------------------
--- Constructor for qt.Size using qt.Variant
--------------------------------------------------------------------------------
-function M.Size( width, height )
+-- Constructs a qt size instance using qt.Variant
+function M.Variant.fromSize( width, height )
 	local variant = co.new( "qt.Variant" )
 	variant:setSize( width or -1, height or -1 )
 	return variant
 end
 
--------------------------------------------------------------------------------
--- Constructor for qt.Font using qt.Variant
--------------------------------------------------------------------------------
-function M.Font( family, pointSize, weight, italic )
+-- Constructs a qt font instance using qt.Variant
+function M.Variant:fromFont( family, pointSize, weight, italic )
 	local variant = co.new( "qt.Variant" )
 	variant:setFont( family, pointSize or -1, weight or -1, italic or false )
 	return variant
 end
 
+local VariantMT = {}
+
+-- Convenience function: constructs a Variant for basic value types
+-- If value is not of a basic type (e.g convertable from co::any)
+-- then the function returns an invalid Variant
+function VariantMT.__call( variantTable, value )
+	-- fromAny function automatically returns an invalid Variant
+	-- if given value could not be converted (e.g not an any)
+	return M.Variant:fromAny( value );
+end
+
+setmetatable( M.Variant, VariantMT )
+
 -------------------------------------------------------------------------------
--- QIcon enums and a Lua constructor for qt.Icon
+-- Constructor for qt.Menu using qt.newInstanceOf() of ISystem
+-------------------------------------------------------------------------------
+M.Menu = {}
+
+function M.Menu:addAction( icon, text )
+	local action = ObjectWrapper( system:newInstanceOf( "QAction" ) )
+	action.icon = icon
+	action.text = text
+	action.iconVisibleInMenu = true
+	system:addAction( self._obj, action._obj )
+	return action
+end
+
+function M.Menu:exec( x, y )
+	return system:execMenu( self._obj, x or -1, y or -1 )
+end
+
+local MenuMT = {}
+
+function MenuMT.__call( menuTable, title )
+	menuTable._obj = system:newInstanceOf( "QMenu" )
+	menuTable._obj:setProperty( "title", M.Variant( title or "" ) )
+	return menuTable
+end
+
+-- makes qt.Menu inherits from qt.Object
+setmetatable( MenuMT, MT )
+
+-- sets menu metatable
+setmetatable( M.Menu, MenuMT )
+
+-------------------------------------------------------------------------------
+-- Exports QIcon enums and a Lua constructor for qt.Icon
 -------------------------------------------------------------------------------
 M.Icon = {}
 
@@ -119,10 +181,7 @@ function IconMT.__call( qtIconTable, filename, width, height, mode, state )
 	local s = state or M.Icon.Normal
 	icon:addFile( filename, w, h, m, s )
 
-	local variant = co.new( "qt.Variant" )
-	variant:setIcon( icon )
-
-	return variant
+	return icon
 end
 
 setmetatable( M.Icon, IconMT )
@@ -179,8 +238,8 @@ M.AlignAbsolute	= 0x0010
 -------------------------------------------------------------------------------
 M.app = ObjectWrapper( system.app )
 
-function M.createWidget( className, parent, widgetName, widget )
-	return ObjectWrapper( system:createWidget( className, ( parent or {} )._obj, widgetName or "" ) )
+function M.newInstanceOf( className, object )
+	return ObjectWrapper( system:newInstanceOf( className ) )
 end
 
 function M.loadUi( uiFile )
@@ -189,6 +248,10 @@ end
 
 function M.getExistingDirectory( parent, caption, initialDir )
 	return system:getExistingDirectory( parent._obj, caption, initialDir )
+end
+
+function M.getOpenFileNames( parent, caption, initialDir )
+	return system:getOpenFileNames( parent._obj, caption, initialDir )
 end
 
 function M.setSearchPaths( prefix, paths )

@@ -4,20 +4,7 @@
 native class Object ( <QObjectWrapper.h> QObjectWrapper )
 {
 	void getPropertyOrChild( in string name, out any value ) raises co.IllegalCastException;
-	void setProperty( in string name, in any value ) raises co.IllegalCastException;
+	void setProperty( in string name, in Variant value ) raises co.IllegalCastException;
 
 	void invoke( in string methodSignature, in any a1, in any a2, in any a3, in any a4, in any a5, in any a6, in any a7 );
-
-	/*! 
-		Generic method to allow exec() calls to QMenu instances (\see QMenu::exec()).
-		The exec() call is performed at positoin (posX, posY). If posX or posY is
-		invalid (i.e -1) the exec() call is performed at current cursor position.
-
-		Returns the triggered action or a null object if no action was triggered.
-	 */
-	void exec( in int32 posX, in int32 posY, out Object selectedAction );
-
-	//! Adds an action into the action list of the given object. Example of objects that supports
-	//! list of actions are QWidget, QMenu, QMenuBar and QToolbar.
-	void addAction( in Object action );
 };

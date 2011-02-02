@@ -10,6 +10,15 @@
 #include <QVariant>
 #include <sstream>
 
+bool canConvert( const co::Any& value )
+{
+	co::TypeKind kind = value.getKind();
+	return kind == co::TK_BOOLEAN || kind == co::TK_INT8 || kind == co::TK_UINT8
+		|| kind == co::TK_INT16 || kind == co::TK_UINT16 || kind == co::TK_INT32
+		|| kind == co::TK_UINT32 || kind == co::TK_INT64 || kind == co::TK_UINT64
+		|| kind == co::TK_FLOAT || kind == co::TK_DOUBLE || kind == co::TK_STRING;
+}
+
 QVariant anyToVariant( const co::Any& value )
 {
 	QVariant v;
