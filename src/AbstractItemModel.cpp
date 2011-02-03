@@ -7,7 +7,6 @@
 #include <ValueConverters.h>
 #include <QTextDocument>
 #include <qt/Variant.h>
-#include <qt/Icon.h>
 
 namespace
 {
