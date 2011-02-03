@@ -2,7 +2,9 @@ require "testkit.unitTests"
 
 local qt = require "qt"
 
-local file = co.findModuleFile( "tests", "TestWindow.ui" )
+qt.setSearchPaths( "coral", co.getPaths() )
+
+local file = "coral:/tests/TestWindow.ui"
 
 function aWindowShouldBeInvisibleWhenLoaded()
 	local widget = qt.loadUi( file )

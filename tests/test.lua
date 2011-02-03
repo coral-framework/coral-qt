@@ -1,6 +1,8 @@
 local qt = require "qt"
 
-local widget = qt.loadUi( ( ... ) or "tests/TestWindow.ui" )
+qt.setSearchPaths( "coral", co.getPaths() )
+
+local widget = qt.loadUi( "coral:/tests/TestWindow.ui" )
 assert( widget )
 
 widget.visible = true

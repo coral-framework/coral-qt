@@ -2,7 +2,7 @@ require "testkit.unitTests"
 
 local qt = require "qt"
 
-local file = co.findModuleFile( "tests", "TestWindow.ui" )
+qt.setSearchPaths( "coral", co.getPaths() )
 
 local mockState = false
 local function slotCheckedMock( checked )
@@ -10,7 +10,7 @@ local function slotCheckedMock( checked )
 end
 
 function singleLuaFunctionCouldBeUsedAsASlotTest()
-	local w = qt.loadUi( file )
+	local w = qt.loadUi( "coral:/tests/TestWindow.ui" )
 	w.checkBox:connect( "toggled(bool)", slotCheckedMock )
 	assertTrue( not w.checkBox.checked, "The checkbox was initialized to checked" )
 
@@ -20,7 +20,7 @@ function singleLuaFunctionCouldBeUsedAsASlotTest()
 end
 
 function multipleLuaFunctionCouldBeUsedAsSlotsTest()
-	local w = qt.loadUi( file )
+	local w = qt.loadUi( "coral:/tests/TestWindow.ui" )
 	local hits = 0
 	w.txtInput:connect( "textChanged()", function() hits = hits + 1 end )
 	w.txtInput:connect( "textChanged()", function() hits = hits + 2 end )
