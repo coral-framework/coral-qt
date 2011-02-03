@@ -40,7 +40,7 @@ QVariant anyToVariant( const co::Any& value )
 	case co::TK_STRING:		v.setValue( QString( value.get<std::string&>().c_str() ) ); break;
 	case co::TK_NATIVECLASS:
 	{
-		if( value.getType()->getFullName() == "qt.Variant" )
+		if( value.getType() == co::typeOf<qt::Variant>::get() )
 			v.setValue( value.get<qt::Variant&>() ); break;
 	}
 	default:

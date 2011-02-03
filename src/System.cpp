@@ -5,6 +5,9 @@
 
 #include "System_Base.h"
 #include "ConnectionHub.h"
+
+#include <co/NotSupportedException.h>
+
 #include <qt/Exception.h>
 #include <qt/ItemDataRole.h>
 #include <qt/IAbstractItemModel.h>
@@ -88,7 +91,7 @@ public:
 		}
 		else
 		{
-			CORAL_THROW( qt::Exception, "cannot create new instance for class name '" << className << "': class not supported" );
+			CORAL_THROW( co::NotSupportedException, "cannot create new instance for class name '" << className << "': class not supported" );
 		}
 	}
 

@@ -20,19 +20,19 @@ M.mainWindow = qt.loadUi( "coral:/coralTypeBrowser/MainWindow.ui" )
 -- icon files
 M.icons = 
 {
-	attribute 		= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/attribute.png" ),
-	component 		= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/component.png" ),
-	enum		 	= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/enum.png" ),
-	exception	 	= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/exception.png" ),
-	facet		 	= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/facet.png" ),
-	interface	 	= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/interface.png" ),
-	method 			= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/method.png" ),
-	namespace 		= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/package_64.png" ),
-	nativeClass		= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/native_class.png" ),
-	primitiveType 	= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/primitive_type.png" ),
-	receptacle	 	= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/receptacle.png" ),
-	struct		 	= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/struct.png" ),
-	docs			= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/docs.png" )
+	attribute 		= qt.Icon( "coral:/coralTypeBrowser/icons/attribute.png" ),
+	component 		= qt.Icon( "coral:/coralTypeBrowser/icons/component.png" ),
+	enum		 	= qt.Icon( "coral:/coralTypeBrowser/icons/enum.png" ),
+	exception	 	= qt.Icon( "coral:/coralTypeBrowser/icons/exception.png" ),
+	facet		 	= qt.Icon( "coral:/coralTypeBrowser/icons/facet.png" ),
+	interface	 	= qt.Icon( "coral:/coralTypeBrowser/icons/interface.png" ),
+	method 			= qt.Icon( "coral:/coralTypeBrowser/icons/method.png" ),
+	namespace 		= qt.Icon( "coral:/coralTypeBrowser/icons/package_64.png" ),
+	nativeClass		= qt.Icon( "coral:/coralTypeBrowser/icons/native_class.png" ),
+	primitiveType 	= qt.Icon( "coral:/coralTypeBrowser/icons/primitive_type.png" ),
+	receptacle	 	= qt.Icon( "coral:/coralTypeBrowser/icons/receptacle.png" ),
+	struct		 	= qt.Icon( "coral:/coralTypeBrowser/icons/struct.png" ),
+	docs			= qt.Icon( "coral:/coralTypeBrowser/icons/docs.png" )
 }
 
 M.typeIcons =
@@ -50,13 +50,13 @@ M.typeIcons =
 M.fonts =
 {
 	-- font used to render doc items
-	docs = qt.Variant:fromFont( "Arial", 11, 50, true ) 
+	docs = qt.Font( "Arial", 11, 50, true ) 
 }
 
 M.colors =
 {
 	-- color for doc items
-	docs = qt.Variant:fromColor( 85, 200, 85 )
+	docs = qt.Color( 85, 200, 85 )
 }
 
 -------------------------------------------------------------------------------
@@ -345,10 +345,10 @@ end
 
 function TypeTreeModel:getHorizontalHeaderData( section, role )
 	if section == 0 and role == "DisplayRole" then
-		return qt.Variant( "Coral Type Hierarchy" )
+		return "Coral Type Hierarchy"
 	end
 
-	return qt.Variant()
+	return nil
 end
 
 function TypeTreeModel:getVerticalHeaderData( section, role )

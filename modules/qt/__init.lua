@@ -59,64 +59,42 @@ function MT.__newindex( wrapper, name, value )
 end
 
 -------------------------------------------------------------------------------
--- Constructor and utility functions for qt.Variant
+-- Lua constructors for supported Qt types
 -------------------------------------------------------------------------------
-M.Variant = {}
-
--- Constructs a qt number instance using qt.Variant
-function M.Variant:fromAny( value )
-	local variant = co.new( "qt.Variant" )
-	variant:setAny( value )
-	return variant
-end
-
 -- Constructs a qt icon instance using qt.Variant
-function M.Variant:fromIcon( filename )
+function M.Icon( filename )
 	local variant = co.new( "qt.Variant" )
 	variant:setIcon( filename )
 	return variant
 end
 
 -- Constructs a qt color instance using qt.Variant
-function M.Variant:fromColor( r, g, b, a )
+function M.Color( r, g, b, a )
 	local variant = co.new( "qt.Variant" )
 	variant:setColor( r, g, b, a or 255 )
 	return variant
 end
 
 -- Constructs a qt brush instance using qt.Variant
-function M.Variant:fromBrush( r, g, b, a, style )
+function M.Brush( r, g, b, a, style )
 	local variant = co.new( "qt.Variant" )
-	variant:setBrush( r, g, b, a or 1, style or 1 )
+	variant:setBrush( r, g, b, a or 1, style or M.SolidPattern )
 	return variant
 end
 
 -- Constructs a qt size instance using qt.Variant
-function M.Variant.fromSize( width, height )
+function M.Size( width, height )
 	local variant = co.new( "qt.Variant" )
 	variant:setSize( width or -1, height or -1 )
 	return variant
 end
 
 -- Constructs a qt font instance using qt.Variant
-function M.Variant:fromFont( family, pointSize, weight, italic )
+function M.Font( family, pointSize, weight, italic )
 	local variant = co.new( "qt.Variant" )
 	variant:setFont( family, pointSize or -1, weight or -1, italic or false )
 	return variant
 end
-
-local VariantMT = {}
-
--- Convenience function: constructs a Variant for basic value types
--- If value is not of a basic type (e.g convertable from co::any)
--- then the function returns an invalid Variant
-function VariantMT.__call( variantTable, value )
-	-- fromAny function automatically returns an invalid Variant
-	-- if given value could not be converted (e.g not an any)
-	return M.Variant:fromAny( value );
-end
-
-setmetatable( M.Variant, VariantMT )
 
 -------------------------------------------------------------------------------
 -- Constructor for qt.Menu using qt.newInstanceOf() of ISystem

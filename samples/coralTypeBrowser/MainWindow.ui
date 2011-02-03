@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>png/coral_32.png</normaloff>png/coral_32.png</iconset>
+    <normaloff>icons/coral_32.png</normaloff>icons/coral_32.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -86,7 +86,7 @@
   <action name="actionEditCoralPath">
    <property name="icon">
     <iconset>
-     <normaloff>png/add_folder_256.png</normaloff>png/add_folder_256.png</iconset>
+     <normaloff>icons/add_folder_256.png</normaloff>icons/add_folder_256.png</iconset>
    </property>
    <property name="text">
     <string>Edit Coral Path...</string>
@@ -102,5 +102,22 @@
   </action>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

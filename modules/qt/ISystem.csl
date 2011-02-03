@@ -11,7 +11,7 @@ interface ISystem
 		This function supports creation of any widget class,
 		QActions and any QLayout subclass such as QStackedLayout.
 
-		\throw qt.Exception if className is not supported.
+		\throw co.NotSupportedException if className is not supported.
 	 */
 	void newInstanceOf( in string className, out Object object ) raises Exception;
 

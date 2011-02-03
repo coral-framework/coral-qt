@@ -1,7 +1,10 @@
 local qt = require "qt"
-local ListItemModel = require "samples.itemModel.MyListModel"
+local ListItemModel = require "itemModel.MyListModel"
 
-local mainWindow = qt.loadUi( co.findModuleFile( "samples.itemModel", "ListViewDialog.ui" ) )
+-- configure search paths
+qt.setSearchPaths( "coral", co.getPaths() )
+
+local mainWindow = qt.loadUi( "coral:/itemModel/ListViewDialog.ui" )
 
 qt.assignModelToView( mainWindow.listView, ListItemModel() )
 

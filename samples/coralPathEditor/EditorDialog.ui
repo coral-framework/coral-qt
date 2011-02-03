@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../coralTypeBrowser/png/coral_32.png</normaloff>../coralTypeBrowser/png/coral_32.png</iconset>
+    <normaloff>icons/coral_32.png</normaloff>icons/coral_32.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>

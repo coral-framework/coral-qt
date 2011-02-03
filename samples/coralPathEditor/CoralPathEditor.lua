@@ -20,14 +20,14 @@ local CoralPathListModel = AbstractListModel( "qt.samples.coralPathEditor.CoralP
 
 function CoralPathListModel:getData( index, role )
 	if role == "DisplayRole" or role == "EditRole" then
-		return qt.Variant( M.coralPathList[index] )
+		return M.coralPathList[index]
 	end
 
 	if role == "DecorationRole" then
 		return M.defaultIcon
 	end
 
-	return qt.Variant()
+	return nil
 end
 
 function CoralPathListModel:getFlags( index )
@@ -89,7 +89,7 @@ local function initialize()
 	qt.setSearchPaths( "coral", M.coralPathList )
 
 	-- load default folder icon (or clause to avoid re-initializations)
-	M.defaultIcon = M.defaultIcon or qt.Variant:fromIcon( "coral:/coralPathEditor/png/folder_256.png" )
+	M.defaultIcon = M.defaultIcon or qt.Icon( "coral:/coralPathEditor/icons/folder_256.png" )
 
 	M.editorDialog = qt.loadUi( "coral:/coralPathEditor/EditorDialog.ui" )
 

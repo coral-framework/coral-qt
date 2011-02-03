@@ -1,3 +1,4 @@
+local qt = require "qt"
 local AbstractListModel = require "qt.AbstractListModel"
 
 local MyListModel = AbstractListModel( "qt.samples.MyListModel" )
@@ -7,6 +8,10 @@ function MyListModel:getData( index, role )
 		return self.data[index]
 	end
 	return nil
+end
+
+function MyListModel:getFlags( index )
+	return qt.ItemIsSelectable + qt.ItemIsEnabled
 end
 
 function MyListModel:getHorizontalHeaderData( section, role )
