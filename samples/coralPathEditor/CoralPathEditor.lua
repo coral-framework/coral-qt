@@ -89,7 +89,7 @@ local function initialize()
 	qt.setSearchPaths( "coral", M.coralPathList )
 
 	-- load default folder icon (or clause to avoid re-initializations)
-	M.defaultIcon = M.defaultIcon or qt.Variant:fromIconFile( "coral:/coralPathEditor/png/folder_256.png" )
+	M.defaultIcon = M.defaultIcon or qt.Variant:fromIcon( "coral:/coralPathEditor/png/folder_256.png" )
 
 	M.editorDialog = qt.loadUi( "coral:/coralPathEditor/EditorDialog.ui" )
 

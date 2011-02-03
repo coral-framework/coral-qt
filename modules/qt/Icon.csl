@@ -1,8 +1,0 @@
-/*
-	Wraps a QIcon.
- */
-native class Icon ( <QIcon> QIcon )
-{
-	void addFile( in string fileName, in int32 width, in int32 height, in int32 mode, in int32 state );
-	bool isNull();
-};

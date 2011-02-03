@@ -7,6 +7,7 @@
 #include <co/Any.h>
 #include <co/IllegalCastException.h>
 #include <co/IllegalArgumentException.h>
+#include <qt/Variant.h>
 #include <QVariant>
 #include <sstream>
 
@@ -37,6 +38,11 @@ QVariant anyToVariant( const co::Any& value )
 	case co::TK_FLOAT:		v.setValue( value.get<float>() ); break;
 	case co::TK_DOUBLE:		v.setValue( value.get<double>() ); break;
 	case co::TK_STRING:		v.setValue( QString( value.get<std::string&>().c_str() ) ); break;
+	case co::TK_NATIVECLASS:
+	{
+		if( value.getType()->getFullName() == "qt.Variant" )
+			v.setValue( value.get<qt::Variant&>() ); break;
+	}
 	default:
 		CORAL_THROW( co::IllegalCastException, "cannot convert " << value << " to a QVariant." );
 		break;

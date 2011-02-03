@@ -55,13 +55,7 @@ function MT.__index( wrapper, name )
 end
 
 function MT.__newindex( wrapper, name, value )
-	local variantValue = value
-	if type( value ) ~= "userdata" then
-		-- assume that all non-user data are primitive types
-		-- convertable to co::any
-		variantValue = M.Variant( value )
-	end
-	wrapper._obj:setProperty( name, variantValue )
+	wrapper._obj:setProperty( name, value )
 end
 
 -------------------------------------------------------------------------------
@@ -77,9 +71,9 @@ function M.Variant:fromAny( value )
 end
 
 -- Constructs a qt icon instance using qt.Variant
-function M.Variant:fromIconFile( filename )
+function M.Variant:fromIcon( filename )
 	local variant = co.new( "qt.Variant" )
-	variant:setIconFile( filename )
+	variant:setIcon( filename )
 	return variant
 end
 
@@ -155,36 +149,6 @@ setmetatable( MenuMT, MT )
 
 -- sets menu metatable
 setmetatable( M.Menu, MenuMT )
-
--------------------------------------------------------------------------------
--- Exports QIcon enums and a Lua constructor for qt.Icon
--------------------------------------------------------------------------------
-M.Icon = {}
-
--- export enum QIcon::Mode from Qt
-M.Icon.Normal	= 0	
-M.Icon.Disabled	= 1	
-M.Icon.Active	= 2	
-M.Icon.Selected = 3
-
--- export enum QIcon::State from Qt
-M.Icon.Off 	= 1
-M.Icon.On 	= 0
-
-local IconMT = {}
-
-function IconMT.__call( qtIconTable, filename, width, height, mode, state )
-	local icon = co.new( "qt.Icon" )
-	local w = width or -1
-	local h = height or -1
-	local m = mode or M.Icon.Off
-	local s = state or M.Icon.Normal
-	icon:addFile( filename, w, h, m, s )
-
-	return icon
-end
-
-setmetatable( M.Icon, IconMT )
 
 -------------------------------------------------------------------------------
 -- Export Qt::ItemFlag enum (see AbstractItemModelDelegate:getData())

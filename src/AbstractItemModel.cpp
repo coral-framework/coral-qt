@@ -43,23 +43,31 @@ QVariant AbstractItemModel::data( const QModelIndex& index, int role ) const
 {
 	qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
 
-	QVariant value;
+	co::Any value;
 	_delegate->getData( getInternalId( index ), itemRole, value );
 
-	return value;
+	// returns an invalid QVariant
+	if( !value.isValid() )
+		return QVariant();
+
+	return anyToVariant( value );
 }
 
 QVariant AbstractItemModel::headerData( int section, Qt::Orientation orientation, int role ) const
 {
 	qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
 
-	QVariant value;
+	co::Any value;
 	if( orientation == Qt::Horizontal )
 		_delegate->getHorizontalHeaderData( section, itemRole, value );
 	else
 		_delegate->getVerticalHeaderData( section, itemRole, value );
 
-	return value;
+	// returns an invalid QVariant
+	if( !value.isValid() )
+		return QVariant();
+
+	return anyToVariant( value );
 }
 
 QModelIndex	AbstractItemModel::index( int row, int column, const QModelIndex& parent ) const
@@ -69,7 +77,7 @@ QModelIndex	AbstractItemModel::index( int row, int column, const QModelIndex& pa
 	if( itemIndex == ID_INVALID )
 		return QModelIndex();
 
-	return createIndex( row, column, itemIndex );
+	return makeIndex( row, column, itemIndex );
 }
 
 QModelIndex	AbstractItemModel::parent( const QModelIndex& index ) const
@@ -79,7 +87,7 @@ QModelIndex	AbstractItemModel::parent( const QModelIndex& index ) const
 	if( parentIndex == ID_INVALID )
 		return QModelIndex();
 
-	return createIndex( _delegate->getRow( parentIndex ), 0, parentIndex );
+	return makeIndex( _delegate->getRow( parentIndex ), 0, parentIndex );
 }
 
 Qt::ItemFlags AbstractItemModel::flags( const QModelIndex& index ) const
@@ -126,8 +134,8 @@ void AbstractItemModel::setDelegate( qt::IAbstractItemModelDelegate* delegate )
 
 void AbstractItemModel::notifyDataChanged( co::int32 fromIndex, co::int32 toIndex )
 {
-	QModelIndex from = createIndex( _delegate->getRow( fromIndex ), _delegate->getColumn( fromIndex ), fromIndex );
-	QModelIndex to = createIndex( _delegate->getRow( toIndex ), _delegate->getColumn( toIndex ), toIndex );
+	QModelIndex from = makeIndex( _delegate->getRow( fromIndex ), _delegate->getColumn( fromIndex ), fromIndex );
+	QModelIndex to = makeIndex( _delegate->getRow( toIndex ), _delegate->getColumn( toIndex ), toIndex );
 
 	emit dataChanged( from, to );
 }

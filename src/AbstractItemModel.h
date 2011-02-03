@@ -49,6 +49,15 @@ public slots:
 	void pressed( const QModelIndex& index );
 
 private:
+	// Portable wrap for createIndex() for gcc-32
+	inline QModelIndex makeIndex( int row, int col, int id ) const
+	{
+		// explicity casts to int because gcc 32-bits can't resolve createIndex()
+		// overload (between int or pointer) since they have the same size in 32-bits platforms
+		return createIndex( row, col, static_cast<int>( id ) );
+	}
+
+private:
 	qt::IAbstractItemModelDelegate* _delegate;
 };
 

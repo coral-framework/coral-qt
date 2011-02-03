@@ -12,6 +12,7 @@
 #include <QVariant>
 #include <QMetaMethod>
 #include <sstream>
+#include <cstdio>
 
 void qt::Object_Adapter::getPropertyOrChild( qt::Object& instance, const std::string& name, co::Any& value )
 {
@@ -27,9 +28,13 @@ void qt::Object_Adapter::getPropertyOrChild( qt::Object& instance, const std::st
 	value.createComplexValue<qt::Object>().set( child );
 }
 
-void qt::Object_Adapter::setProperty( qt::Object& instance, const std::string& name, const qt::Variant& value )
+void qt::Object_Adapter::setProperty( qt::Object& instance, const std::string& name, const co::Any& value )
 {
-	instance.get()->setProperty( name.c_str(), value );
+	QVariant v;
+	if( value.isValid() )
+		v.setValue( anyToVariant( value ) );
+
+	instance.get()->setProperty( name.c_str(), v );
 }
 
 void qt::Object_Adapter::invoke( qt::Object& instance, const std::string& methodSignature, const co::Any& p1,

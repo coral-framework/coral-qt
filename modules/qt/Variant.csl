@@ -5,11 +5,8 @@ native class Variant ( <QVariant> QVariant )
 {
 	// Checks whether this variant instance is valid.
 	bool isValid();
-
-	//! Sets an any for all types other than Qt specific types (i.e: string, boolean, number).
 	void setAny( in any value );
-	void setIcon( in Icon icon );
-	void setIconFile( in string filename );
+	void setIcon( in string iconFilename );
 	void setBrush( in int32 r, in int32 g, in int32 b, in int32 a, in int32 style );
 	void setColor( in int32 r, in int32 g, in int32 b, in int32 a );
 	void setSize( in int32 width, in int32 height );

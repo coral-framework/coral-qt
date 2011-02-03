@@ -20,19 +20,19 @@ M.mainWindow = qt.loadUi( "coral:/coralTypeBrowser/MainWindow.ui" )
 -- icon files
 M.icons = 
 {
-	attribute 		= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/attribute.png" ),
-	component 		= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/component.png" ),
-	enum		 	= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/enum.png" ),
-	exception	 	= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/exception.png" ),
-	facet		 	= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/facet.png" ),
-	interface	 	= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/interface.png" ),
-	method 			= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/method.png" ),
-	namespace 		= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/package_64.png" ),
-	nativeClass		= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/native_class.png" ),
-	primitiveType 	= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/primitive_type.png" ),
-	receptable	 	= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/receptable.png" ),
-	struct		 	= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/struct.png" ),
-	docs			= qt.Variant:fromIconFile( "coral:/coralTypeBrowser/png/docs.png" )
+	attribute 		= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/attribute.png" ),
+	component 		= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/component.png" ),
+	enum		 	= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/enum.png" ),
+	exception	 	= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/exception.png" ),
+	facet		 	= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/facet.png" ),
+	interface	 	= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/interface.png" ),
+	method 			= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/method.png" ),
+	namespace 		= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/package_64.png" ),
+	nativeClass		= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/native_class.png" ),
+	primitiveType 	= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/primitive_type.png" ),
+	receptacle	 	= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/receptacle.png" ),
+	struct		 	= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/struct.png" ),
+	docs			= qt.Variant:fromIcon( "coral:/coralTypeBrowser/png/docs.png" )
 }
 
 M.typeIcons =
@@ -323,12 +323,12 @@ function TypeTreeModel:getData( index, role )
 	if role == "DisplayRole" or role == "EditRole" then
 		-- check whether this is the root namespace (empty name)
 		if typeTree[index].data == "" then
-			data = qt.Variant( "<root namespace>" )
+			data = "<root namespace>"
 		else
-			data = qt.Variant( typeTree[index].data )
+			data = typeTree[index].data
 		end
 	elseif role == "TextAlignmentRole" then
-		data = qt.Variant( qt.AlignLeft + qt.AlignJustify )
+		data = qt.AlignLeft + qt.AlignJustify
 	elseif role == "DecorationRole" then
 		data = typeTree[index].icon
 	elseif role == "FontRole" then
@@ -336,7 +336,7 @@ function TypeTreeModel:getData( index, role )
 	elseif role == "ForegroundRole" then
 		data = typeTree[index].color
 	end
-	return data or qt.Variant()
+	return data
 end
 
 function TypeTreeModel:getFlags( index )
@@ -382,7 +382,7 @@ function TypeTreeModel:getRowCount( parentIndex )
 end
 
 function TypeTreeModel:itemClicked( view, index )
-	local action = M.menu:exec()
+	--local action = M.menu:exec()
 end
 
 function createTypeTreeModel()
@@ -431,13 +431,13 @@ local function createMenu()
 	newAction.data = "Action1"
 end
 
-createMenu()
+--createMenu()
 
 -- assigns my model to ui view
 qt.assignModelToView( M.mainWindow.treeView, treeModel )
 
 M.mainWindow.actionEditCoralPath:connect( "triggered()", onActionEditCoralPathTriggered )
-M.mainWindow.btnClose:connect( "clicked()", onButtonCloseTriggered )
+M.mainWindow.btnClose:connect( "clicked()", onButtonCloseClicked )
 
 M.mainWindow.visible = true
 

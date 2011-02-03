@@ -15,23 +15,16 @@ bool Variant_Adapter::isValid( qt::Variant& instance )
 
 void Variant_Adapter::setAny( qt::Variant& instance, const co::Any& value )
 {
-	if( !value.isValid() || !canConvert( value ) )
-	{
-		instance = qt::Variant();
-		return;
-	}
+	qt::Variant v;
+	if( value.isValid() )
+		v.setValue( anyToVariant( value ) );
 
-	instance.setValue( anyToVariant( value ) );
+	instance.setValue( v );
 }
 
-void Variant_Adapter::setIcon( qt::Variant& instance, const qt::Icon& icon )
+void Variant_Adapter::setIcon( qt::Variant& instance, const std::string& iconFilename )
 {
-	instance.setValue( icon );
-}
-
-void Variant_Adapter::setIconFile( qt::Variant& instance, const std::string& filename )
-{
-	instance.setValue( QIcon( filename.c_str() ) );
+	instance.setValue( QIcon( iconFilename.c_str() ) );
 }
 
 void Variant_Adapter::setBrush( qt::Variant& instance, co::int32 r, co::int32 g, co::int32 b, co::int32 a, co::int32 style )
