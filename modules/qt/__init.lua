@@ -102,7 +102,7 @@ end
 M.Menu = {}
 
 function M.Menu:addAction( icon, text )
-	local action = ObjectWrapper( system:newInstanceOf( "QAction" ) )
+	local action = M.newInstanceOf( "QAction" )
 	action.icon = icon
 	action.text = text
 	action.iconVisibleInMenu = true
@@ -117,8 +117,8 @@ end
 local MenuMT = {}
 
 function MenuMT.__call( menuTable, title )
-	menuTable._obj = system:newInstanceOf( "QMenu" )
-	menuTable._obj:setProperty( "title", M.Variant( title or "" ) )
+	menuTable = M.newInstanceOf( "QMenu" )
+	menuTable:setProperty( "title", M.Variant( title or "" ) )
 	return menuTable
 end
 

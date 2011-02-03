@@ -1,8 +1,8 @@
 #include <Variant_Adapter.h>
 #include <QFont>
+#include <QIcon>
 #include <QBrush>
 #include <QColor>
-#include <qt/Icon.h>
 #include <ValueConverters.h>
 
 namespace qt

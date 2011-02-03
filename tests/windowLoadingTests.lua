@@ -1,4 +1,4 @@
-require "testkit.unitTests"
+require "testkit.Unit"
 
 local qt = require "qt"
 
