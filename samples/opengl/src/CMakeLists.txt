@@ -2,6 +2,9 @@
 # Build the Module
 ################################################################################
 
+# Request OpenGL support
+FIND_PACKAGE( OpenGL REQUIRED )
+
 SET( CORAL_PATH ${CMAKE_SOURCE_DIR}/samples ${CORAL_PATH} )
 
 CORAL_GENERATE_MODULE( _MODULE_SOURCES opengl )
