@@ -7,6 +7,7 @@
 #include <ValueConverters.h>
 #include <QTextDocument>
 #include <qt/Variant.h>
+#include <sstream>
 
 namespace
 {
@@ -30,16 +31,20 @@ AbstractItemModel::~AbstractItemModel()
 
 int	AbstractItemModel::rowCount( const QModelIndex& parent ) const
 {
+	assertDelegateValid();
 	return _delegate->getRowCount( getInternalId( parent ) );
 }
 
 int	AbstractItemModel::columnCount( const QModelIndex& parent ) const
 {
+	assertDelegateValid();
 	return _delegate->getColumnCount( getInternalId( parent ) );
 }
 
 QVariant AbstractItemModel::data( const QModelIndex& index, int role ) const
 {
+	assertDelegateValid();
+
 	qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
 
 	co::Any value;
@@ -54,6 +59,8 @@ QVariant AbstractItemModel::data( const QModelIndex& index, int role ) const
 
 QVariant AbstractItemModel::headerData( int section, Qt::Orientation orientation, int role ) const
 {
+	assertDelegateValid();
+
 	qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
 
 	co::Any value;
@@ -71,6 +78,8 @@ QVariant AbstractItemModel::headerData( int section, Qt::Orientation orientation
 
 QModelIndex	AbstractItemModel::index( int row, int column, const QModelIndex& parent ) const
 {
+	assertDelegateValid();
+
 	co::int32 itemIndex = _delegate->getIndex( row, column, getInternalId( parent ) );
 
 	if( itemIndex == ID_INVALID )
@@ -81,6 +90,8 @@ QModelIndex	AbstractItemModel::index( int row, int column, const QModelIndex& pa
 
 QModelIndex	AbstractItemModel::parent( const QModelIndex& index ) const
 {
+	assertDelegateValid();
+
 	co::int32 parentIndex = _delegate->getParentIndex( getInternalId( index ) );
 
 	if( parentIndex == ID_INVALID )
@@ -91,6 +102,8 @@ QModelIndex	AbstractItemModel::parent( const QModelIndex& index ) const
 
 Qt::ItemFlags AbstractItemModel::flags( const QModelIndex& index ) const
 {
+	assertDelegateValid();
+
 	if( !index.isValid() )
 		return Qt::NoItemFlags;
 
@@ -133,6 +146,8 @@ void AbstractItemModel::setDelegate( qt::IAbstractItemModelDelegate* delegate )
 
 void AbstractItemModel::notifyDataChanged( co::int32 fromIndex, co::int32 toIndex )
 {
+	assertDelegateValid();
+
 	QModelIndex from = makeIndex( _delegate->getRow( fromIndex ), _delegate->getColumn( fromIndex ), fromIndex );
 	QModelIndex to = makeIndex( _delegate->getRow( toIndex ), _delegate->getColumn( toIndex ), toIndex );
 
@@ -141,27 +156,38 @@ void AbstractItemModel::notifyDataChanged( co::int32 fromIndex, co::int32 toInde
 
 void AbstractItemModel::activated( const QModelIndex& index )
 {
+	assertDelegateValid();
 	_delegate->itemActivated( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
 }
 
 void AbstractItemModel::clicked( const QModelIndex& index )
 {
+	assertDelegateValid();
 	_delegate->itemClicked( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
 }
 
 void AbstractItemModel::doubleClicked( const QModelIndex& index )
 {
+	assertDelegateValid();
 	_delegate->itemDoubleClicked( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
 }
 
 void AbstractItemModel::entered( const QModelIndex& index )
 {
+	assertDelegateValid();
 	_delegate->itemEntered( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
 }
 
 void AbstractItemModel::pressed( const QModelIndex& index )
 {
+	assertDelegateValid();
 	_delegate->itemPressed( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
+}
+
+void AbstractItemModel::assertDelegateValid() const
+{
+	if( !_delegate )
+		CORAL_THROW( co::Exception, "delegate attribute not set" );
 }
 
 } // namespace qt
