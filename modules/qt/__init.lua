@@ -30,7 +30,7 @@ end
 
 -- shortcut to ISystem:addWidget( layout, widget )
 function MT.addWidget( layout, widget )
-	system:addWidget( layout._obj, widget._obj )
+	system:insertWidget( layout._obj, -1, widget._obj )
 end
 
 function MT.setLayout( widget, layout )
@@ -42,12 +42,28 @@ function MT.getLayout( widget )
 end
 
 -- shortcut to ISystem:addAction()
-function MT.addAction( menu, icon, text )
+function MT.addAction( widget, icon, text )
 	local action = M.new( "QAction" )
 	action.icon = icon
 	action.text = text
 	action.iconVisibleInMenu = true
-	system:addAction( menu._obj, action._obj )
+	system:insertAction( widget._obj, nil, action._obj )
+	return action
+end
+
+function MT.insertAction( widget, beforeAction, icon, text )
+	local action = M.new( "QAction" )
+	action.icon = icon
+	action.text = text
+	action.iconVisibleInMenu = true
+	system:insertAction( widget._obj, nil, action._obj )
+	return action
+end
+
+function MT.insertSeparator( widget, beforeAction )
+	local action = M.new( "QAction" )
+	system:setSeparator( action )
+	system:insertAction( widget._obj, beforeAction, action._obj )
 	return action
 end
 
