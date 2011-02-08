@@ -2,11 +2,15 @@
 # Run the test scripts with CTest
 ################################################################################
 
-SET( CORAL_PATH ${CORAL_PATH} ${CORAL_QT_SOURCE_DIR} )
+# Adds the tests resources to the Coral Path, so it can be found while running
+# the modules tests
+SET( CORAL_PATH ${CORAL_PATH} ${CORAL_QT_SOURCE_DIR}/tests/test_resources )
+
 CORAL_GET_PATH_STRING( coralPathStr )
+MESSAGE( ">>>>>" ${coralPathStr} )
 
 ADD_TEST(
 	NAME tests
 	COMMAND ${CORAL_LAUNCHER} --mode $<CONFIGURATION> -p ${coralPathStr}
-		lua.Launcher testkit.TestRunner tests -o output/unitTests.xml
+		lua.Launcher testkit.TestRunner ${CORAL_QT_SOURCE_DIR}/tests -o output/unitTests.xml
 )

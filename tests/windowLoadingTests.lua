@@ -4,7 +4,7 @@ local qt = require "qt"
 
 qt.setSearchPaths( "coral", co.getPaths() )
 
-local file = "coral:/tests/TestWindow.ui"
+local file = "coral:/TestWindow.ui"
 
 function aWindowShouldBeInvisibleWhenLoaded()
 	local widget = qt.loadUi( file )
@@ -16,7 +16,7 @@ function shouldThrowAnExceptionWithAnInexistantFile()
 end
 
 function shouldThrowAnExceptionWithAnInvalidFile()
-	expectException( "error loading ui file", qt.loadUi, co.findModuleFile( "tests", "invalid.ui" ) )
+	expectException( "error loading ui file", qt.loadUi, "coral:/invalid.ui" )
 end
 
 
