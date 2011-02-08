@@ -21,6 +21,7 @@ FIND_PACKAGE( Coral REQUIRED )
 SET( QT_MIN_VERSION "4.4.0" ) # minimum Qt version required
 FIND_PACKAGE( Qt4 ${QT_MIN_VERSION} REQUIRED )
 SET( QT_USE_QTUITOOLS 1 )
+SET( QT_USE_QTOPENGL  1 )
 INCLUDE( ${QT_USE_FILE} )
 
 # Configure the coral path

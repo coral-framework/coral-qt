@@ -11,6 +11,7 @@ FILE( GLOB _HEADER_FILES *.h )
 
 SET( _MOC_HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/AbstractItemModel.h
+	${CMAKE_CURRENT_SOURCE_DIR}/GLWidget.h
 )
 
 # Generate moc_*.cpp files from mocable headers

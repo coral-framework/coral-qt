@@ -1,0 +1,7 @@
+/*
+	Component that provides an IGLWidget implementation.
+*/
+component GLWidget
+{
+	provides IGLWidget glWidget;
+};
