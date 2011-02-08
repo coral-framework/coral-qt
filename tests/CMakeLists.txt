@@ -7,7 +7,6 @@
 SET( CORAL_PATH ${CORAL_PATH} ${CORAL_QT_SOURCE_DIR}/tests/test_resources )
 
 CORAL_GET_PATH_STRING( coralPathStr )
-MESSAGE( ">>>>>" ${coralPathStr} )
 
 ADD_TEST(
 	NAME tests
