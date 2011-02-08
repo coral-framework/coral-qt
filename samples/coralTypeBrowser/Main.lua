@@ -46,6 +46,31 @@ M.typeIcons =
 	["TK_COMPONENT"] 	= M.icons.component
 }
 
+M.typeNames =
+{
+	-- map icons for complex types
+	["TK_ANY"] 			= "any",
+	["TK_ENUM"] 		= "enumerator",
+	["TK_EXCEPTION"] 	= "exception",
+	["TK_STRUCT"] 		= "struct",
+	["TK_NATIVECLASS"] 	= "native class",
+	["TK_INTERFACE"] 	= "interface",
+	["TK_COMPONENT"] 	= "component",
+	["TK_ARRAY"] 		= "array",
+	["TK_BOOLEAN"] 		= "boolean",
+	["TK_INT8"] 		= "8-bit integer",
+	["TK_UINT8"] 		= "8-bit unsigned integer",
+	["TK_INT16"] 		= "16-bit integer",
+	["TK_UINT16"] 		= "16-bit unsigned integer",
+	["TK_INT32"] 		= "32-bit integer",
+	["TK_UINT32"] 		= "32-bit unsigned integer",
+	["TK_INT64"] 		= "64-bit integer",
+	["TK_UINT64"] 		= "64-bit unsigned integer",
+	["TK_FLOAT"] 		= "float",
+	["TK_DOUBLE"] 		= "double",
+	["TK_STRING"] 		= "string"
+}
+
 -- fonts for some specific item data in the view
 M.fonts =
 {
@@ -153,10 +178,11 @@ function TypeTree:add( element, parentIndex )
 	-- creates a node data
 	local node = { 
 					data = element.data,
-					icon = element.icon, 
+					type = element.type,
+					icon = element.icon,
 					font = element.font,
 					color = element.color,
-					index = self.nextIndex, 
+					index = self.nextIndex,
 					parent = parentIndex,
 					docs = element.docs,
 					fullName = element.fullName,
@@ -198,7 +224,7 @@ function TypeTree:addGenericMembers( currentType, fieldName, groupName, icon, pa
 			self:add( { data = v.name .. " : " .. v.type.name, 
 						icon = icon, docs = getDocs( currentType, v.name ), 
 						fullName = v.type.fullName,
-						type = fieldName }, parentIndex )
+						type = groupName }, parentIndex )
 		end
 	end
 end
@@ -210,11 +236,12 @@ function TypeTree:addMemberAttributes( currentType, fieldName, groupName, icon, 
 			if data.isReadOnly then
 				data = data .. " [readonly]"
 			end
+
 			self:add( { data = data, 
 						icon = icon, 
 						docs = getDocs( currentType, v.name ), 
-						fullName = v.type.fullName, 
-						type = "attribute" }, 
+						fullName = currentType.fullName .. "." .. v.name, 
+						type = "attribute of type " .. v.type.name }, 
 						parentIndex )
 		end
 	end
@@ -260,7 +287,8 @@ function TypeTree:addType( currentType, parentIndex )
 	local currentIndex = self:add( { data = currentType.name, 
 									 icon = M.typeIcons[currentType.kind] or M.icons.primitiveType, 
 									 docs = getDocs( currentType ), 
-									 fullName = currentType.fullName }, parentIndex or -1 )
+									 fullName = currentType.fullName,
+									 type = M.typeNames[currentType.kind] }, parentIndex or -1 )
 
 	local childTypes = currentType.types
 	if childType then
@@ -274,7 +302,16 @@ end
 
 function TypeTree:addNamespace( namespace, parentIndex )
 	-- adds namespace to type tree
-	local currentIndex = self:add( { data = namespace.name, icon = M.icons.namespace, fullName = namespace.fullName }, parentIndex or -1 )
+	local nsName = namespace.name
+	local nsFullName = namespace.fullName
+	if not nsName or nsName == "" then
+		nsName = "<root namespace>"
+	end
+	if not nsFullName or nsFullName == "" then
+		nsFullName = "<root namespace>"	
+	end
+
+	local currentIndex = self:add( { data = nsName, icon = M.icons.namespace, fullName = nsFullName, type = "namespace" }, parentIndex or -1 )
 	
 	local childNS = namespace.childNamespaces
 	if childNS then
@@ -336,11 +373,7 @@ function TypeTreeModel:getData( index, role )
 	local data = nil
 	if role == "DisplayRole" or role == "EditRole" then
 		-- check whether this is the root namespace (empty name)
-		if typeTree[index].data == "" then
-			data = "<root namespace>"
-		else
 			data = typeTree[index].data
-		end
 	elseif role == "TextAlignmentRole" then
 		data = qt.AlignLeft + qt.AlignJustify
 	elseif role == "DecorationRole" then
@@ -395,12 +428,17 @@ function TypeTreeModel:getRowCount( parentIndex )
 	return #typeTree[parentIndex].children
 end
 
-local function getDocsHtml( fullName, docs )
+local function generateHtmlInformation( fullName, elementType, docs )
 	local docsHtml = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">"
 	docsHtml = docsHtml .. "<html><head><meta name=\"qrichtext\" content=\"1\ /><style type=\"text/css\">p, li { white-space: pre-wrap; } </style></head>"
 	docsHtml = docsHtml .. "<body style=\" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;\">"
 	if fullName and fullName ~= "" then
-		docsHtml = docsHtml .. "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600; color:#000000;\">".. fullName .. "<br><br></span>"
+		docsHtml = docsHtml .. "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+		docsHtml = docsHtml .. "<span style=\" font-weight:600; color:#000000;\">".. fullName .. "</span>"
+		if elementType and elementType ~= "" then
+			docsHtml = "<span style=\" font-weight:400; color:#9F9F9F;\">" .. docsHtml .. " [" .. elementType .. "]" .. "</span>" 
+		end
+		docsHtml = docsHtml .. "<br><br></span>"
 	end
 
 	local finalDocs = "<span style=\" font-weight:400; color:#00aa00;\">" .. ( docs or "" ) .. "</span>"
@@ -414,7 +452,7 @@ end
 
 function TypeTreeModel:itemClicked( view, index )
 	local element = typeTree[index]	
-	M.docsTextBrowser.html = getDocsHtml( element.fullName, element.docs )
+	M.docsTextBrowser.html = generateHtmlInformation( element.fullName, element.type, element.docs )
 	if element.docs and element.docs ~= "" then
 		M.docsTextBrowser.enabled = true
 	else
