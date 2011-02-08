@@ -49,6 +49,8 @@ public slots:
 	void pressed( const QModelIndex& index );
 
 private:
+	void assertDelegateValid() const;
+
 	// Portable wrap for createIndex() for gcc-32
 	inline QModelIndex makeIndex( int row, int col, int id ) const
 	{

@@ -1,3 +1,5 @@
+import co.NotSupportedException;
+
 /*
 	Exposes system-wide Qt operations.
  */
@@ -6,50 +8,69 @@ interface ISystem
 	// The 'qApp' object.
 	readonly attribute Object app;
 
+	// Loads a QWidget from a .ui file created in Qt Designer.
+	// \throw qt.Exception if the ui file could not be loaded.
+	void loadUi( in string filePath, out Object widget ) raises Exception;
+
+	// Sets or replaces Qt's search paths for file names with the prefix 
+	// 'prefix' to 'searchPaths'. \see Qt's documentation of QDir::setSearchPaths().
+	void setSearchPaths( in string prefix, in string[] searchPaths );
+
+	// Opens a directory selection dialog and returns the selected directory or
+	// an empty string if no directory was selected.
+	void getExistingDirectory( in Object parent, in string caption, in string initialDir, out string selectedDir );
+
+	// Opens a file selection dialog and returns the selected files or an empty
+	// list if no file was selected
+	void getOpenFileNames( in Object parent, in string caption, in string initialDir, out string[] selectedFiles );
+
 	/* 
-		Creates a new object using the class specified by className.
-		This function supports creation of any widget class,
-		QActions and any QLayout subclass such as QStackedLayout.
+		Creates a new object using the class specified by className. This 
+		function supports creation of any widget class, QActions and any 
+		QLayout subclass (i.e QStackedLayout).
 
 		\throw co.NotSupportedException if className is not supported.
 	 */
-	void newInstanceOf( in string className, out Object object ) raises Exception;
+	void newInstanceOf( in string className, out Object object ) raises NotSupportedException;
 
-	//! Adds an action to the given widget
-	void addAction( in Object widget, in Object action );
+	/* 
+		Adds a widget to the given \a parent. \a parent must be an instance of
+		QLayout or QSplitter.
 
-	// Loads a QWidget from a .ui file created in Qt Designer.
-	void loadUi( in string filePath, out Object widget ) raises Exception;
-
-	// Opens a directory selection dialog and returns the selected directory or an empty string if no
-	// directory was selected
-	void getExistingDirectory( in Object parent, in string caption, in string initialDir, out string selectedDir );
-
-	// Opens a file selection dialog and returns the selected files or an empty list if no
-	// file was selected
-	void getOpenFileNames( in Object parent, in string caption, in string initialDir, out string[] selectedFiles );
-
-	// Sets or replaces Qt's search paths for file names with the prefix 'prefix'
-	// to 'searchPaths'. \see Qt's documentation of QDir::setSearchPaths().
-	void setSearchPaths( in string prefix, in string[] searchPaths );
-
-	/*
-		Connects a \a signal from \a sender to a \a handler, and returns the connection cookie.
-		\note To undo the connection, call disconnect() passing the returned connection cookie.
-		\throw co.IllegalArgumentException if the \a sender or \a handler are invalid.
-		\throw qt.Exception if the sender does not have such signal or the connection cannot be made.
+		\throw co.IllegalArgumentException if the \a parent is not an instance
+		of QLayout nor QSplitter class.
+		\throw co.IllegalArgumentException if the \a widget is not instance of
+		QWidget.
 	 */
-	int32 connect( in Object sender, in string signal, in IConnectionHandler handler )
-		raises co.IllegalArgumentException, Exception;
+	void addWidget( in Object parent, in Object widget ) raises NotSupportedException;
 
-	// Removes the connection identified by the given \a cookie.
-	void disconnect( in int32 cookie ) raises co.IllegalArgumentException;
+	/*! 
+		Sets a layout in the given widget.
+		
+		\throw co.IllegalArgumentException if the \a widget is not instance of
+		QWidget.
+		\throw co.IllegalArgumentException if the \a layout is not an instance
+		of QLayout class.
+	 */
+	void setLayout( in Object widget, in Object layout );
 
-	// Sets the given IAbstractItemModel as the model for the given view instance.
-	void assignModelToView( inout Object view, in IAbstractItemModel model );
+	/*! 
+		Gets the layout from the given widget.
+		
+		\throw co.IllegalArgumentException if the \a widget is not instance of
+		QWidget.
+	 */
+	void getLayout( in Object widget, out Object layout );
 
-	// Runs the Qt event loop until quit() is called.
-	void exec();
+	/*! 
+		Adds an action to the given widget.
+
+		\throw co.IllegalArgumentException if the \a widget is not instance of
+		QWidget.
+		\throw co.IllegalArgumentException if the \a action is not an instance
+		of QAction class.
+	 */
+	void addAction( in Object widget, in Object action );
 
 	/*! 
 		Performs exec() calls to QMenu instances (\see QMenu::exec()).
@@ -63,6 +84,34 @@ interface ISystem
 	 */
 	void execMenu( in Object menu, in int32 posX, in int32 posY, out Object selectedAction )
 		raises co.IllegalArgumentException;
+
+	/* 
+		Sets the given IAbstractItemModel as the model for the given view instance.
+
+		\throw co.IllegalArgumentException if the given \a view instance is not an
+		instance of QAbstractItemView class or \a model is not an instance of
+		QAbstractItemModel class.
+	 */
+	void assignModelToView( inout Object view, in IAbstractItemModel model );
+
+	/*
+		Connects a \a signal from \a sender to a \a handler, and returns the 
+		connection cookie. \note To undo the connection, call disconnect() 
+		passing the returned connection cookie.
+
+		\throw co.IllegalArgumentException if the \a sender or \a handler are
+		invalid.
+		\throw qt.Exception if the sender does not have such signal or the 
+		connection cannot be made.
+	 */
+	int32 connect( in Object sender, in string signal, in IConnectionHandler handler )
+		raises co.IllegalArgumentException, Exception;
+
+	// Removes the connection identified by the given \a cookie.
+	void disconnect( in int32 cookie ) raises co.IllegalArgumentException;
+
+	// Runs the Qt event loop until quit() is called.
+	void exec();
 
 	// Executes a single iteration of the Qt event loop.
 	void processEvents();

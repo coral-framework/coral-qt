@@ -46,6 +46,31 @@ M.typeIcons =
 	["TK_COMPONENT"] 	= M.icons.component
 }
 
+M.typeNames =
+{
+	-- map icons for complex types
+	["TK_ANY"] 			= "any",
+	["TK_ENUM"] 		= "enumerator",
+	["TK_EXCEPTION"] 	= "exception",
+	["TK_STRUCT"] 		= "struct",
+	["TK_NATIVECLASS"] 	= "native class",
+	["TK_INTERFACE"] 	= "interface",
+	["TK_COMPONENT"] 	= "component",
+	["TK_ARRAY"] 		= "array",
+	["TK_BOOLEAN"] 		= "boolean",
+	["TK_INT8"] 		= "8-bit integer",
+	["TK_UINT8"] 		= "8-bit unsigned integer",
+	["TK_INT16"] 		= "16-bit integer",
+	["TK_UINT16"] 		= "16-bit unsigned integer",
+	["TK_INT32"] 		= "32-bit integer",
+	["TK_UINT32"] 		= "32-bit unsigned integer",
+	["TK_INT64"] 		= "64-bit integer",
+	["TK_UINT64"] 		= "64-bit unsigned integer",
+	["TK_FLOAT"] 		= "float",
+	["TK_DOUBLE"] 		= "double",
+	["TK_STRING"] 		= "string"
+}
+
 -- fonts for some specific item data in the view
 M.fonts =
 {
@@ -152,12 +177,15 @@ TypeTree.__index = TypeTree
 function TypeTree:add( element, parentIndex )
 	-- creates a node data
 	local node = { 
-					data = element.data, 
-					icon = element.icon, 
+					data = element.data,
+					type = element.type,
+					icon = element.icon,
 					font = element.font,
 					color = element.color,
-					index = self.nextIndex, 
-					parent = parentIndex, 
+					index = self.nextIndex,
+					parent = parentIndex,
+					docs = element.docs,
+					fullName = element.fullName,
 					children = {} 
 	}
 	self[node.index] = node
@@ -180,73 +208,87 @@ function TypeTree:add( element, parentIndex )
 	return node.index
 end
 
--- Creates a group with all docs for the given member or type with name 'fullName'
--- (e.g: types.MyType:myMethod or type.MyType)
-function TypeTree:addDocs( fullName, parentIndex )
-	local docs = co.system.types:getDocumentation( fullName )
-	if not docs or docs == "" then
-		return
+function getDocs( coType, memberName )
+	if memberName then
+		return co.system.types:getDocumentation( coType.fullName .. ":" .. memberName )
+	else
+		return co.system.types:getDocumentation( coType.fullName )
 	end
-
-	local docsGroupIndex = self:add( { data = "docs", icon = M.icons.docs }, parentIndex )
-	self:add( { data = docs, font = M.fonts.docs, color = M.colors.docs }, docsGroupIndex )
 end
 
 -- Creates a group of members (if any), extracted from field 'fieldName' of table currentType,
 -- and adds it to type tree as child of index parentIndex.
-function TypeTree:addMemberGroup( currentType, fieldName, groupName, icon, parentIndex )
+function TypeTree:addGenericMembers( currentType, fieldName, groupName, icon, parentIndex )
 	if currentType[fieldName] and #currentType[fieldName] > 0 then
-		local group = { data = getGroupName( groupName, #currentType[fieldName] ), icon = icon }
-		local groupIndex = self:add( group, parentIndex or -1 )
 		for i, v in ipairs( currentType[fieldName] ) do
-			local memberIndex = self:add( { data = v.name .. " : " .. v.type.name, icon = icon }, groupIndex )
-			
-			-- adds documentation for member attribute
-			self:addDocs( currentType.fullName .. ":" .. v.name, memberIndex )
+			self:add( { data = v.name .. " : " .. v.type.name, 
+						icon = icon, docs = getDocs( currentType, v.name ), 
+						fullName = v.type.fullName,
+						type = groupName }, parentIndex )
+		end
+	end
+end
+
+function TypeTree:addMemberAttributes( currentType, fieldName, groupName, icon, parentIndex )
+	if currentType[fieldName] and #currentType[fieldName] > 0 then
+		for i, v in ipairs( currentType[fieldName] ) do
+			local data = "attribute " .. v.name .. " : " .. v.type.name
+			if data.isReadOnly then
+				data = data .. " [readonly]"
+			end
+
+			self:add( { data = data, 
+						icon = icon, 
+						docs = getDocs( currentType, v.name ), 
+						fullName = currentType.fullName .. "." .. v.name, 
+						type = "attribute of type " .. v.type.name }, 
+						parentIndex )
 		end
 	end
 end
 
 -- Creates a group of methods, extracted from field 'fieldName' of table currentType,
 -- and adds it to type tree as child of index parentIndex
-function TypeTree:addMethodGroup( currentType, fieldName, groupName, icon, parentIndex )
+function TypeTree:addMethods( currentType, fieldName, groupName, icon, parentIndex )
 	if currentType[fieldName] and #currentType[fieldName] > 0 then
-		local group = { data = getGroupName( groupName, #currentType[fieldName] ), icon = icon }
-		local groupIndex = self:add( group, parentIndex or -1 )
 		for i, v in ipairs( currentType[fieldName] ) do
-			local methodIndex = self:add( { data = extractMethodSignature( v ), icon = icon }, groupIndex )
-
-			-- adds documentation for member method
-			self:addDocs( currentType.fullName .. ":" .. v.name, methodIndex )
+			local methodIndex = self:add( { data = extractMethodSignature( v ), icon = icon, 
+											docs = getDocs( currentType, v.name ), 
+											fullName = currentType.fullName .. ":" .. v.name, 
+											type = "method"  }, parentIndex )
 
 			-- extracts method exceptions
 			if v.exceptions and #v.exceptions > 0 then
 				local exceptionsIndex = self:add( { data = "throws", icon = M.icons.exception }, methodIndex )
 				for j, v2 in ipairs( v.exceptions ) do
-					self:add( { data = v2.name, icon = M.icons.exception }, exceptionsIndex )
+					self:add( { data = v2.name, 
+								icon = M.icons.exception, 
+								fullName = currentType.fullName .. ":" .. v2.name, 
+								type = "exception" }, exceptionsIndex )
 				end
 			end
 		end
 	end
 end
 
-function TypeTree:addMembers( currentType, parentIndex )
+function TypeTree:addTypeMembers( currentType, parentIndex )
 	-- add facets and receptacles (components only)
-	self:addMemberGroup( currentType, "facets", "facet", M.icons.facet, parentIndex )
-	self:addMemberGroup( currentType, "receptacles", "receptacle", M.icons.receptacle, parentIndex )
+	self:addGenericMembers( currentType, "facets", "facet", M.icons.facet, parentIndex )
+	self:addGenericMembers( currentType, "receptacles", "receptacle", M.icons.receptacle, parentIndex )
+
+	-- add attributes (all types)
+	self:addMemberAttributes( currentType, "memberAttributes", "attribute", M.icons.attribute, parentIndex )
 
 	-- add methods (native class and interface only)
-	self:addMethodGroup( currentType, "memberMethods", "method", M.icons.method, parentIndex )
-	
-	-- add attributes (all types)
-	self:addMemberGroup( currentType, "memberAttributes", "attribute", M.icons.attribute, parentIndex )
+	self:addMethods( currentType, "memberMethods", "method", M.icons.method, parentIndex )
 end
 
 function TypeTree:addType( currentType, parentIndex )
-	local currentIndex = self:add( { data = currentType.name, icon = M.typeIcons[currentType.kind] or M.icons.primitiveType }, parentIndex or -1 )
-
-	-- adds documentation for type
-	self:addDocs( currentType.fullName, currentIndex )
+	local currentIndex = self:add( { data = currentType.name, 
+									 icon = M.typeIcons[currentType.kind] or M.icons.primitiveType, 
+									 docs = getDocs( currentType ), 
+									 fullName = currentType.fullName,
+									 type = M.typeNames[currentType.kind] }, parentIndex or -1 )
 
 	local childTypes = currentType.types
 	if childType then
@@ -255,12 +297,21 @@ function TypeTree:addType( currentType, parentIndex )
 		end
 	end
 
-	self:addMembers( currentType, currentIndex )
+	self:addTypeMembers( currentType, currentIndex )
 end
 
 function TypeTree:addNamespace( namespace, parentIndex )
 	-- adds namespace to type tree
-	local currentIndex = self:add( { data = namespace.name, icon = M.icons.namespace }, parentIndex or -1 )
+	local nsName = namespace.name
+	local nsFullName = namespace.fullName
+	if not nsName or nsName == "" then
+		nsName = "<root namespace>"
+	end
+	if not nsFullName or nsFullName == "" then
+		nsFullName = "<root namespace>"	
+	end
+
+	local currentIndex = self:add( { data = nsName, icon = M.icons.namespace, fullName = nsFullName, type = "namespace" }, parentIndex or -1 )
 	
 	local childNS = namespace.childNamespaces
 	if childNS then
@@ -322,11 +373,7 @@ function TypeTreeModel:getData( index, role )
 	local data = nil
 	if role == "DisplayRole" or role == "EditRole" then
 		-- check whether this is the root namespace (empty name)
-		if typeTree[index].data == "" then
-			data = "<root namespace>"
-		else
 			data = typeTree[index].data
-		end
 	elseif role == "TextAlignmentRole" then
 		data = qt.AlignLeft + qt.AlignJustify
 	elseif role == "DecorationRole" then
@@ -381,8 +428,36 @@ function TypeTreeModel:getRowCount( parentIndex )
 	return #typeTree[parentIndex].children
 end
 
+local function generateHtmlInformation( fullName, elementType, docs )
+	local docsHtml = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">"
+	docsHtml = docsHtml .. "<html><head><meta name=\"qrichtext\" content=\"1\ /><style type=\"text/css\">p, li { white-space: pre-wrap; } </style></head>"
+	docsHtml = docsHtml .. "<body style=\" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;\">"
+	if fullName and fullName ~= "" then
+		docsHtml = docsHtml .. "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+		docsHtml = docsHtml .. "<span style=\" font-weight:600; color:#000000;\">".. fullName .. "</span>"
+		if elementType and elementType ~= "" then
+			docsHtml = "<span style=\" font-weight:400; color:#9F9F9F;\">" .. docsHtml .. " [" .. elementType .. "]" .. "</span>" 
+		end
+		docsHtml = docsHtml .. "<br><br></span>"
+	end
+
+	local finalDocs = "<span style=\" font-weight:400; color:#00aa00;\">" .. ( docs or "" ) .. "</span>"
+	if not docs or docs == "" then
+		finalDocs = "<span style=\" font-weight:400; color:#7f7f7f;\">" .. "&lt;no documentation available&gt;" .. "</span>"
+	end
+	docsHtml = docsHtml .. finalDocs
+	docsHtml = docsHtml .. "</p></body></html>"
+	return docsHtml
+end
+
 function TypeTreeModel:itemClicked( view, index )
-	--local action = M.menu:exec()
+	local element = typeTree[index]	
+	M.docsTextBrowser.html = generateHtmlInformation( element.fullName, element.type, element.docs )
+	if element.docs and element.docs ~= "" then
+		M.docsTextBrowser.enabled = true
+	else
+		M.docsTextBrowser.enabled = false
+	end
 end
 
 function createTypeTreeModel()
@@ -409,7 +484,7 @@ local function onActionEditCoralPathTriggered()
 
 	-- updates type tree
 	typeTree = TypeTree:new()
-	M.mainWindow.treeView:invoke( "reset()" )
+	M.treeView:invoke( "reset()" )
 	treeModel:notifyDataChanged( 1, typeTree.nextIndex - 1 )
 end
 
@@ -433,11 +508,36 @@ end
 
 --createMenu()
 
--- assigns my model to ui view
-qt.assignModelToView( M.mainWindow.treeView, treeModel )
+local function setupUi()
+	M.treeView = qt.new( "QTreeView" )
+	M.treeView.objectName = "treeView"
 
-M.mainWindow.actionEditCoralPath:connect( "triggered()", onActionEditCoralPathTriggered )
-M.mainWindow.btnClose:connect( "clicked()", onButtonCloseClicked )
+	M.treeView.minimumWidth = 700
+	local splitter = qt.new( "QSplitter" )
+	splitter:addWidget( M.treeView )
+
+	local docsSplitter = qt.new( "QSplitter" )
+
+	M.docsTextBrowser = qt.new( "QTextBrowser" )
+	M.docsTextBrowser.plainText = "<no documentation available>"
+	M.docsTextBrowser.enabled = false
+	docsSplitter:addWidget( M.docsTextBrowser )
+
+	splitter:addWidget( M.docsTextBrowser )
+
+	local layout = qt.new( "QVBoxLayout" )
+	layout:addWidget( splitter )
+	M.mainWindow.mainFrame:setLayout( layout )
+
+	-- assigns my model to ui view
+	M.treeView:setModel( treeModel )
+
+	-- setup signal and slot connections
+	M.mainWindow.actionEditCoralPath:connect( "triggered()", onActionEditCoralPathTriggered )
+	M.mainWindow.btnClose:connect( "clicked()", onButtonCloseClicked )
+end
+
+setupUi()
 
 M.mainWindow.visible = true
 

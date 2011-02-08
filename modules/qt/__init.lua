@@ -28,6 +28,38 @@ local function ObjectWrapper( object )
 	return setmetatable( { _obj = object }, MT )
 end
 
+-- shortcut to ISystem:addWidget( layout, widget )
+function MT.addWidget( layout, widget )
+	system:addWidget( layout._obj, widget._obj )
+end
+
+function MT.setLayout( widget, layout )
+	system:setLayout( widget._obj, layout._obj )
+end
+
+function MT.getLayout( widget )
+	return ObjectWrapper( system:setLayout( widget._obj ) )
+end
+
+-- shortcut to ISystem:addAction()
+function MT.addAction( menu, icon, text )
+	local action = M.new( "QAction" )
+	action.icon = icon
+	action.text = text
+	action.iconVisibleInMenu = true
+	system:addAction( menu._obj, action._obj )
+	return action
+end
+
+-- shortcut to ISystem:execMenu()
+function MT.exec( menu, x, y )
+	return ObjectWrapper( system:execMenu( menu._obj, x or -1, y or -1 ) )
+end
+
+function MT.setModel( view, model )
+	system:assignModelToView( view._obj, model._obj or model )
+end
+
 local function connect( wrapper, signal, handlerClosure )
 	local cookie = system:connect( wrapper._obj, signal, connectionHandler )
 	handlerClosures[cookie] = handlerClosure
@@ -43,6 +75,9 @@ function MT.__index( wrapper, name )
 	elseif name == "invoke" then
 		return invoke
 	end
+
+	-- returns one of the shortcut functions
+	if MT[name] then return MT[name] end
 
 	local v = wrapper._obj:getPropertyOrChild( name )
 
@@ -99,34 +134,11 @@ end
 -------------------------------------------------------------------------------
 -- Constructor for qt.Menu using qt.newInstanceOf() of ISystem
 -------------------------------------------------------------------------------
-M.Menu = {}
-
-function M.Menu:addAction( icon, text )
-	local action = M.newInstanceOf( "QAction" )
-	action.icon = icon
-	action.text = text
-	action.iconVisibleInMenu = true
-	system:addAction( self._obj, action._obj )
-	return action
+function M.Menu( title )
+	local menu = M.new( "QMenu" )
+	menu.title = title or ""
+	return menu
 end
-
-function M.Menu:exec( x, y )
-	return system:execMenu( self._obj, x or -1, y or -1 )
-end
-
-local MenuMT = {}
-
-function MenuMT.__call( menuTable, title )
-	menuTable = M.newInstanceOf( "QMenu" )
-	menuTable:setProperty( "title", M.Variant( title or "" ) )
-	return menuTable
-end
-
--- makes qt.Menu inherits from qt.Object
-setmetatable( MenuMT, MT )
-
--- sets menu metatable
-setmetatable( M.Menu, MenuMT )
 
 -------------------------------------------------------------------------------
 -- Export Qt::ItemFlag enum (see AbstractItemModelDelegate:getData())
@@ -176,11 +188,17 @@ M.AlignVCenter	= 0x0080
 M.AlignAbsolute	= 0x0010
 
 -------------------------------------------------------------------------------
+-- Export Qt::AlignmentFlag enum
+-------------------------------------------------------------------------------
+M.Horizontal = 0x1
+M.Vertical = 0x2
+
+-------------------------------------------------------------------------------
 -- Export Module
 -------------------------------------------------------------------------------
 M.app = ObjectWrapper( system.app )
 
-function M.newInstanceOf( className, object )
+function M.new( className, object )
 	return ObjectWrapper( system:newInstanceOf( className ) )
 end
 
@@ -206,10 +224,6 @@ end
 
 function M.processEvents()
 	return system:processEvents()
-end
-
-function M.assignModelToView( view, model )
-	return system:assignModelToView( view._obj, model )
 end
 
 function M.quit()

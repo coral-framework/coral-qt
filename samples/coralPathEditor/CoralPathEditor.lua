@@ -99,7 +99,7 @@ local function initialize()
 	M.editorDialog.btnAddFolder:connect( "clicked()", onBtnAddFolderClicked )
 
 	-- assign my model to ui view
-	qt.assignModelToView( M.editorDialog.listView, M.listModel )
+	M.editorDialog.listView:setModel( M.listModel )
 
 	M.editorDialog.windowTitle = "Coral Path Editor"
 	
