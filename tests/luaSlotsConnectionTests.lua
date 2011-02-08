@@ -10,7 +10,7 @@ local function slotCheckedMock( checked )
 end
 
 function singleLuaFunctionCouldBeUsedAsASlotTest()
-	local w = qt.loadUi( "coral:/tests/TestWindow.ui" )
+	local w = qt.loadUi( "coral:/TestWindow.ui" )
 	w.checkBox:connect( "toggled(bool)", slotCheckedMock )
 	assertTrue( not w.checkBox.checked, "The checkbox was initialized to checked" )
 
@@ -20,7 +20,7 @@ function singleLuaFunctionCouldBeUsedAsASlotTest()
 end
 
 function multipleLuaFunctionCouldBeUsedAsSlotsTest()
-	local w = qt.loadUi( "coral:/tests/TestWindow.ui" )
+	local w = qt.loadUi( "coral:/TestWindow.ui" )
 	local hits = 0
 	w.txtInput:connect( "textChanged()", function() hits = hits + 1 end )
 	w.txtInput:connect( "textChanged()", function() hits = hits + 2 end )
