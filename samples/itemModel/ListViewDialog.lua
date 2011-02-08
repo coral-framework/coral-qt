@@ -6,7 +6,7 @@ qt.setSearchPaths( "coral", co.getPaths() )
 
 local mainWindow = qt.loadUi( "coral:/itemModel/ListViewDialog.ui" )
 
-qt.assignModelToView( mainWindow.listView, ListItemModel() )
+mainWindow.listView:setModel( ListItemModel() )
 
 mainWindow.visible = true
 
