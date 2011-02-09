@@ -91,12 +91,12 @@ public:
 		QStringList qtSearchPaths;
 		while( searchPaths )
 		{
-			std::string path = searchPaths.getLast();
-			qtSearchPaths.push_back( QString::fromStdString( path ) );
-			searchPaths.popLast();
+			std::string path = searchPaths.getFirst();
+			qtSearchPaths.push_back( path.c_str() );
+			searchPaths.popFirst();
 		}
 
-		QDir::setSearchPaths( QString::fromStdString( prefix ), qtSearchPaths );
+		QDir::setSearchPaths( prefix.c_str(), qtSearchPaths );
 	}
 
 	void getExistingDirectory( const qt::Object& parent, const std::string& caption, const std::string& initialDir,

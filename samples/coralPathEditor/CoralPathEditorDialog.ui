@@ -88,9 +88,16 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="btnApply">
           <property name="text">
-           <string>Close</string>
+           <string>Apply</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnCancel">
+          <property name="text">
+           <string>Cancel</string>
           </property>
          </widget>
         </item>
@@ -104,14 +111,14 @@
  <resources/>
  <connections>
   <connection>
-   <sender>pushButton</sender>
+   <sender>btnCancel</sender>
    <signal>clicked()</signal>
    <receiver>Dialog</receiver>
-   <slot>accept()</slot>
+   <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>698</x>
-     <y>584</y>
+     <x>710</x>
+     <y>581</y>
     </hint>
     <hint type="destinationlabel">
      <x>698</x>
