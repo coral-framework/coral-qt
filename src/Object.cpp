@@ -17,12 +17,7 @@
 void qt::Object_Adapter::getPropertyOrChild( qt::Object& instance, const std::string& name, co::Any& value )
 {
 	QVariant v = instance.get()->property( name.c_str() );
-
-	if( v.isValid() )
-	{
-		variantToAny( v , value );
-		return;
-	}
+	variantToAny( v , value );
 
 	QObject* child = instance.get()->findChild<QObject*>( name.c_str() );
 	value.createComplexValue<qt::Object>().set( child );
@@ -30,10 +25,26 @@ void qt::Object_Adapter::getPropertyOrChild( qt::Object& instance, const std::st
 
 void qt::Object_Adapter::setProperty( qt::Object& instance, const std::string& name, const co::Any& value )
 {
-	QVariant v;
-	if( value.isValid() )
-		v.setValue( anyToVariant( value ) );
+	int typeId = QMetaType::QVariantList;
+	if( value.getKind() == co::TK_DOUBLE )
+	{
+		/*
+			checks property type: for all complex types a qt::Variant (same as QVariant) is used
+			to set the property value (see anyToVariant()) (e.g QIcon, QColor). In such case, its
+			not necessary to use a specific typeId because the native class QVariant contains all
+			information	about the property value type. We only need to differ double from integer
+			since lua handle number as double and Qt does not convert double to int to match the
+			property signature.
+		*/
+		QObject* obj = instance.get();
+		const QMetaObject* metaObj = obj->metaObject();
+		int propertyIdx = metaObj->indexOfProperty( name.c_str() );
+		QMetaProperty property = metaObj->property( propertyIdx );
+		typeId = property.type();
+	}
 
+	QVariant v;
+	anyToVariant( value, typeId, v );
 	instance.get()->setProperty( name.c_str(), v );
 }
 
@@ -61,7 +72,10 @@ void qt::Object_Adapter::invoke( qt::Object& instance, const std::string& method
 	QVariant var[MAX_NUM_ARGS];
 	QGenericArgument arg[MAX_NUM_ARGS];
 	for( int i = 0; i < numArgs; ++i )
-		anyToArgument( *any[i], paramTypes[i], var[i], arg[i] );
+	{
+		anyToVariant( *any[i], paramTypes[i].constData(), var[i] );
+		variantToArgument( var[i], arg[i] );
+	}
 
 	bool ok = mm.invoke( obj, arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6] );
 	if( !ok ) 

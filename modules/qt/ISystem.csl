@@ -27,8 +27,9 @@ interface ISystem
 
 	/* 
 		Creates a new object using the class specified by className. This 
-		function supports creation of any widget class, QActions and any 
-		QLayout subclass (i.e QStackedLayout).
+		function supports creation of any widget class listed in 
+		QUILoader::availableWidgets() method plus QActions, any QLayout 
+		subclass (i.e QStackedLayout) and QMessageBox classes.
 
 		\throw co.NotSupportedException if className is not supported.
 	 */
@@ -69,16 +70,15 @@ interface ISystem
 
 	/*! 
 		Adds an action to the given widget before \a beforeAction action.
-		If \a beforeAction is null the action is appended after the last
+		If \a beforeActionIndex is -1 the action is appended after the last
 		action in widgets list.
 
 		\throw co.IllegalArgumentException if the \a widget is not instance of
 		QWidget.
-		\throw co.IllegalArgumentException if the \a action or beforeAction is 
-		not an instance of QAction class.
+		\throw qt.Exception if the \a action or beforeActionIndex is out-of-bounds.
 	 */
-	void insertAction( in Object widget, in Object beforeAction, in Object action ) 
-		raises IllegalArgumentException;
+	void insertAction( in Object widget, in int32 beforeActionIndex, in Object action ) 
+		raises IllegalArgumentException, Exception;
 
 	/*! Sets the given \a action as separator. \see QAction:setSeparator().
 
@@ -86,6 +86,17 @@ interface ISystem
 		of QAction class.
   	 */
 	void makeSeparator( in Object action ) raises IllegalArgumentException;
+
+	/*! Sets the a menu in the given \a action. It allows creation of submenus
+		or menus in QMenuBars.
+
+		\throw co.IllegalArgumentException if the \a action is not an instance
+		of QAction class.
+
+		\throw co.IllegalArgumentException if the \a menu is not an instance
+		of QMenu class.
+  	 */
+	void setMenu( in Object action, in Object menu ) raises IllegalArgumentException;
 
 	/*! 
 		Performs exec() calls to QMenu instances (\see QMenu::exec()).

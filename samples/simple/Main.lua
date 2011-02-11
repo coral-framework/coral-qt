@@ -1,6 +1,10 @@
 local qt = require "qt"
 
-local widget = qt.loadUi "tests/TestWindow.ui"
+-- update Qt search paths
+qt.setSearchPaths( "coral", co.getPaths() )
+
+local widget = qt.loadUi "coral:/simple/TestWindow.ui"
+widget.enabled = true
 
 widget.txtInput:connect( "textChanged()", function() widget.windowTitle = widget.txtInput.plainText end )
 widget.txtInput.plainText = "write something here"

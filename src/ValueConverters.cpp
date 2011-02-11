@@ -11,35 +11,102 @@
 #include <QVariant>
 #include <sstream>
 
-QVariant anyToVariant( const co::Any& value )
-{
-	QVariant v;
+Q_DECLARE_METATYPE( Qt::Alignment )
+static const int s_QtAlignmentTypeId = qRegisterMetaType<Qt::Alignment>( "Qt::Alignment" );
 
-	switch( value.getKind() )
+void anyToVariant( const co::Any& any, int expectedTypeId, QVariant& var )
+{
+	switch( expectedTypeId )
 	{
-	case co::TK_BOOLEAN:	v.setValue( value.get<bool>() ); break;
-	case co::TK_INT8:		v.setValue( value.get<co::int8>() ); break;
-	case co::TK_UINT8:		v.setValue( value.get<co::uint8>() ); break;
-	case co::TK_INT16:		v.setValue( value.get<co::int16>() ); break;
-	case co::TK_UINT16:		v.setValue( value.get<co::uint16>() ); break;
-	case co::TK_INT32:		v.setValue( value.get<co::int32>() ); break;
-	case co::TK_UINT32:		v.setValue( value.get<co::uint32>() ); break;
-	case co::TK_INT64:		v.setValue( value.get<co::int64>() ); break;
-	case co::TK_UINT64:		v.setValue( value.get<co::uint64>() ); break;
-	case co::TK_FLOAT:		v.setValue( value.get<float>() ); break;
-	case co::TK_DOUBLE:		v.setValue( value.get<double>() ); break;
-	case co::TK_STRING:		v.setValue( QString( value.get<std::string&>().c_str() ) ); break;
-	case co::TK_NATIVECLASS:
-	{
-		if( value.getType() == co::typeOf<qt::Variant>::get() )
-			v.setValue( value.get<qt::Variant&>() ); break;
-	}
+	case QMetaType::Void:
+		CORAL_THROW( co::IllegalArgumentException, "illegal Qt type '" << QMetaType::typeName( expectedTypeId ) << "'" );
+		return;
+	case QMetaType::Bool:
+		var.setValue( any.get<bool>() );
+		return;
+	case QMetaType::Int:
+		var.setValue( any.get<int>() );
+		return;
+	case QMetaType::UInt:
+		var.setValue( any.get<unsigned int>() );
+		return;
+	case QMetaType::Double:
+		var.setValue( any.get<double>() );
+		return;
+	case QMetaType::QString:
+		var.setValue<QString>( any.get<const std::string&>().c_str() );
+		return;
+	case QMetaType::QVariantList:
+		switch( any.getKind() )
+		{
+		case co::TK_NONE:		return;
+		case co::TK_BOOLEAN:	var.setValue( any.get<bool>() ); return;
+		case co::TK_INT8:		var.setValue( any.get<co::int8>() ); return;
+		case co::TK_UINT8:		var.setValue( any.get<co::uint8>() ); return;
+		case co::TK_INT16:		var.setValue( any.get<co::int16>() ); return;
+		case co::TK_UINT16:		var.setValue( any.get<co::uint16>() ); return;
+		case co::TK_INT32:		var.setValue( any.get<co::int32>() ); return;
+		case co::TK_UINT32:		var.setValue( any.get<co::uint32>() ); return;
+		case co::TK_INT64:		var.setValue( any.get<co::int64>() ); return;
+		case co::TK_UINT64:		var.setValue( any.get<co::uint64>() ); return;
+		case co::TK_FLOAT:		var.setValue( any.get<float>() ); return;
+		case co::TK_DOUBLE:		var.setValue( any.get<double>() ); return;
+		case co::TK_STRING:		var.setValue( QString( any.get<std::string&>().c_str() ) ); return;
+		case co::TK_NATIVECLASS:
+		{
+			if( any.getType() == co::typeOf<qt::Variant>::get() )
+				var.setValue( any.get<qt::Variant&>() ); return;
+		}
+		default:
+			CORAL_THROW( co::IllegalCastException, "cannot convert " << any << " to a QVariant." );
+			return;
+		}
+
 	default:
-		CORAL_THROW( co::IllegalCastException, "cannot convert " << value << " to a QVariant." );
+		// check our registered type
+		if( expectedTypeId == s_QtAlignmentTypeId )
+		{
+			var = QVariant::fromValue( static_cast<Qt::Alignment>( any.get<co::int64>() ) );
+			return;
+		}
+
+		CORAL_THROW( co::IllegalArgumentException, "no conversion from " << any << " to " << QMetaType::typeName( expectedTypeId ) );
+	}
+}
+
+void anyToVariant( const co::Any& any, const char* expectedTypeId, QVariant& var )
+{
+	int typeId = QMetaType::type( expectedTypeId );
+	anyToVariant( any, typeId, var );
+}
+
+void variantToArgument( QVariant& var, QGenericArgument& arg )
+{
+	QVariant::Type type = var.type();
+	switch( type )
+	{
+	case QVariant::Bool:
+		arg = Q_ARG( bool, *reinterpret_cast<bool*>( var.data() ) );
+	case QVariant::Int:
+		arg = Q_ARG( int, *reinterpret_cast<int*>( var.data() ) );
+	case QVariant::UInt:
+		arg = Q_ARG( unsigned int, *reinterpret_cast<unsigned int*>( var.data() ) );
+	case QVariant::Double:
+		arg = Q_ARG( double, *reinterpret_cast<double*>( var.data() ) );
+	case QVariant::String:
+		arg = Q_ARG( QString, *reinterpret_cast<QString*>( var.data() ) );
+		break;
+	case QVariant::UserType:
+		// check our registered type
+		if( var.userType() == s_QtAlignmentTypeId )
+		{
+			arg = Q_ARG( Qt::Alignment, *reinterpret_cast<Qt::Alignment*>( var.data() ) );
+			break;
+		}
+	default:
+		CORAL_THROW( co::IllegalArgumentException, "no conversion from " << QMetaType::typeName( type ) << " to QGenericArgument" );
 		break;
 	}
-
-	return v;
 }
 
 void variantToAny( const QVariant& v, co::Any& value )
@@ -70,40 +137,6 @@ void variantToAny( const QVariant& v, co::Any& value )
 
 	default:
 		CORAL_THROW( co::IllegalCastException, "cannot convert " << v.typeName() << " to a Coral any." );
-		break;
-	}
-}
-
-void anyToArgument( const co::Any& any, const QByteArray& argType, QVariant& var, QGenericArgument& arg )
-{
-	int typeId = QMetaType::type( argType.constData() );
-	switch( typeId )
-	{
-	case QMetaType::Void:
-		CORAL_THROW( co::IllegalArgumentException, "illegal Qt type '" << argType.constData() << "'" );
-		break;
-	case QMetaType::Bool:
-		var.setValue( any.get<bool>() );
-		arg = Q_ARG( bool, *reinterpret_cast<bool*>( var.data() ) );
-		break;
-	case QMetaType::Int:
-		var.setValue( any.get<int>() );
-		arg = Q_ARG( int, *reinterpret_cast<int*>( var.data() ) );
-		break;
-	case QMetaType::UInt:
-		var.setValue( any.get<unsigned int>() );
-		arg = Q_ARG( unsigned int, *reinterpret_cast<unsigned int*>( var.data() ) );
-		break;
-	case QMetaType::Double:
-		var.setValue( any.get<double>() );
-		arg = Q_ARG( double, *reinterpret_cast<double*>( var.data() ) );
-		break;
-	case QMetaType::QString:
-		var.setValue<QString>( any.get<const std::string&>().c_str() );
-		arg = Q_ARG( QString, *reinterpret_cast<QString*>( var.data() ) );
-		break;
-	default:
-		CORAL_THROW( co::IllegalArgumentException, "no conversion from " << any << " to " << argType.constData() );
 		break;
 	}
 }

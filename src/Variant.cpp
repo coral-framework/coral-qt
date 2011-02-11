@@ -16,8 +16,7 @@ bool Variant_Adapter::isValid( qt::Variant& instance )
 void Variant_Adapter::setAny( qt::Variant& instance, const co::Any& value )
 {
 	qt::Variant v;
-	if( value.isValid() )
-		v.setValue( anyToVariant( value ) );
+	anyToVariant( value, QMetaType::QVariantList, v );
 
 	instance.setValue( v );
 }
