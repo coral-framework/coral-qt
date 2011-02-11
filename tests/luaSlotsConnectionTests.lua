@@ -12,11 +12,11 @@ end
 function singleLuaFunctionCouldBeUsedAsASlotTest()
 	local w = qt.loadUi( "coral:/TestWindow.ui" )
 	w.checkBox:connect( "toggled(bool)", slotCheckedMock )
-	assertTrue( not w.checkBox.checked, "The checkbox was initialized to checked" )
+	ASSERT_TRUE( not w.checkBox.checked, "The checkbox was initialized to checked" )
 
 	w.checkBox.checked = true
 
-	assertTrue( mockState, "The mockState variable was not changed to the checkbox value" )
+	ASSERT_TRUE( mockState, "The mockState variable was not changed to the checkbox value" )
 end
 
 function multipleLuaFunctionCouldBeUsedAsSlotsTest()
@@ -27,5 +27,5 @@ function multipleLuaFunctionCouldBeUsedAsSlotsTest()
 
 	w.txtInput.plainText = "changing text"
 
-	assertEquals( hits, 3, "2 slots where connected to a signal but they where not both signaled." )
+	ASSERT_EQUALS( hits, 3, "2 slots where connected to a signal but they where not both signaled." )
 end
