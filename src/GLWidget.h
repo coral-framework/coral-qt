@@ -24,14 +24,16 @@ public:
 
 	virtual void resizeGL( int w, int h );
 
-	virtual void setPainter( qt::IPainter* painter );
+	virtual void setParentWidget( const qt::Object& parent );
 
+protected:
 	virtual IPainter* getPainter();
 
-	virtual const Object& getWidget();
+	virtual void setPainter( IPainter* painter );
 
 private:
 	IPainter* _painter;
+	QObjectWrapper _wrapper;
 };
 
 } // namespace qt;

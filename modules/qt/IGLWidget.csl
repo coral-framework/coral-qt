@@ -1,8 +1,8 @@
 /*
-	Represents a Qt's OpenGL Widget.
+	Interface that provides an Object 
  */
 interface IGLWidget
 {
-	readonly attribute Object widget; //< Widget instance
-	attribute IPainter painter; //< Painter delegate
+	attribute IPainter painter; //< Painter delegate	
+	void setParentWidget( in Object parent ); //< Parent Widget
 };

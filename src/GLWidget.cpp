@@ -34,7 +34,7 @@ namespace qt {
 			_painter->resize( w, h );
 	}
 
-	void GLWidget::setPainter( qt::IPainter* painter )
+	void GLWidget::setPainter( IPainter* painter )
 	{
 		_painter = painter;
 	}
@@ -44,9 +44,9 @@ namespace qt {
 		return _painter;
 	}
 
-	const Object& GLWidget::getWidget()
+	void GLWidget::setParentWidget( const qt::Object& parent )
 	{
-		return QObjectWrapper( this );
+		setParent( dynamic_cast< QWidget* >( parent.get() ) );
 	}
 }
 

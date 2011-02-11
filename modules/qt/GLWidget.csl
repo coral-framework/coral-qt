@@ -3,5 +3,5 @@
 */
 component GLWidget
 {
-	provides IGLWidget glWidget;
+	provides IGLWidget widget; //< QGLWidget abstraction
 };
