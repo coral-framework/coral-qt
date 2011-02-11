@@ -74,8 +74,15 @@ local function onBtnAddFolderClicked()
 	end
 
 	table.insert( M.coralPathList, dir )
-	co.addPath( dir )
+	table.insert( M.addedPathList, dir )
 	update()
+end
+
+local function onBtnApplyClicked()
+	for k, v in ipairs( M.addedPathList ) do
+		co.addPath( v )
+	end
+	M.editorDialog:invoke( "accept()" )
 end
 
 -------------------------------------------------------------------------------
@@ -84,6 +91,7 @@ end
 local function initialize()
 	-- initialize coral path list
 	M.coralPathList = co.getPaths()
+	M.addedPathList = {}
 
 	-- update Qt search paths
 	qt.setSearchPaths( "coral", M.coralPathList )
@@ -91,12 +99,13 @@ local function initialize()
 	-- load default folder icon (or clause to avoid re-initializations)
 	M.defaultIcon = M.defaultIcon or qt.Icon( "coral:/coralPathEditor/icons/folder_256.png" )
 
-	M.editorDialog = qt.loadUi( "coral:/coralPathEditor/EditorDialog.ui" )
+	M.editorDialog = qt.loadUi( "coral:/coralPathEditor/CoralPathEditorDialog.ui" )
 
 	M.listModel = createCoralPathListModel()
 
 	-- connect signals to module's slots
 	M.editorDialog.btnAddFolder:connect( "clicked()", onBtnAddFolderClicked )
+	M.editorDialog.btnApply:connect( "clicked()", onBtnApplyClicked )
 
 	-- assign my model to ui view
 	M.editorDialog.listView:setModel( M.listModel )
@@ -106,9 +115,15 @@ local function initialize()
 	update()
 end
 
+local function dialogResult( code )
+	M.resultCode = code	
+end
+
 function M:show()
 	initialize()
+	self.editorDialog:connect( "finished(int)", dialogResult )
 	self.editorDialog:invoke( "exec()" )
+	return M.resultCode == 1
 end
 
 return M

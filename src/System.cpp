@@ -17,11 +17,15 @@
 
 #include <QStringListModel>
 
+#include <QStackedLayout>
 #include <QApplication>
 #include <QFileDialog>
+#include <QStatusBar>
+#include <QBoxLayout>
 #include <QFileInfo>
 #include <QSplitter>
 #include <QUiLoader>
+#include <QToolBar>
 #include <QAction>
 #include <QLayout>
 #include <QCursor>
@@ -87,12 +91,12 @@ public:
 		QStringList qtSearchPaths;
 		while( searchPaths )
 		{
-			std::string path = searchPaths.getLast();
-			qtSearchPaths.push_back( QString::fromStdString( path ) );
-			searchPaths.popLast();
+			std::string path = searchPaths.getFirst();
+			qtSearchPaths.push_back( path.c_str() );
+			searchPaths.popFirst();
 		}
 
-		QDir::setSearchPaths( QString::fromStdString( prefix ), qtSearchPaths );
+		QDir::setSearchPaths( prefix.c_str(), qtSearchPaths );
 	}
 
 	void getExistingDirectory( const qt::Object& parent, const std::string& caption, const std::string& initialDir,
@@ -156,6 +160,49 @@ public:
 			CORAL_THROW( co::NotSupportedException, "cannot add widget: 'parent' is not an instace of QLayout nor QSplitter classs" );
 	}
 
+	void insertWidget( const qt::Object& parent, co::uint32 beforeIndex, const qt::Object& widget )
+	{
+		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
+		if( !qwidget )
+			CORAL_THROW( co::NotSupportedException, "cannot add widget: 'widget' is not an instace of QWidget" );
+
+		QSplitter* qsplitter = qobject_cast<QSplitter*>( parent.get() );
+		QBoxLayout* qlayout = qobject_cast<QBoxLayout*>( parent.get() );
+		QStatusBar* qstatusBar = qobject_cast<QStatusBar*>( parent.get() );
+		QStackedLayout* qstackedLayout = qobject_cast<QStackedLayout*>( parent.get() );
+		if( qsplitter )
+		{
+			if( beforeIndex > 0 )
+				qsplitter->insertWidget( beforeIndex, qwidget );
+			else
+				qsplitter->addWidget( qwidget );
+		}
+		else if( qlayout )
+		{
+			if( beforeIndex > 0 )
+				qlayout->insertWidget( beforeIndex, qwidget );
+			else
+				qlayout->addWidget( qwidget );
+		}
+		else if( qstatusBar )
+		{
+			if( beforeIndex > 0 )
+				qstatusBar->insertWidget( beforeIndex, qwidget );
+			else
+				qstatusBar->addWidget( qwidget );
+		}
+		else if( qstackedLayout )
+		{
+			if( beforeIndex > 0 )
+				qstackedLayout->insertWidget( beforeIndex, qwidget );
+			else
+				qstackedLayout->addWidget( qwidget );
+		}
+		else
+			CORAL_THROW( co::NotSupportedException, "cannot insert widget: 'parent' is not an instace of QSplitter, "
+													"QBoxLayout, QStatusBar nor QStackedLayout classs" );
+	}
+
 	void setLayout( const qt::Object& widget, const qt::Object& layout )
 	{
 		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
@@ -178,17 +225,33 @@ public:
 		layout.set( qwidget->layout() );
 	}
 
-	void addAction( const qt::Object& widget, const qt::Object& action )
+	void insertAction( const qt::Object& widget, const qt::Object& beforeAction, const qt::Object& action )
 	{
 		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
 		if( !qwidget )
-			CORAL_THROW( qt::Exception, "cannot add action: 'widget' is not an instace of QWidget" );
+			CORAL_THROW( qt::Exception, "cannot insert action: 'widget' is not an instace of QWidget" );
+
+		QAction* beforeQAction = qobject_cast<QAction*>( beforeAction.get() );
+		if( !beforeQAction && beforeAction.get() )
+			CORAL_THROW( qt::Exception, "cannot insert action: 'beforeAction' is not an instace of QAction" );
 
 		QAction* qaction = qobject_cast<QAction*>( action.get() );
 		if( !qaction )
-			CORAL_THROW( qt::Exception, "cannot add action: 'action' is not an instace of QAction" );
+			CORAL_THROW( qt::Exception, "cannot insert action: 'action' is not an instace of QAction" );
 
-		qwidget->addAction( qaction );
+		if( beforeQAction )
+			qwidget->insertAction( beforeQAction, qaction );
+		else
+			qwidget->addAction( qaction );
+	}
+
+	void makeSeparator( const qt::Object& action )
+	{
+		QAction* qaction = qobject_cast<QAction*>( action.get() );
+		if( !qaction )
+			CORAL_THROW( qt::Exception, "cannot make separator: 'action' is not an instace of QAction" );
+
+		qaction->setSeparator( true );
 	}
 
 	void execMenu( const qt::Object& menu, co::int32 posX, co::int32 posY, qt::Object& selectedAction )

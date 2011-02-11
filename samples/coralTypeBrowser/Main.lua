@@ -5,7 +5,7 @@ local qt = require "qt"
 local lfs = require "lfs"
 local path = require "path"
 local AbstractItemModel = require "qt.AbstractItemModel"
-local coralPathEditor = require "coralPathEditor.CoralPathEditor"
+local coralPathEditor = require "coralPathEditor.CoralPathEditorDialog"
 
 local M = {}
 
@@ -15,7 +15,7 @@ local TypeTreeModel = AbstractItemModel( "qt.samples.coralTypeBrowser.TypeTreeMo
 qt.setSearchPaths( "coral", co.getPaths() )
 
 -- loads main form
-M.mainWindow = qt.loadUi( "coral:/coralTypeBrowser/MainWindow.ui" )
+M.mainWindow = qt.loadUi( "coral:/coralTypeBrowser/CoralTypeBrowser.ui" )
 
 -- icon files
 M.icons = 
@@ -48,7 +48,7 @@ M.typeIcons =
 
 M.typeNames =
 {
-	-- map icons for complex types
+	-- map display names for types
 	["TK_ANY"] 			= "any",
 	["TK_ENUM"] 		= "enumerator",
 	["TK_EXCEPTION"] 	= "exception",
@@ -480,7 +480,9 @@ local treeModel = createTypeTreeModel()
 --- Slots
 -------------------------------------------------------------------------------
 local function onActionEditCoralPathTriggered()
-	coralPathEditor:show()
+	if not coralPathEditor:show() then
+		return
+	end
 
 	-- updates type tree
 	typeTree = TypeTree:new()

@@ -1,4 +1,5 @@
 import co.NotSupportedException;
+import co.IllegalArgumentException;
 
 /*
 	Exposes system-wide Qt operations.
@@ -34,15 +35,19 @@ interface ISystem
 	void newInstanceOf( in string className, out Object object ) raises NotSupportedException;
 
 	/* 
-		Adds a widget to the given \a parent. \a parent must be an instance of
-		QLayout or QSplitter.
+		Inserts a widget in the given \a parent before widget with index 
+		\a beforeIndex. Parameter \a parent must be an instance of 
+		QStatusBar, QBoxLayout, QStackedLayout or QSplitter. If \a beforeIndex
+		is -1, then the \a widget is appended after last widget in \a parent 
+		widget list.
 
 		\throw co.IllegalArgumentException if the \a parent is not an instance
-		of QLayout nor QSplitter class.
+		of QStatusBar, QBoxLayout, QStackedLayout nor QSplitter class.
 		\throw co.IllegalArgumentException if the \a widget is not instance of
 		QWidget.
 	 */
-	void addWidget( in Object parent, in Object widget ) raises NotSupportedException;
+	void insertWidget( in Object parent, in uint32 beforeIndex, in Object widget ) 
+		raises NotSupportedException;
 
 	/*! 
 		Sets a layout in the given widget.
@@ -52,7 +57,7 @@ interface ISystem
 		\throw co.IllegalArgumentException if the \a layout is not an instance
 		of QLayout class.
 	 */
-	void setLayout( in Object widget, in Object layout );
+	void setLayout( in Object widget, in Object layout ) raises IllegalArgumentException;
 
 	/*! 
 		Gets the layout from the given widget.
@@ -60,17 +65,27 @@ interface ISystem
 		\throw co.IllegalArgumentException if the \a widget is not instance of
 		QWidget.
 	 */
-	void getLayout( in Object widget, out Object layout );
+	void getLayout( in Object widget, out Object layout ) raises IllegalArgumentException;
 
 	/*! 
-		Adds an action to the given widget.
+		Adds an action to the given widget before \a beforeAction action.
+		If \a beforeAction is null the action is appended after the last
+		action in widgets list.
 
 		\throw co.IllegalArgumentException if the \a widget is not instance of
 		QWidget.
+		\throw co.IllegalArgumentException if the \a action or beforeAction is 
+		not an instance of QAction class.
+	 */
+	void insertAction( in Object widget, in Object beforeAction, in Object action ) 
+		raises IllegalArgumentException;
+
+	/*! Sets the given \a action as separator. \see QAction:setSeparator().
+
 		\throw co.IllegalArgumentException if the \a action is not an instance
 		of QAction class.
-	 */
-	void addAction( in Object widget, in Object action );
+  	 */
+	void makeSeparator( in Object action ) raises IllegalArgumentException;
 
 	/*! 
 		Performs exec() calls to QMenu instances (\see QMenu::exec()).
@@ -83,7 +98,7 @@ interface ISystem
 		instance of QMenu class.
 	 */
 	void execMenu( in Object menu, in int32 posX, in int32 posY, out Object selectedAction )
-		raises co.IllegalArgumentException;
+		raises IllegalArgumentException;
 
 	/* 
 		Sets the given IAbstractItemModel as the model for the given view instance.
@@ -92,7 +107,7 @@ interface ISystem
 		instance of QAbstractItemView class or \a model is not an instance of
 		QAbstractItemModel class.
 	 */
-	void assignModelToView( inout Object view, in IAbstractItemModel model );
+	void assignModelToView( inout Object view, in IAbstractItemModel model ) raises IllegalArgumentException;
 
 	/*
 		Connects a \a signal from \a sender to a \a handler, and returns the 
@@ -105,7 +120,7 @@ interface ISystem
 		connection cannot be made.
 	 */
 	int32 connect( in Object sender, in string signal, in IConnectionHandler handler )
-		raises co.IllegalArgumentException, Exception;
+		raises IllegalArgumentException, Exception;
 
 	// Removes the connection identified by the given \a cookie.
 	void disconnect( in int32 cookie ) raises co.IllegalArgumentException;
