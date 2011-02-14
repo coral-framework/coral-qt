@@ -11,10 +11,12 @@ local M =
 }
 
 function M.load( mainWindow )
-	local layout = qt.new( "QVBoxLayout" )
-	mainWindow.centralWidget:setLayout( layout )
+	local layout = mainWindow.centralWidget:setLayout( "QVBoxLayout" )	
 	local textEdit = qt.new( "QTextEdit" )
-	textEdit.plainText = "[Extended Central Widget]: Click unload in the plugins access menu to unload the Central Widget Plugin and remove this widget."
+	local msg = "[Extended Central Widget]: Click unload in the plugins "
+	msg = msg .. "access menu to unload the Central Widget Plugin and remove this widget."
+	textEdit.plainText = msg
+
 	textEdit:invoke( "setAlignment(Qt::Alignment)", qt.AlignCenter )
 	layout:addWidget( textEdit )
 end
