@@ -34,7 +34,14 @@ function MT.addWidget( layout, widget )
 end
 
 function MT.setLayout( widget, layout )
-	system:setLayout( widget._obj, layout._obj )
+	local layoutInstance = layout
+	if type( layout ) == "string" then
+		-- create the layout passing widget as parent (Qt Forces the parent in Debug with an Q_ASSERT for some strange reason!!)
+		layoutInstance = M.new( layout, widget )
+	end
+	
+	system:setLayout( widget._obj, layoutInstance._obj )
+	return layoutInstance
 end
 
 function MT.getLayout( widget )
@@ -212,8 +219,8 @@ M.AlignBottom	= 0x0040
 M.AlignVCenter	= 0x0080
 M.AlignAbsolute	= 0x0010
 M.AlignCenter	= M.AlignHCenter + M.AlignVCenter
-M.Horizontal = 0x1
-M.Vertical = 0x2
+M.Horizontal 	= 0x1
+M.Vertical 		= 0x2
 
 -------------------------------------------------------------------------------
 -- Export QMessageBox enums
@@ -250,8 +257,13 @@ M.MessageBox.NoButton			= 0x00000000
 -------------------------------------------------------------------------------
 M.app = ObjectWrapper( system.app )
 
-function M.new( className, object )
-	return ObjectWrapper( system:newInstanceOf( className ) )
+function M.new( className, parent, object )
+	if not parent then
+		-- empty Object representing a null QObject
+		parent = { _obj = co.new( "qt.Object" ) }
+	end
+
+	return ObjectWrapper( system:newInstanceOf( className, parent._obj ) )
 end
 
 function M.loadUi( uiFile )

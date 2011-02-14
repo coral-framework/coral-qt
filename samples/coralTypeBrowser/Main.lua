@@ -514,9 +514,8 @@ local function setupUi()
 
 	splitter:addWidget( M.docsTextBrowser )
 
-	local layout = qt.new( "QVBoxLayout" )
+	local layout = M.mainWindow.mainFrame:setLayout( "QVBoxLayout" )
 	layout:addWidget( splitter )
-	M.mainWindow.mainFrame:setLayout( layout )
 
 	-- assigns my model to ui view
 	M.treeView:setModel( treeModel )
