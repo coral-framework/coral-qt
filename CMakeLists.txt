@@ -18,7 +18,7 @@ SET( CMAKE_MODULE_PATH ${CORAL_ROOT}/cmake ${CMAKE_MODULE_PATH} )
 FIND_PACKAGE( Coral REQUIRED )
 
 # Request Qt4 support for this project
-SET( QT_MIN_VERSION "4.7.0" ) # minimum Qt version required
+SET( QT_MIN_VERSION "4.6.2" ) # minimum Qt version required
 FIND_PACKAGE( Qt4 ${QT_MIN_VERSION} REQUIRED )
 SET( QT_USE_QTUITOOLS 1 )
 INCLUDE( ${QT_USE_FILE} )
