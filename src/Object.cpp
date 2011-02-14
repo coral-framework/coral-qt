@@ -27,12 +27,10 @@ void qt::Object_Adapter::setProperty( qt::Object& instance, const std::string& n
 {
 	QObject* obj = instance.get();
 	const QMetaObject* metaObj = obj->metaObject();
-	int propertyIdx = metaObj->indexOfProperty( name.c_str() );
-	QMetaProperty property = metaObj->property( propertyIdx );
-	QVariant::Type typeId = property.type();
+	QMetaProperty property = metaObj->property( metaObj->indexOfProperty( name.c_str() ) );
 
 	QVariant v;
-	anyToVariant( value, typeId, v );
+	anyToVariant( value, property.type(), v );
 	instance.get()->setProperty( name.c_str(), v );
 }
 

@@ -41,6 +41,16 @@ namespace {
 	const char* dummy_argv[] = { "", "" };
 }
 
+#define INSERT_WIDGET( element, pos, widget ) \
+	if( pos >= 0 ) \
+	{ \
+		element->insertWidget( pos, widget ); \
+	} \
+	else \
+	{	\
+		element->addWidget( widget ); \
+	}
+
 namespace qt {
 
 class System : public qt::System_Base
@@ -178,35 +188,45 @@ public:
 		QStackedLayout* qstackedLayout = qobject_cast<QStackedLayout*>( parent.get() );
 		if( qsplitter )
 		{
-			if( beforeIndex >= 0 )
-				qsplitter->insertWidget( beforeIndex, qwidget );
-			else
-				qsplitter->addWidget( qwidget );
+			INSERT_WIDGET( qsplitter, beforeIndex, qwidget );
 		}
 		else if( qlayout )
 		{
-			if( beforeIndex >= 0 )
-				qlayout->insertWidget( beforeIndex, qwidget );
-			else
-				qlayout->addWidget( qwidget );
+			INSERT_WIDGET( qlayout, beforeIndex, qwidget );
 		}
 		else if( qstatusBar )
 		{
-			if( beforeIndex >= 0 )
-				qstatusBar->insertWidget( beforeIndex, qwidget );
-			else
-				qstatusBar->addWidget( qwidget );
+			INSERT_WIDGET( qstatusBar, beforeIndex, qwidget );
 		}
 		else if( qstackedLayout )
 		{
-			if( beforeIndex >= 0 )
-				qstackedLayout->insertWidget( beforeIndex, qwidget );
-			else
-				qstackedLayout->addWidget( qwidget );
+			INSERT_WIDGET( qstackedLayout, beforeIndex, qwidget );
 		}
 		else
 			CORAL_THROW( co::NotSupportedException, "cannot insert widget: 'parent' is not an instace of QSplitter, "
 													"QBoxLayout, QStatusBar nor QStackedLayout classs" );
+	}
+
+	void removeWidget( const qt::Object& parent, const qt::Object& widget )
+	{
+		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
+		if( !qwidget )
+			CORAL_THROW( co::NotSupportedException, "cannot remove widget: 'widget' is not an instace of QWidget" );
+
+		QBoxLayout* qlayout = qobject_cast<QBoxLayout*>( parent.get() );
+		QStatusBar* qstatusBar = qobject_cast<QStatusBar*>( parent.get() );
+		QStackedLayout* qstackedLayout = qobject_cast<QStackedLayout*>( parent.get() );
+		if( qlayout )
+			qlayout->removeWidget( qwidget );
+		else if( qstatusBar )
+			qstatusBar->removeWidget( qwidget );
+		else if( qstackedLayout )
+			qstackedLayout->removeWidget( qwidget );
+		else
+			CORAL_THROW( co::NotSupportedException, "cannot remove widget: 'parent' is not an instace of "
+													"QBoxLayout, QStatusBar nor QStackedLayout classs" );
+
+		qwidget->setParent( 0 );
 	}
 
 	void setLayout( const qt::Object& widget, const qt::Object& layout )

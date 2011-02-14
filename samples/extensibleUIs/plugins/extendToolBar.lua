@@ -14,4 +14,8 @@ function M.load( mainWindow )
 	M.action = mainWindow.toolbar:addAction( "Extended Action for ToolBar!", M.icon )
 end
 
+function M.unload( mainWindow )
+
+end
+
 return M
