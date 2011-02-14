@@ -1,8 +1,0 @@
-/*
-	Interface that provides an Object 
- */
-interface IGLWidget
-{
-	attribute IPainter painter; //< Painter delegate	
-	void setParentWidget( in Object parent ); //< Parent Widget
-};

@@ -38,7 +38,7 @@ function MT.setLayout( widget, layout )
 end
 
 function MT.getLayout( widget )
-	return ObjectWrapper( system:setLayout( widget._obj ) )
+	return ObjectWrapper( system:getLayout( widget._obj ) )
 end
 
 -- shortcut to ISystem:addAction()
@@ -107,6 +107,23 @@ end
 
 function MT.__newindex( wrapper, name, value )
 	wrapper._obj:setProperty( name, value )
+end
+
+-------------------------------------------------------------------------------
+-- Casts IObjectSource components into an ObjectWrapper
+-------------------------------------------------------------------------------
+function M.objectCast( component )
+--[[
+	-- check whether we are really dealing with a component
+	assert( component.kind == "TK_COMPONENT", "objectCast: " .. component.type .. " is not an component." )
+	-- scans the component's facets for an IObjectSource and returns its enclosed object
+	for facet in component.facets do
+		if facet.type == "qt.IObjectSource" then return ObjectWrapper( facet.object ) end
+	end
+	-- no IObjectSource found, error out to user
+	error( "objectCast: " .. component.type .. " is not an object source." )
+]]
+	return ObjectWrapper( component.self.object )
 end
 
 -------------------------------------------------------------------------------

@@ -8,12 +8,12 @@ namespace qt {
 		: QGLWidget( QGLFormat( QGL::AlphaChannel | QGL::DoubleBuffer | QGL::Rgba, 0) )
 	{
 		_painter = 0;
+		_wrapper.set( this );
 	}
 
 	GLWidget::~GLWidget()
 	{
-		// call inherited destructor
-		QGLWidget::~QGLWidget();
+		// empty
 	}
 
 	void GLWidget::initializeGL()
@@ -34,19 +34,19 @@ namespace qt {
 			_painter->resize( w, h );
 	}
 
-	void GLWidget::setPainter( IPainter* painter )
+	void GLWidget::setReceptaclePainter( IPainter* painter )
 	{
 		_painter = painter;
 	}
 
-	qt::IPainter* GLWidget::getPainter()
+	qt::IPainter* GLWidget::getReceptaclePainter()
 	{
 		return _painter;
 	}
 
-	void GLWidget::setParentWidget( const qt::Object& parent )
+	const qt::Object& GLWidget::getObject()
 	{
-		setParent( dynamic_cast< QWidget* >( parent.get() ) );
+		return _wrapper;
 	}
 }
 

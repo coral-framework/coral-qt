@@ -1,7 +1,9 @@
 /*
-	Component that provides an IGLWidget implementation.
+	Component that provides an OpenGL widget.
+	Also dispatches the widget events to its delegate interfaces.
 */
 component GLWidget
 {
-	provides IGLWidget widget; //< QGLWidget abstraction
+	provides IObjectSource self; //< QObject reference
+	receives IPainter painter;   //< Painter delegate
 };

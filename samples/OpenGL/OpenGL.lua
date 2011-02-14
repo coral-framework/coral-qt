@@ -4,13 +4,13 @@ local qt = require "qt"
 -- Configures search paths
 qt.setSearchPaths( "coral", co.getPaths() )
 
-local mainWindow = qt.loadUi( "coral:/openGL/OpenGLWindow.ui" )
-
--- Creates the GL widget and adds it to the window
--- the code now is ugly, but I did not think of anything good yet.
+local mainWindow = qt.loadUi "coral:/openGL/OpenGLWindow.ui"
 local glWidget = co.new "qt.GLWidget"
-glWidget.widget:setParentWidget( mainWindow.centralwidget._obj )
+local layout = qt.new "QVBoxLayout"
 
+-- Adds the widget to the main window
+layout:addWidget( qt.objectCast( glWidget ) )
+mainWindow.centralwidget:setLayout( layout )
 mainWindow.visible = true
 
 qt.exec()

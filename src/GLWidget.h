@@ -18,18 +18,18 @@ public:
 	
 	virtual ~GLWidget();
 
-	virtual void initializeGL();
+	void initializeGL();
 	
-	virtual void paintGL();
+	void paintGL();
 
-	virtual void resizeGL( int w, int h );
+	void resizeGL( int w, int h );
 
-	virtual void setParentWidget( const qt::Object& parent );
+	const qt::Object& getObject();
 
 protected:
-	virtual IPainter* getPainter();
+	IPainter* getReceptaclePainter();
 
-	virtual void setPainter( IPainter* painter );
+	 void setReceptaclePainter( IPainter* painter );
 
 private:
 	IPainter* _painter;
