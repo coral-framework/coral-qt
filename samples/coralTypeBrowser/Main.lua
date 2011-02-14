@@ -497,19 +497,6 @@ end
 -------------------------------------------------------------------------------
 --- Initializations
 -------------------------------------------------------------------------------
-local function createMenu()
-	M.menu = qt.Menu()
-
-	-- adds a new action using the given menu and text
-	local newAction = M.menu:addAction( M.icons.docs, "test" )
-	newAction.data = "Action0"
-	
-	newAction = M.menu:addAction( M.icons.docs, "test2" )
-	newAction.data = "Action1"
-end
-
---createMenu()
-
 local function setupUi()
 	M.treeView = qt.new( "QTreeView" )
 	M.treeView.objectName = "treeView"

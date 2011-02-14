@@ -19,6 +19,7 @@
 
 #include <QStackedLayout>
 #include <QApplication>
+#include <QMessageBox>
 #include <QFileDialog>
 #include <QStatusBar>
 #include <QBoxLayout>
@@ -137,6 +138,10 @@ public:
 		{
 			object.set( loader.createAction() );
 		}
+		else if( name == "QMessageBox" )
+		{
+			object.set( new QMessageBox() );
+		}
 		else
 		{
 			CORAL_THROW( co::NotSupportedException,
@@ -172,28 +177,28 @@ public:
 		QStackedLayout* qstackedLayout = qobject_cast<QStackedLayout*>( parent.get() );
 		if( qsplitter )
 		{
-			if( beforeIndex > 0 )
+			if( beforeIndex >= 0 )
 				qsplitter->insertWidget( beforeIndex, qwidget );
 			else
 				qsplitter->addWidget( qwidget );
 		}
 		else if( qlayout )
 		{
-			if( beforeIndex > 0 )
+			if( beforeIndex >= 0 )
 				qlayout->insertWidget( beforeIndex, qwidget );
 			else
 				qlayout->addWidget( qwidget );
 		}
 		else if( qstatusBar )
 		{
-			if( beforeIndex > 0 )
+			if( beforeIndex >= 0 )
 				qstatusBar->insertWidget( beforeIndex, qwidget );
 			else
 				qstatusBar->addWidget( qwidget );
 		}
 		else if( qstackedLayout )
 		{
-			if( beforeIndex > 0 )
+			if( beforeIndex >= 0 )
 				qstackedLayout->insertWidget( beforeIndex, qwidget );
 			else
 				qstackedLayout->addWidget( qwidget );
@@ -225,22 +230,24 @@ public:
 		layout.set( qwidget->layout() );
 	}
 
-	void insertAction( const qt::Object& widget, const qt::Object& beforeAction, const qt::Object& action )
+	void insertAction( const qt::Object& widget, co::int32 beforeActionIndex, const qt::Object& action )
 	{
 		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
 		if( !qwidget )
 			CORAL_THROW( qt::Exception, "cannot insert action: 'widget' is not an instace of QWidget" );
 
-		QAction* beforeQAction = qobject_cast<QAction*>( beforeAction.get() );
-		if( !beforeQAction && beforeAction.get() )
-			CORAL_THROW( qt::Exception, "cannot insert action: 'beforeAction' is not an instace of QAction" );
-
 		QAction* qaction = qobject_cast<QAction*>( action.get() );
 		if( !qaction )
 			CORAL_THROW( qt::Exception, "cannot insert action: 'action' is not an instace of QAction" );
 
-		if( beforeQAction )
-			qwidget->insertAction( beforeQAction, qaction );
+		if( beforeActionIndex >= 0 )
+		{
+			QList<QAction*> actions = qwidget->actions();
+			if( beforeActionIndex >= actions.size() )
+				CORAL_THROW( qt::Exception, "cannot insert action: 'beforeActionIndex' out-of-bounds" );
+
+			qwidget->insertAction( actions[beforeActionIndex], qaction );
+		}
 		else
 			qwidget->addAction( qaction );
 	}
@@ -252,6 +259,19 @@ public:
 			CORAL_THROW( qt::Exception, "cannot make separator: 'action' is not an instace of QAction" );
 
 		qaction->setSeparator( true );
+	}
+
+	void setMenu( const qt::Object& action, const qt::Object& menu )
+	{
+		QAction* qaction = qobject_cast<QAction*>( action.get() );
+		if( !qaction )
+			CORAL_THROW( qt::Exception, "cannot set menu: 'action' is not an instace of QAction" );
+
+		QMenu* qmenu = qobject_cast<QMenu*>( menu.get() );
+		if( !qmenu )
+			CORAL_THROW( qt::Exception, "cannot set menu: 'menu' is not an instace of QMenu" );
+
+		qaction->setMenu( qmenu );
 	}
 
 	void execMenu( const qt::Object& menu, co::int32 posX, co::int32 posY, qt::Object& selectedAction )

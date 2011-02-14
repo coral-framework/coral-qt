@@ -50,11 +50,9 @@ QVariant AbstractItemModel::data( const QModelIndex& index, int role ) const
 	co::Any value;
 	_delegate->getData( getInternalId( index ), itemRole, value );
 
-	// returns an invalid QVariant
-	if( !value.isValid() )
-		return QVariant();
-
-	return anyToVariant( value );
+	QVariant result;
+	anyToVariant( value, QMetaType::QVariantList, result );
+	return result;
 }
 
 QVariant AbstractItemModel::headerData( int section, Qt::Orientation orientation, int role ) const
@@ -69,11 +67,9 @@ QVariant AbstractItemModel::headerData( int section, Qt::Orientation orientation
 	else
 		_delegate->getVerticalHeaderData( section, itemRole, value );
 
-	// returns an invalid QVariant
-	if( !value.isValid() )
-		return QVariant();
-
-	return anyToVariant( value );
+	QVariant result;
+	anyToVariant( value, QMetaType::QVariantList, result );
+	return result;
 }
 
 QModelIndex	AbstractItemModel::index( int row, int column, const QModelIndex& parent ) const

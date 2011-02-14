@@ -10,9 +10,9 @@
 #include <QVariant>
 #include <QGenericArgument>
 
-bool canConvert( const co::Any& value );
-QVariant anyToVariant( const co::Any& value );
+void anyToVariant( const co::Any& any, int expectedTypeId, QVariant& var );
+void anyToVariant( const co::Any& any, const char* expectedTypeId, QVariant& var );
+void variantToArgument( QVariant& var, QGenericArgument& arg );
 void variantToAny( const QVariant& v, co::Any& value );
-void anyToArgument( const co::Any& any, const QByteArray& argType, QVariant& var, QGenericArgument& arg );
 
 #endif // _VALUECONVERTERS_H_

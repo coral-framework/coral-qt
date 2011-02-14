@@ -42,21 +42,30 @@ function MT.getLayout( widget )
 end
 
 -- shortcut to ISystem:addAction()
-function MT.addAction( widget, icon, text )
+function MT.addAction( widget, text, icon )
 	local action = M.new( "QAction" )
-	action.icon = icon
-	action.text = text
-	action.iconVisibleInMenu = true
-	system:insertAction( widget._obj, nil, action._obj )
+	if icon then
+		action.icon = icon
+		action.iconVisibleInMenu = true
+	end
+	action.text = text or ""
+	system:insertAction( widget._obj, -1, action._obj )
 	return action
 end
 
-function MT.insertAction( widget, beforeAction, icon, text )
+-- shortcut to ISystem:addAction()
+function MT.setMenu( action, menu )
+	system:setMenu( action._obj, menu._obj )
+end
+
+function MT.insertAction( widget, beforeActionIndex, text, icon )
 	local action = M.new( "QAction" )
-	action.icon = icon
-	action.text = text
+	if icon then
+		action.icon = icon
+	end
+	action.text = text or ""
 	action.iconVisibleInMenu = true
-	system:insertAction( widget._obj, nil, action._obj )
+	system:insertAction( widget._obj, beforeActionIndex or -1, action._obj )
 	return action
 end
 
@@ -219,12 +228,39 @@ M.AlignTop		= 0x0020
 M.AlignBottom	= 0x0040
 M.AlignVCenter	= 0x0080
 M.AlignAbsolute	= 0x0010
-
--------------------------------------------------------------------------------
--- Export Qt::AlignmentFlag enum
--------------------------------------------------------------------------------
+M.AlignCenter	= M.AlignHCenter + M.AlignVCenter
 M.Horizontal = 0x1
 M.Vertical = 0x2
+
+-------------------------------------------------------------------------------
+-- Export QMessageBox enums
+-------------------------------------------------------------------------------
+M.MessageBox = {}
+
+M.MessageBox.NoIcon				= 0
+M.MessageBox.Question			= 4
+M.MessageBox.Information		= 1
+M.MessageBox.Warning			= 2
+M.MessageBox.Critical			= 3
+M.MessageBox.Ok					= 0x00000400
+M.MessageBox.Open				= 0x00002000
+M.MessageBox.Save				= 0x00000800
+M.MessageBox.Cancel				= 0x00400000
+M.MessageBox.Close				= 0x00200000
+M.MessageBox.Discard			= 0x00800000
+M.MessageBox.Apply				= 0x02000000
+M.MessageBox.Reset				= 0x04000000
+M.MessageBox.RestoreDefaults	= 0x08000000
+M.MessageBox.Help				= 0x01000000
+M.MessageBox.SaveAll			= 0x00001000
+M.MessageBox.Yes				= 0x00004000
+M.MessageBox.YesToAll			= 0x00008000
+M.MessageBox.No					= 0x00010000
+M.MessageBox.NoToAll			= 0x00020000
+M.MessageBox.Abort				= 0x00040000
+M.MessageBox.Retry				= 0x00080000
+M.MessageBox.Ignore				= 0x00100000
+M.MessageBox.NoButton			= 0x00000000
 
 -------------------------------------------------------------------------------
 -- Export Module
