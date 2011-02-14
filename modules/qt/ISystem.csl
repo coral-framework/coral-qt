@@ -33,7 +33,7 @@ interface ISystem
 
 		\throw co.NotSupportedException if className is not supported.
 	 */
-	void newInstanceOf( in string className, out Object object ) raises NotSupportedException;
+	void newInstanceOf( in string className, in Object parent, out Object object ) raises NotSupportedException;
 
 	/* 
 		Inserts a widget in the given \a parent before widget with index 
@@ -47,7 +47,7 @@ interface ISystem
 		\throw co.IllegalArgumentException if the \a widget is not instance of
 		QWidget.
 	 */
-	void insertWidget( in Object parent, in uint32 beforeIndex, in Object widget ) 
+	void insertWidget( in Object parent, in int32 beforeIndex, in Object widget ) 
 		raises NotSupportedException;
 
 	/*! 
@@ -79,6 +79,8 @@ interface ISystem
 	 */
 	void insertAction( in Object widget, in int32 beforeActionIndex, in Object action ) 
 		raises IllegalArgumentException, Exception;
+
+	
 
 	/*! Sets the given \a action as separator. \see QAction:setSeparator().
 

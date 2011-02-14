@@ -121,26 +121,27 @@ public:
 		}
 	}
 
-	void newInstanceOf( const std::string& className, qt::Object& object )
+	void newInstanceOf( const std::string& className, const qt::Object& parent, qt::Object& object )
 	{
 		QUiLoader loader;
 		QString name = className.c_str();
+		QWidget* parentWidget = qobject_cast<QWidget*>( parent.get() );
 		// check whether the className is a supported widget
 		if( loader.availableWidgets().contains( name, Qt::CaseInsensitive ) )
 		{
-			object.set( loader.createWidget( name ) );
+			object.set( loader.createWidget( name, parentWidget ) );
 		}
 		else if( loader.availableLayouts().contains( name, Qt::CaseInsensitive ) )
 		{
-			object.set( loader.createLayout( name ) );
+			object.set( loader.createLayout( name, parentWidget ) );
 		}
 		else if( name == "QAction" )
 		{
-			object.set( loader.createAction() );
+			object.set( loader.createAction( parentWidget ) );
 		}
 		else if( name == "QMessageBox" )
 		{
-			object.set( new QMessageBox() );
+			object.set( new QMessageBox( parentWidget ) );
 		}
 		else
 		{
@@ -165,7 +166,7 @@ public:
 			CORAL_THROW( co::NotSupportedException, "cannot add widget: 'parent' is not an instace of QLayout nor QSplitter classs" );
 	}
 
-	void insertWidget( const qt::Object& parent, co::uint32 beforeIndex, const qt::Object& widget )
+	void insertWidget( const qt::Object& parent, co::int32 beforeIndex, const qt::Object& widget )
 	{
 		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
 		if( !qwidget )
