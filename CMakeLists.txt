@@ -31,11 +31,15 @@ SET( CORAL_PATH
 	"${CMAKE_SOURCE_DIR}/modules"
 )
 
+# Request OpenGL support for the gl widget sample
+FIND_PACKAGE( OpenGL REQUIRED )
+
 ################################################################################
 # Subdirectories
 ################################################################################
 
 ADD_SUBDIRECTORY( src )
+ADD_SUBDIRECTORY( samples/opengl/src )
 
 ENABLE_TESTING()
 ADD_SUBDIRECTORY( tests )

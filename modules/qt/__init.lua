@@ -139,6 +139,9 @@ function M.objectCast( component )
 	-- no IObjectSource found, error out to user
 	error( "objectCast: " .. component.type .. " is not an object source." )
 ]]
+
+	-- By now, just assume that the component passed
+	-- has an IObjectSource facet called 'self'
 	return ObjectWrapper( component.self.object )
 end
 
