@@ -17,7 +17,13 @@
 void qt::Object_Adapter::getPropertyOrChild( qt::Object& instance, const std::string& name, co::Any& value )
 {
 	QVariant v = instance.get()->property( name.c_str() );
-	variantToAny( v , value );
+	variantToAny( v, value );
+
+	if( v.isValid() )
+	{
+		variantToAny( v , value );
+		return;
+	}
 
 	QObject* child = instance.get()->findChild<QObject*>( name.c_str() );
 	value.createComplexValue<qt::Object>().set( child );
