@@ -31,10 +31,10 @@ function M.load( mainWindow )
 	mainWindow.statusbar:addWidget( M.button )
 	mainWindow.statusbar:addWidget( M.button2 )
 
-	-- set visible state again (qt hides widgets after removing them)
-	M.lineEdit.visible = true
+	-- set visible state again (Qt hides widgets after they get removed)
 	M.button.visible = true
-	M.button2.visible = true	
+	M.button2.visible = true
+	M.lineEdit.visible = true
 end
 
 function M.unload( mainWindow )

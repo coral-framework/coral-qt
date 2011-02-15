@@ -21,6 +21,7 @@ function M.load( mainWindow )
 		M.initialized = true
 	end
 	M.layout:addWidget( M.textEdit )
+	-- set visible state again (Qt hides widgets after they get removed)
 	M.textEdit.visible = true
 end
 

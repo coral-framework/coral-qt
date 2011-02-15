@@ -11,11 +11,17 @@ local M =
 }
 
 function M.load( mainWindow )
-	M.action = mainWindow.toolbar:addAction( "Extended Action for ToolBar!", M.icon )
+	if not M.initialized then
+		M.menuAction = qt.new( "QAction" )
+		M.menuAction.text = "Extended Action for ToolBar!"
+		M.menuAction.icon = M.icon
+		M.initialized = true
+	end
+	mainWindow.toolbar:addAction( M.menuAction )
 end
 
 function M.unload( mainWindow )
-
+	mainWindow.toolbar:removeAction( M.menuAction )
 end
 
 return M

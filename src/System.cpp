@@ -14,9 +14,7 @@
 #include <qt/IAbstractItemModel.h>
 #include <QAbstractItemView>
 #include <QAbstractItemModel>
-
 #include <QStringListModel>
-
 #include <QStackedLayout>
 #include <QApplication>
 #include <QMessageBox>
@@ -34,6 +32,7 @@
 #include <QWidget>
 #include <QFile>
 #include <QMenu>
+
 #include <sstream>
 
 namespace {
@@ -47,7 +46,7 @@ namespace {
 		element->insertWidget( pos, widget ); \
 	} \
 	else \
-	{	\
+	{ \
 		element->addWidget( widget ); \
 	}
 
@@ -164,7 +163,7 @@ public:
 	{
 		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
 		if( !qwidget )
-			CORAL_THROW( co::NotSupportedException, "cannot add widget: 'widget' is not an instace of QWidget" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot add widget: 'widget' is not an instace of QWidget" );
 
 		QLayout* qlayout = qobject_cast<QLayout*>( parent.get() );
 		QSplitter* qsplitter = qobject_cast<QSplitter*>( parent.get() );
@@ -173,14 +172,14 @@ public:
 		else if( qsplitter )
 			qsplitter->addWidget( qwidget );
 		else
-			CORAL_THROW( co::NotSupportedException, "cannot add widget: 'parent' is not an instace of QLayout nor QSplitter classs" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot add widget: 'parent' is not an instace of QLayout nor QSplitter classs" );
 	}
 
 	void insertWidget( const qt::Object& parent, co::int32 beforeIndex, const qt::Object& widget )
 	{
 		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
 		if( !qwidget )
-			CORAL_THROW( co::NotSupportedException, "cannot add widget: 'widget' is not an instace of QWidget" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot add widget: 'widget' is not an instace of QWidget" );
 
 		QSplitter* qsplitter = qobject_cast<QSplitter*>( parent.get() );
 		QBoxLayout* qlayout = qobject_cast<QBoxLayout*>( parent.get() );
@@ -203,15 +202,15 @@ public:
 			INSERT_WIDGET( qstackedLayout, beforeIndex, qwidget );
 		}
 		else
-			CORAL_THROW( co::NotSupportedException, "cannot insert widget: 'parent' is not an instace of QSplitter, "
-													"QBoxLayout, QStatusBar nor QStackedLayout classs" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot insert widget: 'parent' is not an instace of QSplitter, "
+													   "QBoxLayout, QStatusBar nor QStackedLayout classs" );
 	}
 
 	void removeWidget( const qt::Object& parent, const qt::Object& widget )
 	{
 		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
 		if( !qwidget )
-			CORAL_THROW( co::NotSupportedException, "cannot remove widget: 'widget' is not an instace of QWidget" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot remove widget: 'widget' is not an instace of QWidget" );
 
 		QBoxLayout* qlayout = qobject_cast<QBoxLayout*>( parent.get() );
 		QStatusBar* qstatusBar = qobject_cast<QStatusBar*>( parent.get() );
@@ -223,8 +222,8 @@ public:
 		else if( qstackedLayout )
 			qstackedLayout->removeWidget( qwidget );
 		else
-			CORAL_THROW( co::NotSupportedException, "cannot remove widget: 'parent' is not an instace of "
-													"QBoxLayout, QStatusBar nor QStackedLayout classs" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot remove widget: 'parent' is not an instace of "
+													   "QBoxLayout, QStatusBar nor QStackedLayout classs" );
 
 		qwidget->setParent( 0 );
 	}
@@ -233,11 +232,11 @@ public:
 	{
 		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
 		if( !qwidget )
-			CORAL_THROW( co::NotSupportedException, "cannot set layout: 'widget' is not an instace of QWidget" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot set layout: 'widget' is not an instace of QWidget" );
 
 		QLayout* qlayout = qobject_cast<QLayout*>( layout.get() );
 		if( !qlayout )
-			CORAL_THROW( co::NotSupportedException, "cannot set layout: 'layout' is not an instace of QLayout" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot set layout: 'layout' is not an instace of QLayout" );
 
 		qwidget->setLayout( qlayout );
 	}
@@ -246,7 +245,7 @@ public:
 	{
 		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
 		if( !qwidget )
-			CORAL_THROW( co::NotSupportedException, "cannot get layout: 'widget' is not an instace of QWidget" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot get layout: 'widget' is not an instace of QWidget" );
 
 		layout.set( qwidget->layout() );
 	}
@@ -255,11 +254,11 @@ public:
 	{
 		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
 		if( !qwidget )
-			CORAL_THROW( qt::Exception, "cannot insert action: 'widget' is not an instace of QWidget" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot insert action: 'widget' is not an instace of QWidget" );
 
 		QAction* qaction = qobject_cast<QAction*>( action.get() );
 		if( !qaction )
-			CORAL_THROW( qt::Exception, "cannot insert action: 'action' is not an instace of QAction" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot insert action: 'action' is not an instace of QAction" );
 
 		if( beforeActionIndex >= 0 )
 		{
@@ -273,11 +272,24 @@ public:
 			qwidget->addAction( qaction );
 	}
 
+	void removeAction( const qt::Object& widget, const qt::Object& action )
+	{
+		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
+		if( !qwidget )
+			CORAL_THROW( co::IllegalArgumentException, "cannot remove action: 'widget' is not an instace of QWidget" );
+
+		QAction* qaction = qobject_cast<QAction*>( action.get() );
+		if( !qaction )
+			CORAL_THROW( co::IllegalArgumentException, "cannot remove action: 'action' is not an instace of QAction" );
+
+		qwidget->removeAction( qaction );
+	}
+
 	void makeSeparator( const qt::Object& action )
 	{
 		QAction* qaction = qobject_cast<QAction*>( action.get() );
 		if( !qaction )
-			CORAL_THROW( qt::Exception, "cannot make separator: 'action' is not an instace of QAction" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot make separator: 'action' is not an instace of QAction" );
 
 		qaction->setSeparator( true );
 	}
@@ -286,11 +298,11 @@ public:
 	{
 		QAction* qaction = qobject_cast<QAction*>( action.get() );
 		if( !qaction )
-			CORAL_THROW( qt::Exception, "cannot set menu: 'action' is not an instace of QAction" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot set menu: 'action' is not an instace of QAction" );
 
 		QMenu* qmenu = qobject_cast<QMenu*>( menu.get() );
 		if( !qmenu )
-			CORAL_THROW( qt::Exception, "cannot set menu: 'menu' is not an instace of QMenu" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot set menu: 'menu' is not an instace of QMenu" );
 
 		qaction->setMenu( qmenu );
 	}

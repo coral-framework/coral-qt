@@ -62,14 +62,23 @@ end
 
 -- shortcut to ISystem:addAction()
 function MT.addAction( widget, text, icon )
-	local action = M.new( "QAction" )
-	if icon then
-		action.icon = icon
-		action.iconVisibleInMenu = true
+	local actionInstance = text	
+	-- support adding action from text and icon
+	if type( text ) == "string" then
+		actionInstance = M.new( "QAction" )
+		if icon then
+			actionInstance.icon = icon
+			actionInstance.iconVisibleInMenu = true
+		end
+		actionInstance.text = text or ""
 	end
-	action.text = text or ""
-	system:insertAction( widget._obj, -1, action._obj )
-	return action
+	
+	system:insertAction( widget._obj, -1, actionInstance._obj )
+	return actionInstance
+end
+
+function MT.removeAction( widget, action )
+	system:removeAction( widget._obj, action._obj )
 end
 
 -- shortcut to ISystem:setMenu( action, menu )
