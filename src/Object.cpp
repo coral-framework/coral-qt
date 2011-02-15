@@ -17,11 +17,9 @@
 void qt::Object_Adapter::getPropertyOrChild( qt::Object& instance, const std::string& name, co::Any& value )
 {
 	QVariant v = instance.get()->property( name.c_str() );
-	variantToAny( v, value );
-
 	if( v.isValid() )
 	{
-		variantToAny( v , value );
+		variantToAny( v, value );
 		return;
 	}
 

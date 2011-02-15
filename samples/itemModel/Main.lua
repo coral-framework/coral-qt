@@ -8,7 +8,6 @@ local mainWindow = qt.loadUi( "coral:/itemModel/ListViewDialog.ui" )
 
 mainWindow.listView:setModel( ListItemModel() )
 
-print( mainWindow.visible )
 mainWindow.visible = true
 
 qt.exec()
