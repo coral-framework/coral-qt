@@ -33,7 +33,8 @@ interface ISystem
 
 		\throw co.NotSupportedException if className is not supported.
 	 */
-	void newInstanceOf( in string className, in Object parent, out Object object ) raises NotSupportedException;
+	void newInstanceOf( in string className, in Object parent, out Object object ) 
+		raises NotSupportedException;
 
 	/* 
 		Inserts a widget in the given \a parent before widget with index 
@@ -48,7 +49,25 @@ interface ISystem
 		QWidget.
 	 */
 	void insertWidget( in Object parent, in int32 beforeIndex, in Object widget ) 
-		raises NotSupportedException;
+		raises IllegalArgumentException;
+
+	/* 
+		Removes \a widget from \a parent.
+	
+		\throw co.IllegalArgumentException if the \a parent is not an instance
+		of QStatusBar, QBoxLayout nor QStackedLayout class.
+		Note: altough it is possible to insert a widget into a QSplitter (\see,
+		insertWidget()), Qt	does not allow removal of widgets from splitters,
+		so an exception will be raised if a QSplitter is passed as argument to
+		\a widget.
+
+		This function also sets the parent widget of \a widget to NULL.
+
+		\throw co.IllegalArgumentException if the \a widget is not instance of
+		QWidget.
+	 */
+	void removeWidget( in Object parent, in Object widget )
+		raises IllegalArgumentException;
 
 	/*! 
 		Sets a layout in the given widget.
@@ -74,13 +93,23 @@ interface ISystem
 		action in widgets list.
 
 		\throw co.IllegalArgumentException if the \a widget is not instance of
-		QWidget.
-		\throw qt.Exception if the \a action or beforeActionIndex is out-of-bounds.
+		QWidget or \a action is not an instance of QAction.
+		\throw qt.Exception if the \a action or beforeActionIndex is 
+		out-of-bounds.
 	 */
 	void insertAction( in Object widget, in int32 beforeActionIndex, in Object action ) 
 		raises IllegalArgumentException, Exception;
 
-	
+	/*! 
+		Removes \a action from \a widget.
+		
+		\throw co.IllegalArgumentException if the \a widget is not instance of
+		QWidget or \a action is not an instance of QAction.
+		\throw qt.Exception if the \a action or beforeActionIndex is 
+		out-of-bounds.
+	 */
+	void removeAction( in Object widget, in Object action ) 
+		raises IllegalArgumentException, Exception;	
 
 	/*! Sets the given \a action as separator. \see QAction:setSeparator().
 

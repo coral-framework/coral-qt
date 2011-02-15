@@ -11,12 +11,22 @@ local M =
 }
 
 function M.load( mainWindow )
-	local layout = qt.new( "QVBoxLayout" )
-	mainWindow.centralWidget:setLayout( layout )
-	local textEdit = qt.new( "QTextEdit" )
-	textEdit.plainText = "[Extended Central Widget]: Click unload in the plugins access menu to unload the Central Widget Plugin and remove this widget."
-	textEdit:invoke( "setAlignment(Qt::Alignment)", qt.AlignCenter )
-	layout:addWidget( textEdit )
+	if not M.initialized then
+		M.layout = mainWindow.centralWidget:setLayout( "QVBoxLayout" )	
+		M.textEdit = qt.new( "QTextEdit" )
+		local msg = "[Extended Central Widget]: Click unload in the plugins "
+		msg = msg .. "access menu to unload the Central Widget Plugin and remove this widget."
+		M.textEdit.plainText = msg
+		M.textEdit:invoke( "setAlignment(Qt::Alignment)", qt.AlignCenter )
+		M.initialized = true
+	end
+	M.layout:addWidget( M.textEdit )
+	-- set visible state again (Qt hides widgets after they get removed)
+	M.textEdit.visible = true
+end
+
+function M.unload( mainWindow )
+	mainWindow.centralWidget:getLayout():removeWidget( M.textEdit )
 end
 
 return M

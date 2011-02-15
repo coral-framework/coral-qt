@@ -28,15 +28,26 @@ local function ObjectWrapper( object )
 	return setmetatable( { _obj = object }, MT )
 end
 
--- shortcut to ISystem:addWidget( layout, widget )
-function MT.addWidget( layout, widget )
-	system:insertWidget( layout._obj, -1, widget._obj )
+-- helper to ISystem:insertWidget( parent, pos, widget )
+function MT.addWidget( parent, widget )
+	system:insertWidget( parent._obj, -1, widget._obj )
+	return widget
 end
 
+-- helper to ISystem:removeWidget( parent, widget )
+function MT.removeWidget( parent, widget )
+	system:removeWidget( parent._obj, widget._obj )
+	return widget
+end
+
+-- helper to ISystem:setLayout( widget, layout )
 function MT.setLayout( widget, layout )
 	local layoutInstance = layout
 	if type( layout ) == "string" then
-		-- create the layout passing widget as parent (Qt Forces the parent in Debug with an Q_ASSERT for some strange reason!!)
+		-- create the layout specified by the given string passing 'widget' 
+		-- as parent: Qt forces a non-null parent in Debug using an Q_ASSERT
+		-- for some strange reason. It is not pointed in the documentation of 
+		-- QUiLoader::createLayout().
 		layoutInstance = M.new( layout, widget )
 	end
 	
@@ -44,27 +55,39 @@ function MT.setLayout( widget, layout )
 	return layoutInstance
 end
 
+-- shortcut to ISystem:getLayout( widget )
 function MT.getLayout( widget )
 	return ObjectWrapper( system:getLayout( widget._obj ) )
 end
 
 -- shortcut to ISystem:addAction()
 function MT.addAction( widget, text, icon )
-	local action = M.new( "QAction" )
-	if icon then
-		action.icon = icon
-		action.iconVisibleInMenu = true
+	local actionInstance = text	
+	-- support adding action from text and icon
+	if type( text ) == "string" then
+		actionInstance = M.new( "QAction" )
+		if icon then
+			actionInstance.icon = icon
+			actionInstance.iconVisibleInMenu = true
+		end
+		actionInstance.text = text or ""
 	end
-	action.text = text or ""
-	system:insertAction( widget._obj, -1, action._obj )
-	return action
+	
+	system:insertAction( widget._obj, -1, actionInstance._obj )
+	return actionInstance
 end
 
--- shortcut to ISystem:addAction()
+function MT.removeAction( widget, action )
+	system:removeAction( widget._obj, action._obj )
+end
+
+-- shortcut to ISystem:setMenu( action, menu )
 function MT.setMenu( action, menu )
 	system:setMenu( action._obj, menu._obj )
+	return menu
 end
 
+-- shortcut to ISystem:insertAction( widget, pos, action )
 function MT.insertAction( widget, beforeActionIndex, text, icon )
 	local action = M.new( "QAction" )
 	if icon then

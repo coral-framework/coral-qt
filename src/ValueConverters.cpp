@@ -36,7 +36,12 @@ void anyToVariant( const co::Any& any, int expectedTypeId, QVariant& var )
 	case QMetaType::QString:
 		var.setValue<QString>( any.get<const std::string&>().c_str() );
 		return;
-	case QMetaType::QVariantList:
+	case QMetaType::QIcon:
+	case QMetaType::QSize:
+	case QMetaType::QFont:
+	case QMetaType::QColor:
+	case QMetaType::QBrush:
+	case QMetaType::QVariant:
 		switch( any.getKind() )
 		{
 		case co::TK_NONE:		return;

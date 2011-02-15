@@ -91,7 +91,7 @@ local function setupUi()
 			unloadAction.enabled = true 
 		end
 
-		local onUnloadActionTriggered = function() 
+		local onUnloadActionTriggered = function()
 			v.unload( M.mainWindow ) 
 			loadAction.enabled = true 
 			unloadAction.enabled = false

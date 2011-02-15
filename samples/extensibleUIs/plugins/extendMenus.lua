@@ -11,12 +11,23 @@ local M =
 }
 
 function M.load( mainWindow )
-	M.menuAction = mainWindow.menubar:addAction( "[Extended Menu]" )
-	local menu = qt.Menu()
-	menu:addAction( "Extended Option1" )
-	menu:addAction( "Extended Option2" )
-	menu:addAction( "Extended Option3" )
-	M.menuAction:setMenu( menu )
+	if not M.initialized then
+		M.menuAction = qt.new( "QAction" )
+		M.menuAction.text = "[Extended Menu]"
+
+		local menu = qt.Menu()
+		menu:addAction( "Extended Option1" )
+		menu:addAction( "Extended Option2" )
+		menu:addAction( "Extended Option3" )
+		M.menuAction:setMenu( menu )
+		M.initialized = true
+	end
+	mainWindow.menubar:addAction( M.menuAction )
+end
+
+
+function M.unload( mainWindow )
+	mainWindow.menubar:removeAction( M.menuAction )
 end
 
 return M
