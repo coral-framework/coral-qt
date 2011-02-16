@@ -12,7 +12,8 @@ namespace opengl {
 
 BasicCubeSample::BasicCubeSample()
 {
-	// empty
+	_pitch = 45.0;
+	_yaw = 45.0;
 }
 
 BasicCubeSample::~BasicCubeSample()
@@ -42,8 +43,8 @@ void BasicCubeSample::paint()
 	glLoadIdentity();
 	glTranslated( 0.0, 0.0, -5.0 );
 	
-	glRotated( 45.0, 1.0, 0.0, 0.0 ); // yaw
-	glRotated( 45.0, 0.0, 1.0, 0.0 ); // pitch
+	glRotated( _yaw, 1.0, 0.0, 0.0 ); // yaw
+	glRotated( _pitch, 0.0, 1.0, 0.0 ); // pitch
 
 	// Draw the cube's faces
 	// Front face

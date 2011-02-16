@@ -5,4 +5,5 @@
 component BasicCubeSample
 {
 	provides qt.IPainter painter;
+	provides ICubeParameters parameters;
 };

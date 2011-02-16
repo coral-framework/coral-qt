@@ -3,11 +3,11 @@
 -------------------------------------------------------------------------------
 
 -- default empty implementation for keyboard and mouse handlers
-local function defaultKeyHandler( key ) end
-local function defaultMouseHandler( x, y, button ) end
+local function defaultKeyHandler( self, key ) end
+local function defaultMouseHandler( self, x, y, button ) end
 
 return function( componentName )
-	local InputListener = co.Component { name = componentName, provides = { "qt.IInputListener" } }
+	local InputListener = co.Component { name = componentName, provides = { listener = "qt.IInputListener" } }
 	
 	InputListener.keyPressed = defaultKeyHandler
 	InputListener.keyReleased = defaultKeyHandler
