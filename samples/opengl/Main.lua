@@ -5,7 +5,7 @@ local qt = require "qt"
 qt.setSearchPaths( "coral", co.getPaths() )
 
 -- Creates all the necessary stuff
-local mainWindow = qt.loadUi "coral:/openGL/MainWindow.ui"
+local mainWindow = qt.loadUi "coral:/opengl/MainWindow.ui"
 local glWidget   = co.new "qt.GLWidget"
 local cubeSample = co.new "opengl.BasicCubeSample"
 
