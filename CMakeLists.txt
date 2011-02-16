@@ -21,6 +21,7 @@ FIND_PACKAGE( Coral REQUIRED )
 SET( QT_MIN_VERSION "4.7.0" ) # minimum Qt version required
 FIND_PACKAGE( Qt4 ${QT_MIN_VERSION} REQUIRED )
 SET( QT_USE_QTUITOOLS 1 )
+SET( QT_USE_QTOPENGL  1 )
 INCLUDE( ${QT_USE_FILE} )
 
 # Configure the coral path
@@ -30,11 +31,15 @@ SET( CORAL_PATH
 	"${CMAKE_SOURCE_DIR}/modules"
 )
 
+# Request OpenGL support for the gl widget sample
+FIND_PACKAGE( OpenGL REQUIRED )
+
 ################################################################################
 # Subdirectories
 ################################################################################
 
 ADD_SUBDIRECTORY( src )
+ADD_SUBDIRECTORY( samples/opengl/src )
 
 ENABLE_TESTING()
 ADD_SUBDIRECTORY( tests )

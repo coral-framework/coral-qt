@@ -1,0 +1,8 @@
+/*
+	A small sample for qt.GLWidget, who only draws a cube on-screen.
+ */
+
+component BasicCubeSample
+{
+	provides qt.IPainter painter;
+};

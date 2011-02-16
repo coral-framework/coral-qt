@@ -149,6 +149,26 @@ function MT.__newindex( wrapper, name, value )
 end
 
 -------------------------------------------------------------------------------
+-- Casts IObjectSource components into an ObjectWrapper
+-------------------------------------------------------------------------------
+function M.objectCast( component )
+--[[
+	-- check whether we are really dealing with a component
+	assert( component.kind == "TK_COMPONENT", "objectCast: " .. component.type .. " is not an component." )
+	-- scans the component's facets for an IObjectSource and returns its enclosed object
+	for facet in component.facets do
+		if facet.type == "qt.IObjectSource" then return ObjectWrapper( facet.object ) end
+	end
+	-- no IObjectSource found, error out to user
+	error( "objectCast: " .. component.type .. " is not an object source." )
+]]
+
+	-- By now, just assume that the component passed
+	-- has an IObjectSource facet called 'self'
+	return ObjectWrapper( component.self.object )
+end
+
+-------------------------------------------------------------------------------
 -- Lua constructors for supported Qt types
 -------------------------------------------------------------------------------
 -- Constructs a qt icon instance using qt.Variant

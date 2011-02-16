@@ -27,5 +27,5 @@ function multipleLuaFunctionCouldBeUsedAsSlotsTest()
 
 	w.txtInput.plainText = "changing text"
 
-	ASSERT_EQUALS( hits, 3, "2 slots where connected to a signal but they where not both signaled." )
+	ASSERT_EQ( hits, 3, "2 slots where connected to a signal but they where not both signaled." )
 end

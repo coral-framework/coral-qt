@@ -1,0 +1,9 @@
+/*
+	Delegate for IGLWidget painting callbacks.
+*/
+ interface IPainter
+{
+	void initialize();
+	void paint();
+	void resize( in int32 width, in int32 height );
+};
