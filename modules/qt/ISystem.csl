@@ -9,9 +9,18 @@ interface ISystem
 	// The 'qApp' object.
 	readonly attribute Object app;
 
-	// Loads a QWidget from a .ui file created in Qt Designer.
-	// \throw qt.Exception if the ui file could not be loaded.
-	void loadUi( in string filePath, out Object widget ) raises Exception;
+	/* 
+		Loads a QWidget from a .ui file created in Qt Designer.
+		If \a parent is not NULL, it will be set as the parent of the returned
+		widget.
+
+		\throw qt.Exception if the ui file could not be loaded.
+		\throw co.IllegalArgumentException if \a parent is not a subclass of
+		 QWidget.		
+	 */
+	
+	void loadUi( in string filePath, in Object parent, out Object widget ) 
+		raises Exception, IllegalArgumentException;
 
 	// Sets or replaces Qt's search paths for file names with the prefix 
 	// 'prefix' to 'searchPaths'. \see Qt's documentation of QDir::setSearchPaths().

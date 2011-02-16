@@ -34,6 +34,11 @@ function MT.addWidget( parent, widget )
 	return widget
 end
 
+function MT.insertWidget( parent, widget, pos )
+	system:insertWidget( parent._obj, pos, widget._obj )
+	return widget
+end
+
 -- helper to ISystem:removeWidget( parent, widget )
 function MT.removeWidget( parent, widget )
 	system:removeWidget( parent._obj, widget._obj )
@@ -301,16 +306,23 @@ M.MessageBox.NoButton			= 0x00000000
 M.app = ObjectWrapper( system.app )
 
 function M.new( className, parent, object )
+	local parentInstance = parent
 	if not parent then
 		-- empty Object representing a null QObject
-		parent = { _obj = co.new( "qt.Object" ) }
+		parentInstance = { _obj = co.new( "qt.Object" ) }
 	end
 
-	return ObjectWrapper( system:newInstanceOf( className, parent._obj ) )
+	return ObjectWrapper( system:newInstanceOf( className, parentInstance._obj ) )
 end
 
-function M.loadUi( uiFile )
-	return ObjectWrapper( system:loadUi( uiFile ) )
+function M.loadUi( uiFile, parentWidget )
+	local parentInstance = parentWidget
+	if not parentWidget then
+		-- empty Object representing a null QObject
+		parentInstance = { _obj = co.new( "qt.Object" ) }
+	end
+
+	return ObjectWrapper( system:loadUi( uiFile, parentInstance._obj ) )
 end
 
 function M.getExistingDirectory( parent, caption, initialDir )
