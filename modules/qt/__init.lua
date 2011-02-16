@@ -34,6 +34,11 @@ function MT.addWidget( parent, widget )
 	return widget
 end
 
+function MT.insertWidget( parent, widget, pos )
+	system:insertWidget( parent._obj, pos, widget._obj )
+	return widget
+end
+
 -- helper to ISystem:removeWidget( parent, widget )
 function MT.removeWidget( parent, widget )
 	system:removeWidget( parent._obj, widget._obj )

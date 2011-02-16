@@ -204,7 +204,7 @@ public:
 		}
 		else if( qstatusBar )
 		{
-			INSERT_WIDGET( qstatusBar, beforeIndex, qwidget );
+			qstatusBar->insertPermanentWidget( beforeIndex, qwidget );
 		}
 		else if( qstackedLayout )
 		{
