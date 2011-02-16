@@ -68,8 +68,16 @@ public:
 
 	const qt::Object& getApp() { return _appObj; }
 
-	void loadUi( const std::string& filePath, qt::Object& widget )
+	void loadUi( const std::string& filePath, const qt::Object& parent, qt::Object& widget )
 	{
+		QWidget* parentWidget = 0;
+		if( parent.get() )
+		{
+			parentWidget = qobject_cast<QWidget*>( parent.get() );
+			if( !parentWidget )
+				CORAL_THROW( co::IllegalArgumentException, "cannot set parent widget: 'parent' is not an instace of QWidget" );
+		}
+
 		QUiLoader loader;
 
 		QFile uiFile( filePath.c_str() );
@@ -93,6 +101,7 @@ public:
 			CORAL_THROW( qt::Exception, "error loading ui file '" << filePath << "'"  );
 		}
 
+		resWidget->setParent( parentWidget );
 		widget.set( resWidget );
 	}
 
