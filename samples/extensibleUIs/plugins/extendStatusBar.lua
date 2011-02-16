@@ -35,6 +35,7 @@ function M.load( mainWindow )
 	M.button.visible = true
 	M.button2.visible = true
 	M.lineEdit.visible = true
+	mainWindow.statusbar:invoke( "showMessage(QString)", "Test Message. Does it conflict with widgets? No!" )
 end
 
 function M.unload( mainWindow )

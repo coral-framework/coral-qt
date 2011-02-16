@@ -204,7 +204,14 @@ public:
 		}
 		else if( qstatusBar )
 		{
-			qstatusBar->insertPermanentWidget( beforeIndex, qwidget );
+			if( beforeIndex >= 0 )
+			{
+				qstatusBar->insertPermanentWidget( beforeIndex, qwidget );
+			}
+			else
+			{
+				qstatusBar->addPermanentWidget( qwidget );
+			}
 		}
 		else if( qstackedLayout )
 		{
