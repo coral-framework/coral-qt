@@ -6,4 +6,5 @@ component GLWidget
 {
 	provides IObjectSource self; //< QObject reference
 	receives IPainter painter;   //< Painter delegate
+	receives IInputListener inputListener; //<< Input event delegate
 };

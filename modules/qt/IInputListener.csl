@@ -1,0 +1,12 @@
+/*
+ * Interface for handling of events from input devices (keyboard and mouse).
+ */
+interface IInputListener
+{
+	void keyPressed( in int32 key );
+	void keyReleased( in int32 key );
+	void mousePressed( in int32 x, in int32 y, in int32 button );
+	void mouseReleased( in int32 x, in int32 y, in int32 button );
+	void mouseDoubleClicked( in int32 x, in int32 y, in int32 button );
+	void mouseMoved( in int32 x, in int32 y );
+};

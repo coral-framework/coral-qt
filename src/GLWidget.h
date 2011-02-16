@@ -27,12 +27,23 @@ public:
 	const qt::Object& getObject();
 
 protected:
-	IPainter* getReceptaclePainter();
+	void keyPressEvent( QKeyEvent* event );
+	void keyReleaseEvent( QKeyEvent* event );
+	void mousePressEvent( QMouseEvent* event );
+	void mouseReleaseEvent( QMouseEvent* event );
+	void mouseMoveEvent( QMouseEvent* event );
+	void mouseDoubleClickEvent( QMouseEvent* event );
 
-	 void setReceptaclePainter( IPainter* painter );
+protected:
+	IPainter* getReceptaclePainter();
+	void setReceptaclePainter( IPainter* painter );
+
+	IInputListener* getReceptacleInputListener();
+	void setReceptacleInputListener( IInputListener* inputListener );
 
 private:
 	IPainter* _painter;
+	IInputListener* _inputListener;
 	QObjectWrapper _wrapper;
 };
 
