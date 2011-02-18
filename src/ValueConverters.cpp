@@ -39,6 +39,7 @@ void anyToVariant( const co::Any& any, int expectedTypeId, QVariant& var )
 	case QMetaType::QIcon:
 	case QMetaType::QSize:
 	case QMetaType::QFont:
+	case QMetaType::QPoint:
 	case QMetaType::QColor:
 	case QMetaType::QBrush:
 	case QMetaType::QVariant:
@@ -139,7 +140,18 @@ void variantToAny( const QVariant& v, co::Any& value )
 	case QVariant::DateTime:
 		value.createString() = v.toString().toLatin1().data();
 		break;
-
+	case QVariant::Icon:
+	case QVariant::Size:
+	case QVariant::Font:
+	case QVariant::Point:
+	case QVariant::Color:
+	case QVariant::Brush:
+		{
+			// sets a qt::Variant
+			qt::Variant& refVariant = value.createComplexValue<qt::Variant>();
+			refVariant = v;
+			break;
+		}
 	default:
 		CORAL_THROW( co::IllegalCastException, "cannot convert " << v.typeName() << " to a Coral any." );
 		break;

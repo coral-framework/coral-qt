@@ -3,6 +3,7 @@
  * See copyright notice in LICENSE.md
  */
 
+#include "EventHub.h"
 #include "System_Base.h"
 #include "ConnectionHub.h"
 
@@ -359,6 +360,11 @@ public:
 		QObject::connect( qtView, SIGNAL( pressed( const QModelIndex& ) ), qtModel, SLOT( pressed( const QModelIndex& ) ) );
 	}
 
+	co::int32 installEventHandler( const qt::Object& watched, qt::IEventHandler* handler )
+	{
+		return _eventHub.installEventHandler( watched, handler );
+	}
+
 	co::int32 connect( const qt::Object& sender, const std::string& signal, qt::IConnectionHandler* handler )
 	{
 		return _connectionHub.connect( sender, signal, handler );
@@ -388,6 +394,7 @@ private:
 	QApplication* _app;
 	qt::Object _appObj;
 	ConnectionHub _connectionHub;
+	EventHub _eventHub;
 };
 
 } // namespace qt

@@ -160,6 +160,15 @@ interface ISystem
 	 */
 	void assignModelToView( inout Object view, in IAbstractItemModel model ) raises IllegalArgumentException;
 
+
+	/*
+		Installs an event handler in \a watched object and returns a cookie 
+		for the installation. Once installed, the event handler will be 
+		notified of all events from \a watched object. If \a watched already
+	    have an installed event handler it will be replaced.
+	 */
+	int32 installEventHandler( in Object watched, in IEventHandler handler );
+
 	/*
 		Connects a \a signal from \a sender to a \a handler, and returns the 
 		connection cookie. \note To undo the connection, call disconnect() 

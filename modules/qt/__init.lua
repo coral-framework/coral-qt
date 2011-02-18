@@ -16,8 +16,26 @@ function LuaConnectionHandler.handler:onSignal( cookie, ... )
 	closure( ... )
 end
 
-local handlerClosures = {}
-local connectionHandler = ( LuaConnectionHandler{ closures = handlerClosures } ).handler
+local connectionHandlerClosures = {}
+local connectionHandler = ( LuaConnectionHandler{ closures = connectionHandlerClosures } ).handler
+
+-------------------------------------------------------------------------------
+-- IEventHandler component that dispatches all events
+-------------------------------------------------------------------------------
+local LuaEventHandler = co.Component { name = "qt.LuaEventHandler", provides = { handler = "qt.IEventHandler" } }
+function LuaEventHandler.handler:onEvent( cookie, eventType, ... )
+	if not self.filteredObjects[cookie][eventType] then
+		return
+	end
+
+	local closures = self.filteredObjects[cookie][eventType].closures
+	for i, v in ipairs( closures ) do
+		v( self.filteredObjects[cookie][eventType].wrapper, ... )
+	end
+end
+
+local filteredObjects = {}
+local eventHandler = ( LuaEventHandler{ filteredObjects = filteredObjects } ).handler
 
 -------------------------------------------------------------------------------
 -- ObjectWrapper
@@ -94,14 +112,19 @@ end
 
 -- shortcut to ISystem:insertAction( widget, pos, action )
 function MT.insertAction( widget, beforeActionIndex, text, icon )
-	local action = M.new( "QAction" )
-	if icon then
-		action.icon = icon
+	local actionInstance = text	
+	-- support adding action from text and icon
+	if type( text ) == "string" then
+		actionInstance = M.new( "QAction" )
+		if icon then
+			actionInstance.icon = icon
+			actionInstance.iconVisibleInMenu = true
+		end
+		actionInstance.text = text or ""
 	end
-	action.text = text or ""
-	action.iconVisibleInMenu = true
-	system:insertAction( widget._obj, beforeActionIndex or -1, action._obj )
-	return action
+	
+	system:insertAction( widget._obj, beforeActionIndex, actionInstance._obj )
+	return actionInstance
 end
 
 function MT.insertSeparator( widget, beforeAction )
@@ -122,7 +145,20 @@ end
 
 local function connect( wrapper, signal, handlerClosure )
 	local cookie = system:connect( wrapper._obj, signal, connectionHandler )
-	handlerClosures[cookie] = handlerClosure
+	connectionHandlerClosures[cookie] = handlerClosure
+end
+
+local function listen( wrapper, eventType, handlerClosure )
+	assert( type( handlerClosure ) == "function", "listen: invalid handlerClosure" )
+	local cookie = system:installEventHandler( wrapper._obj, eventHandler )
+
+	local t = filteredObjects
+	t[cookie] = t[cookie] or {}
+	t[cookie][eventType] = t[cookie][eventType] or {}
+	t[cookie][eventType].closures = t[cookie][eventType].closures or {}
+	t[cookie][eventType].wrapper = wrapper
+
+	table.insert( t[cookie][eventType].closures, handlerClosure )
 end
 
 local function invoke( wrapper, name, a1, a2, a3, a4, a5, a6, a7 )
@@ -134,6 +170,8 @@ function MT.__index( wrapper, name )
 		return connect
 	elseif name == "invoke" then
 		return invoke
+	elseif name == "listen" then
+		return listen
 	end
 
 	-- returns one of the shortcut functions
@@ -183,6 +221,13 @@ function M.Icon( filename )
 	return variant
 end
 
+-- Constructs a qt point instance using qt.Variant
+function M.Point( x, y )
+	local variant = co.new( "qt.Variant" )
+	variant:setPoint( x, y )
+	return variant
+end
+
 -- Constructs a qt color instance using qt.Variant
 function M.Color( r, g, b, a )
 	local variant = co.new( "qt.Variant" )
@@ -219,6 +264,23 @@ function M.Menu( title )
 	menu.title = title or ""
 	return menu
 end
+
+-------------------------------------------------------------------------------
+-- Export QEvent::Type enum
+-------------------------------------------------------------------------------
+M.Event = {}
+
+M.Event.MouseButtonDblClick	= 4
+M.Event.MouseButtonPress	= 2
+M.Event.MouseButtonRelease	= 3
+M.Event.MouseMove			= 5
+M.Event.KeyPress			= 6
+M.Event.KeyRelease			= 7
+M.Event.Wheel				= 31
+M.Event.Close				= 19
+M.Event.Resize				= 14
+M.Event.Show				= 17
+M.Event.Hide				= 18
 
 -------------------------------------------------------------------------------
 -- Export Qt::ItemFlag enum (see AbstractItemModelDelegate:getData())
