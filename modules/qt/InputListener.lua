@@ -15,6 +15,7 @@ return function( componentName )
 	InputListener.mouseReleased = defaultMouseHandler
 	InputListener.mouseDoubleClicked = defaultMouseHandler
 	InputListener.mouseMoved = defaultMouseHandler
+	InputListener.mouseWheel = defaultMouseHandler
 	
 	return InputListener
 end

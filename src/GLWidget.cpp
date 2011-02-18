@@ -87,6 +87,31 @@ namespace qt {
 			event->ignore();
 	}
 
+	void GLWidget::setAutoSwapBuffers( bool autoSwapBuffers )
+	{
+		setAutoBufferSwap( autoSwapBuffers );
+	}
+	
+	bool GLWidget::getAutoSwapBuffers()
+	{
+		return autoBufferSwap();
+	}
+
+	void GLWidget::setFormat( co::int32 desiredFormat )
+	{
+		QGLWidget::setFormat( QGLFormat( static_cast<QGL::FormatOption>( desiredFormat ) ) );
+	}
+
+	void GLWidget::swapBuffers()
+	{
+		QGLWidget::swapBuffers();
+	}
+
+	void GLWidget::makeCurrent()
+	{
+		QGLWidget::makeCurrent();
+	}
+
 	const qt::Object& GLWidget::getObject()
 	{
 		return _wrapper;

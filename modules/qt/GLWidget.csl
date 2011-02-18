@@ -5,6 +5,7 @@
 component GLWidget
 {
 	provides IObjectSource self; //< QObject reference
+	provides IGLContext context; //< OpenGL rendering context
 	receives IPainter painter;   //< Painter delegate
 	receives IInputListener inputListener; //<< Input event delegate
 };

@@ -12,25 +12,54 @@ local glWidget   = co.new "qt.GLWidget"
 local cubeSample = co.new "opengl.BasicCubeSample"
 
 -------------------------------------------------------------------------------
+-- Sets the widget format
+glWidget.context:setFormat( qt.FormatOption.Rgba + qt.FormatOption.DoubleBuffer + qt.FormatOption.AlphaChannel )
+
+-------------------------------------------------------------------------------
 -- Creates and configures the InputListener for the sample
 
-local InputListener = require "qt.InputListener"
-local SampleInputListener = InputListener( "qt.samples.opengl.SampleInputListener" )
+local SampleInputListener = co.Component {
+	name = "qt.samples.opengl.SampleInputListener",
+	provides = { listener   = "qt.IInputListener" },
+	receives = { parameters = "opengl.ICubeParameters" }
+}
 
-SampleInputListener.lastx = 0
-SampleInputListener.lasty = 0
-SampleInputListener.target = qt.objectCast( glWidget )
+-- Internal attributes
+SampleInputListener.lastx = 0  -- Last drag x coordinate
+SampleInputListener.lasty = 0  -- Last drag y coordinate
+SampleInputListener.target = qt.objectCast( glWidget ) -- Target widget
+SampleInputListener._params = nil -- internal reference of the opengl.ICubeParameters interface
 
+-- The 'receives opengl.ICubeParameters' required the following two methods
+function SampleInputListener:setReceptacleParameters( value )
+	self._params = value
+end
+function SampleInputListener:getReceptacleParameters()
+	return self._params
+end
+
+-- Those qt.IInputListener methods are unused; providing empty implementations
+function SampleInputListener:keyPressed( key ) end
+function SampleInputListener:keyReleased( key ) end
+function SampleInputListener:mouseReleased( x, y, button ) end
+function SampleInputListener:mouseDoubleClicked( x, y, button ) end
+function SampleInputListener:mouseWheel( x, y, button ) end
+
+-- Handles mouse button press event
 function SampleInputListener:mousePressed( x, y, button )
 	self.lastx = x
 	self.lasty = y
 end
 
+-- Handles mouse motion while any mouse button is pressed
 function SampleInputListener:mouseMoved( x, y )
-	cubeSample.parameters.pitch = cubeSample.parameters.pitch - ( self.lastx - x ) * 0.5
-	cubeSample.parameters.yaw = cubeSample.parameters.yaw - ( self.lasty - y ) * 0.5
+	-- updates the cube rotation parameters
+	self._params.pitch = self._params.pitch - ( self.lastx - x ) * 0.5
+	self._params.yaw   = self._params.yaw   - ( self.lasty - y ) * 0.5
+	-- updates the dragging position
 	self.lastx = x
 	self.lasty = y
+	-- triggers widget redraw
 	self.target:invoke( "update()" )
 end
 
@@ -46,6 +75,7 @@ layout:addWidget( qt.objectCast( glWidget ) )
 -- Sets the sample painter
 glWidget.painter = cubeSample.painter
 glWidget.inputListener = sampleListener.listener
+sampleListener.parameters = cubeSample.parameters
 
 -------------------------------------------------------------------------------
 -- Start running the program

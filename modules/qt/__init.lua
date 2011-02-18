@@ -195,17 +195,6 @@ end
 -- Casts IObjectSource components into an ObjectWrapper
 -------------------------------------------------------------------------------
 function M.objectCast( component )
---[[
-	-- check whether we are really dealing with a component
-	assert( component.kind == "TK_COMPONENT", "objectCast: " .. component.type .. " is not an component." )
-	-- scans the component's facets for an IObjectSource and returns its enclosed object
-	for facet in component.facets do
-		if facet.type == "qt.IObjectSource" then return ObjectWrapper( facet.object ) end
-	end
-	-- no IObjectSource found, error out to user
-	error( "objectCast: " .. component.type .. " is not an object source." )
-]]
-
 	-- By now, just assume that the component passed
 	-- has an IObjectSource facet called 'self'
 	return ObjectWrapper( component.self.object )
@@ -264,6 +253,33 @@ function M.Menu( title )
 	menu.title = title or ""
 	return menu
 end
+
+-------------------------------------------------------------------------------
+-- Export QGL::FormatOption enum
+-------------------------------------------------------------------------------
+M.FormatOption = {}
+M.FormatOption.DoubleBuffer				= 1				
+M.FormatOption.DepthBuffer				= 2				
+M.FormatOption.Rgba						= 4				
+M.FormatOption.AlphaChannel				= 8				
+M.FormatOption.AccumBuffer				= 16				
+M.FormatOption.StencilBuffer			= 32				
+M.FormatOption.StereoBuffers			= 64				
+M.FormatOption.DirectRendering			= 128				
+M.FormatOption.HasOverlay				= 256	
+M.FormatOption.SampleBuffers			= 512
+M.FormatOption.DeprecatedFunctions		= 1024			
+M.FormatOption.SingleBuffer				= 65536
+M.FormatOption.NoDepthBuffer			= 131072
+M.FormatOption.ColorIndex				= 262144
+M.FormatOption.NoAlphaChannel			= 524288
+M.FormatOption.NoAccumBuffer			= 1048576
+M.FormatOption.NoStencilBuffer			= 2097152
+M.FormatOption.NoStereoBuffers			= 4194304
+M.FormatOption.IndirectRendering		= 8388608
+M.FormatOption.NoOverlay				= 16777216
+M.FormatOption.NoSampleBuffers			= 33554432
+M.FormatOption.NoDeprecatedFunctions	= 67108864
 
 -------------------------------------------------------------------------------
 -- Export QEvent::Type enum

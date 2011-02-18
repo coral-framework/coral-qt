@@ -10,7 +10,7 @@ class BasicCubeSample: public BasicCubeSample_Base
 public:
 	BasicCubeSample();
 	virtual ~BasicCubeSample();
-	
+
 public:
 	// qt.IPainter methods;
 	void initialize();
@@ -27,7 +27,7 @@ private:
 	double _pitch;
 	double _yaw;
 };
-	
+
 }; // namespace opengl
 
 #endif // _ROTATINGCUBESAMPLE_H_

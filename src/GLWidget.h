@@ -18,12 +18,20 @@ public:
 	
 	virtual ~GLWidget();
 
+	// QGLWidget methods
 	void initializeGL();
-	
 	void paintGL();
-
 	void resizeGL( int w, int h );
 
+	// qt.IGLContext.autoSwapBuffers attribute
+	void setAutoSwapBuffers( bool autoSwapBuffers );
+	bool getAutoSwapBuffers();
+	// qt.IGLContext methods
+	void setFormat( co::int32 desiredFormat );
+	void swapBuffers();
+	void makeCurrent();
+
+	// qt.IObjecSource method
 	const qt::Object& getObject();
 
 protected:
