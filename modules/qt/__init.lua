@@ -20,22 +20,64 @@ local connectionHandlerClosures = {}
 local connectionHandler = ( LuaConnectionHandler{ closures = connectionHandlerClosures } ).handler
 
 -------------------------------------------------------------------------------
--- IEventHandler component that dispatches all events
+-- IEventHandler declaration and auxiliary structures
 -------------------------------------------------------------------------------
+-- Qt QEvent::Type enum mapping used to map event type ids to a fixed closure name
+local eventTypes = {
+MouseButtonDblClick					= 4,
+MouseButtonPress					= 2,
+MouseButtonRelease					= 3,
+MouseMove							= 5,
+KeyPress							= 6,
+KeyRelease							= 7,
+Wheel								= 31,
+Close								= 19,
+Resize								= 14,
+Show								= 17,
+Hide								= 18
+}
+
+local eventClosureNames = {
+-- closure name map
+["onMouseDoubleClick"]				= true,
+["onMousePress"]					= true,
+["onMouseRelease"]					= true,
+["onMouseMove"]						= true,
+["onKeyPress"]						= true,
+["onKeyRelease"]					= true,
+["onWheel"]							= true,
+["onClose"]							= true,
+["onResize"]						= true,
+["onShow"]							= true,
+["onHide"]							= true,
+
+-- enum to name map
+[eventTypes.MouseButtonDblClick]	= "onMouseDoubleClick",
+[eventTypes.MouseButtonPress]		= "onMousePress",
+[eventTypes.MouseButtonRelease]		= "onMouseRelease",
+[eventTypes.MouseMove]				= "onMouseMove",
+[eventTypes.KeyPress]				= "onKeyPress",
+[eventTypes.KeyRelease]				= "onKeyRelease",
+[eventTypes.Wheel]					= "onWheel",
+[eventTypes.Close]					= "onClose",
+[eventTypes.Resize]					= "onResize",
+[eventTypes.Show]					= "onShow",
+[eventTypes.Hide]					= "onHide"
+}
+
+-- IEventHandler component that dispatches all events
 local LuaEventHandler = co.Component { name = "qt.LuaEventHandler", provides = { handler = "qt.IEventHandler" } }
 function LuaEventHandler.handler:onEvent( cookie, eventType, ... )
-	if not self.filteredObjects[cookie][eventType] then
+	local eventClosureName = eventClosureNames[eventType]
+	if not eventClosureName or not self.closures[cookie][eventClosureName] then
 		return
 	end
-
-	local closures = self.filteredObjects[cookie][eventType].closures
-	for i, v in ipairs( closures ) do
-		v( self.filteredObjects[cookie][eventType].wrapper, ... )
-	end
+	-- dispatch the event to corresponding closure passing the source object
+	self.closures[cookie][eventClosureName]( self.closures[cookie].source, ... )
 end
 
-local filteredObjects = {}
-local eventHandler = ( LuaEventHandler{ filteredObjects = filteredObjects } ).handler
+local eventHandlerClosures = {}
+local eventHandler = ( LuaEventHandler{ closures = eventHandlerClosures } ).handler
 
 -------------------------------------------------------------------------------
 -- ObjectWrapper
@@ -44,6 +86,50 @@ local MT = {}
 
 local function ObjectWrapper( object )
 	return setmetatable( { _obj = object }, MT )
+end
+
+local function connect( wrapper, signal, handlerClosure )
+	local cookie = system:connect( wrapper._obj, signal, connectionHandler )
+	connectionHandlerClosures[cookie] = handlerClosure
+end
+
+local function invoke( wrapper, name, a1, a2, a3, a4, a5, a6, a7 )
+	return wrapper._obj:invoke( name, a1, a2, a3, a4, a5, a6, a7 )
+end
+
+function MT.__index( wrapper, name )
+	if name == "connect" then
+		return connect
+	elseif name == "invoke" then
+		return invoke
+	elseif name == "listen" then
+		return listen
+	end
+
+	-- returns one of the shortcut functions
+	if MT[name] then return MT[name] end
+
+	local v = wrapper._obj:getPropertyOrChild( name )
+
+	-- assume that all userdata are instances of qt.Object
+	if type( v ) == "userdata" then
+		v = ObjectWrapper( v )
+	end
+
+	return v
+end
+
+function MT.__newindex( wrapper, name, value )
+	-- checks whether the new index name is a event closure name
+	if type( value ) == "function" and eventClosureNames[name] then
+		local cookie = system:installEventHandler( wrapper._obj, eventHandler )
+		eventHandlerClosures[cookie] = eventHandlerClosures[cookie] or {}
+		eventHandlerClosures[cookie][name] = value
+		eventHandlerClosures[cookie].source = wrapper
+		return
+	end
+
+	wrapper._obj:setProperty( name, value )
 end
 
 -- helper to ISystem:insertWidget( parent, pos, widget )
@@ -143,54 +229,6 @@ function MT.setModel( view, model )
 	system:assignModelToView( view._obj, model._obj or model )
 end
 
-local function connect( wrapper, signal, handlerClosure )
-	local cookie = system:connect( wrapper._obj, signal, connectionHandler )
-	connectionHandlerClosures[cookie] = handlerClosure
-end
-
-local function listen( wrapper, eventType, handlerClosure )
-	assert( type( handlerClosure ) == "function", "listen: invalid handlerClosure" )
-	local cookie = system:installEventHandler( wrapper._obj, eventHandler )
-
-	local t = filteredObjects
-	t[cookie] = t[cookie] or {}
-	t[cookie][eventType] = t[cookie][eventType] or {}
-	t[cookie][eventType].closures = t[cookie][eventType].closures or {}
-	t[cookie][eventType].wrapper = wrapper
-
-	table.insert( t[cookie][eventType].closures, handlerClosure )
-end
-
-local function invoke( wrapper, name, a1, a2, a3, a4, a5, a6, a7 )
-	return wrapper._obj:invoke( name, a1, a2, a3, a4, a5, a6, a7 )
-end
-
-function MT.__index( wrapper, name )
-	if name == "connect" then
-		return connect
-	elseif name == "invoke" then
-		return invoke
-	elseif name == "listen" then
-		return listen
-	end
-
-	-- returns one of the shortcut functions
-	if MT[name] then return MT[name] end
-
-	local v = wrapper._obj:getPropertyOrChild( name )
-
-	-- assume that all userdata are instances of qt.Object
-	if type( v ) == "userdata" then
-		v = ObjectWrapper( v )
-	end
-
-	return v
-end
-
-function MT.__newindex( wrapper, name, value )
-	wrapper._obj:setProperty( name, value )
-end
-
 -------------------------------------------------------------------------------
 -- Casts IObjectSource components into an ObjectWrapper
 -------------------------------------------------------------------------------
@@ -280,23 +318,6 @@ M.FormatOption.IndirectRendering		= 8388608
 M.FormatOption.NoOverlay				= 16777216
 M.FormatOption.NoSampleBuffers			= 33554432
 M.FormatOption.NoDeprecatedFunctions	= 67108864
-
--------------------------------------------------------------------------------
--- Export QEvent::Type enum
--------------------------------------------------------------------------------
-M.Event = {}
-
-M.Event.MouseButtonDblClick	= 4
-M.Event.MouseButtonPress	= 2
-M.Event.MouseButtonRelease	= 3
-M.Event.MouseMove			= 5
-M.Event.KeyPress			= 6
-M.Event.KeyRelease			= 7
-M.Event.Wheel				= 31
-M.Event.Close				= 19
-M.Event.Resize				= 14
-M.Event.Show				= 17
-M.Event.Hide				= 18
 
 -------------------------------------------------------------------------------
 -- Export Qt::ItemFlag enum (see AbstractItemModelDelegate:getData())

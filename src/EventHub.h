@@ -36,6 +36,7 @@ private:
 	co::int32 findFilteredObject( QObject* watched );
 
 private:
+	static const int MAX_ARGS = 6;
 	struct FilteredObject
 	{
 		QObject* watched;

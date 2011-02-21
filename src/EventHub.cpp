@@ -6,6 +6,76 @@
 #include "EventHub.h"
 #include <QEvent>
 #include <QVariant>
+#include <QKeyEvent>
+#include <QWheelEvent>
+#include <QMouseEvent>
+#include <QResizeEvent>
+
+// Extract event-specific arguments to co::Any array
+static void extractArguments( QEvent* event, co::Any* args, int maxArgs )
+{
+	switch( event->type() )
+	{
+	case QEvent::MouseButtonDblClick:
+	case QEvent::MouseButtonPress:
+	case QEvent::MouseButtonRelease:
+	case QEvent::MouseMove:
+		{
+			QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>( event );
+			assert( mouseEvent );
+
+			// extract position (x and y ), button, modifiers
+			const QPoint& pos = mouseEvent->pos();
+			args[0].set( pos.x() );
+			args[1].set( pos.x() );
+			args[2].set( static_cast<co::int32>( mouseEvent->button() ) );
+			args[3].set( static_cast<co::int32>( mouseEvent->modifiers() ) );
+			return;
+		}
+	case QEvent::KeyPress:
+	case QEvent::KeyRelease:
+		{
+			QKeyEvent* keyEvent = dynamic_cast<QKeyEvent*>( event );
+			assert( keyEvent );
+
+			// extract key and modifiers
+			args[0].set( keyEvent->key() );
+			args[1].set( static_cast<co::int32>( keyEvent->modifiers() ) );
+
+			return;
+		}
+	case QEvent::Wheel:
+		{
+			QWheelEvent* wheelEvent = dynamic_cast<QWheelEvent*>( event );
+			assert( wheelEvent );
+
+			// extract position (x and y ), delta, modifiers
+			const QPoint& pos = wheelEvent->pos();
+			args[0].set( pos.x() );
+			args[1].set( pos.x() );
+			args[2].set( wheelEvent->delta() );
+			args[3].set( static_cast<co::int32>( wheelEvent->modifiers() ) );
+			return;
+		}
+	case QEvent::Resize:
+		{
+			QResizeEvent* resizeEvent = dynamic_cast<QResizeEvent*>( event );
+			assert( resizeEvent );
+
+			// extract size (width and height) and oldSize (width and height)
+			const QSize& size = resizeEvent->size();
+			const QSize& oldSize = resizeEvent->oldSize();
+			args[0].set( size.width() );
+			args[1].set( size.height() );
+			args[2].set( oldSize.width() );
+			args[3].set( oldSize.height() );
+			return;
+		}
+	default:
+		// Close, Show and Hide require no arguments
+		return;
+	}
+}
 
 EventHub::EventHub()
 {
@@ -53,7 +123,10 @@ bool EventHub::eventFilter( QObject* watched, QEvent* event )
 	assert( cookie >= 0 && cookie < _filteredObjects.size() );
 	assert( _filteredObjects[cookie] );
 
-	_filteredObjects[cookie]->handler->onEvent( cookie, event->type(), 0, 0, 0, 0, 0, 0 );
+	co::Any args[MAX_ARGS];
+	extractArguments( event, args, MAX_ARGS );
+
+	_filteredObjects[cookie]->handler->onEvent( cookie, event->type(), args[0], args[1], args[2], args[3], args[4], args[5] );
 	return false;
 }
 

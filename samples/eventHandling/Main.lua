@@ -16,11 +16,18 @@ local function setupUi()
 
 	-- set event handlers
 	-- set show event for both windows
-	M.mainWindow:listen( qt.Event.Show, function() M.mainWindow.windowTitle = "Event Handling Sample Application: Main Dialog" end )
-	M.mainWindow2:listen( qt.Event.Show, function() M.mainWindow2.windowTitle = "Event Handling Sample Application: Slave Dialog" end )
+	M.mainWindow.onShow = function( source, ... ) print( "handled onShow event from object ",  source ); M.mainWindow.windowTitle = "Event Handling Sample Application: Main Dialog" end
+	M.mainWindow2.onShow = function( source, ... ) print( "handled onShow event from object ", source ); M.mainWindow2.windowTitle = "Event Handling Sample Application: Slave Dialog" end
 
 	-- set close event so when the main window is closed, the slave is closed too
-	M.mainWindow:listen( qt.Event.Close, function() qt.app:invoke( "closeAllWindows()" ) end )
+	M.mainWindow.onClose = function( source, ... ) print( "handled onClose event from object ", source ); qt.app:invoke( "closeAllWindows()" ) end
+
+	M.mainWindow.onResize = function( source, width, height, oldWidth, oldHeight ) print( "onResize", source, width, height, oldWidth, oldHeight ) end
+	M.mainWindow.onKeyPress = function( source, key, modifiers ) print( "onKeyPress", source, key, modifiers ) end
+	M.mainWindow.onMousePress = function( source, x, y, button, modifiers ) print( "onMousePress", source, x, y, button, modifiers ) end
+	M.mainWindow.onMouseMove = function( source, x, y, button, modifiers ) print( "onMouseMove", source, x, y, button, modifiers ) end
+	M.mainWindow.onMouseRelease = function( source, x, y, button, modifiers ) print( "onMouseRelease", source, x, y, button, modifiers ) end
+	M.mainWindow.onWheel = function( source, x, y, delta, modifiers ) print( "onWheel", source, x, y, delta, modifiers ) end
 
 	M.mainWindow.visible = true
 
