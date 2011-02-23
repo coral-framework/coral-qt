@@ -15,14 +15,14 @@ Coral-Qt module supports Object events through Lua closures. Each closure name m
 - MouseDoubleClick (onMouseDoubleClick)
 - Wheel (onWheel)
 
-At each event call the source Object that originated the event is also passed as first argument. The other arguments are event-specific as listed in the following example:
+At each event call, the source Object that originated the event is also passed as first argument. The other arguments are event-specific as shown as follow:
 
 Example:
 
 	-- basic events
-	mainWindow.onShow = function( source ) end -- (no event arguments)
-	mainWindow.onHide = function( source ) end -- (no event arguments)
-	mainWindow.onClose = function( source ) end -- (no event arguments)
+	mainWindow.onShow = function( source ) end -- (no event-specific arguments)
+	mainWindow.onHide = function( source ) end -- (no event-specific arguments)
+	mainWindow.onClose = function( source ) end -- (no event-specific arguments)
 	mainWindow.onResize = function( source, width, height, oldWidth, oldHeight ) end -- (new and old widget dimensions)
 
 	-- key events
@@ -37,10 +37,10 @@ Example:
 	mainWindow.onWheel = function( source, x, y, delta, modifiers ) end
 
 
-Keyboard Keys and Key modifiers
+Keyboard Keys and modifiers
 -------------------------------
 
-Key modifiers are contained into a CSL Struct with six boolean fields, one for each modifier key.
+Keyboard modifiers are contained into a CSL Struct with several boolean fields, one for each modifier key.
 Field names are:
 
 - alt
@@ -76,13 +76,17 @@ The same is valid for mouse events:
 	mainWindow.onMousePress = onMousePress
 	...
 
-In keyPress or keyRelease events, the key value is a string wich value is the same as one of Qt::Key enumerator entries names.
+In keyPress or keyRelease events, the key value is a string which value is one of Qt::Key enumerator entries names.
 
 Key querying example:
 
 	local function onKeyPress( source, key, modifiers )
-		if key == "Key_A" then
-			print( "the A key was pressed" )
+		if key == "Key_A" and modifiers.control then
+			selectAllText()
+		elseif key == "Key_F1" then
+			myHelpFunction()
+		elseif key == "Key_Q" and modifiers.control then
+			quitApplication()
 		end
 	end
 
