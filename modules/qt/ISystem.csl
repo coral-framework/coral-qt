@@ -32,7 +32,7 @@ interface ISystem
 
 	// Opens a file selection dialog and returns the selected files or an empty
 	// list if no file was selected
-	void getOpenFileNames( in Object parent, in string caption, in string initialDir, out string[] selectedFiles );
+	void getOpenFileNames( in Object parent, in string caption, in string initialDir, in string filter, out string[] selectedFiles );
 
 	/* 
 		Creates a new object using the class specified by className. This 
@@ -167,7 +167,7 @@ interface ISystem
 		notified of all events from \a watched object. If \a watched already
 	    have an installed event handler it will be replaced.
 	 */
-	int32 installEventHandler( in Object watched, in IEventHandler handler );
+	int64 installEventHandler( in Object watched, in IEventHandler handler );
 
 	/*
 		Connects a \a signal from \a sender to a \a handler, and returns the 

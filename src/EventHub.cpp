@@ -10,9 +10,74 @@
 #include <QWheelEvent>
 #include <QMouseEvent>
 #include <QResizeEvent>
+#include <QCoreApplication>
+#include <qt/KeyboardModifiers.h>
+
+static void fillKeyboardModifiers( Qt::KeyboardModifiers modifiers, co::Any& any )
+{
+	qt::KeyboardModifiers& km = any.createComplexValue<qt::KeyboardModifiers>();
+
+	km.alt = modifiers & Qt::AltModifier;
+	km.meta = modifiers & Qt::MetaModifier;
+	km.shift = modifiers & Qt::ShiftModifier;
+	km.keypad = modifiers & Qt::KeypadModifier;
+	km.control = modifiers & Qt::ControlModifier;
+	km.groupSwitch = modifiers & Qt::GroupSwitchModifier;
+}
+
+static void fillKeyCodeString( const QMetaEnum& metaEnum, int keyCode, co::Any& any )
+{
+	const char* name = metaEnum.valueToKey( keyCode );
+	if( name )
+		any.createString() = name;
+}
+
+EventHub::EventHub()
+{
+	initializeKeyMetaEnum();
+}
+
+EventHub::~EventHub()
+{
+	// empty
+}
+
+co::int64 EventHub::installEventHandler( const qt::Object& watched, qt::IEventHandler* handler )
+{
+	QObject* obj = watched.get();
+	if( !isObjectFiltered( obj ) )
+		obj->installEventFilter( this );
+
+	// sets/replaces event handler for the object
+	_filteredObjects[obj] = handler;
+
+	return reinterpret_cast<co::int64>( obj );
+}
+
+void EventHub::removeEventHandler( const qt::Object& watched )
+{
+	QObject* obj = watched.get();
+	if( isObjectFiltered( obj ) )
+	{
+		obj->removeEventFilter( this );
+		_filteredObjects.erase( obj );
+	}
+}
+
+bool EventHub::eventFilter( QObject* watched, QEvent* event )
+{
+	assert( _filteredObjects[watched] );
+
+	co::Any args[MAX_ARGS];
+	extractArguments( event, args, MAX_ARGS );
+
+	_filteredObjects[watched]->onEvent( reinterpret_cast<co::int64>( watched ), event->type(),
+										args[0], args[1], args[2], args[3], args[4], args[5] );
+	return false;
+}
 
 // Extract event-specific arguments to co::Any array
-static void extractArguments( QEvent* event, co::Any* args, int maxArgs )
+void EventHub::extractArguments( QEvent* event, co::Any* args, int maxArgs )
 {
 	switch( event->type() )
 	{
@@ -29,7 +94,7 @@ static void extractArguments( QEvent* event, co::Any* args, int maxArgs )
 			args[0].set( pos.x() );
 			args[1].set( pos.x() );
 			args[2].set( static_cast<co::int32>( mouseEvent->button() ) );
-			args[3].set( static_cast<co::int32>( mouseEvent->modifiers() ) );
+			fillKeyboardModifiers( mouseEvent->modifiers(), args[3] );
 			return;
 		}
 	case QEvent::KeyPress:
@@ -38,10 +103,8 @@ static void extractArguments( QEvent* event, co::Any* args, int maxArgs )
 			QKeyEvent* keyEvent = dynamic_cast<QKeyEvent*>( event );
 			assert( keyEvent );
 
-			// extract key and modifiers
-			args[0].set( keyEvent->key() );
-			args[1].set( static_cast<co::int32>( keyEvent->modifiers() ) );
-
+			fillKeyCodeString( _qtKeyMetaEnum, keyEvent->key(), args[0] );
+			fillKeyboardModifiers( keyEvent->modifiers(), args[1] );
 			return;
 		}
 	case QEvent::Wheel:
@@ -54,7 +117,7 @@ static void extractArguments( QEvent* event, co::Any* args, int maxArgs )
 			args[0].set( pos.x() );
 			args[1].set( pos.x() );
 			args[2].set( wheelEvent->delta() );
-			args[3].set( static_cast<co::int32>( wheelEvent->modifiers() ) );
+			fillKeyboardModifiers( wheelEvent->modifiers(), args[3] );
 			return;
 		}
 	case QEvent::Resize:
@@ -77,63 +140,15 @@ static void extractArguments( QEvent* event, co::Any* args, int maxArgs )
 	}
 }
 
-EventHub::EventHub()
+bool EventHub::isObjectFiltered( QObject* watched )
 {
-	// empty
+	return _filteredObjects.find( watched ) != _filteredObjects.end();
 }
 
-EventHub::~EventHub()
+void EventHub::initializeKeyMetaEnum()
 {
-	for( int i = 0; i < _filteredObjects.size(); ++i )
-		delete _filteredObjects[i];
-}
-
-co::int32 EventHub::installEventHandler( const qt::Object& watched, qt::IEventHandler* handler )
-{
-	QObject* obj = watched.get();
-	FilteredObject* filteredObj = 0;
-	co::int32 index = findFilteredObject( obj );
-	if( index >= 0 )
-		filteredObj = _filteredObjects[index];
-	else
-	{
-		filteredObj = new FilteredObject();
-		filteredObj->watched = obj;
-		_filteredObjects.push_back( filteredObj );
-		index = _filteredObjects.size() - 1;
-	}
-
-	// replace or set current handler
-	filteredObj->handler = handler;
-
-	// sets installation index as a dynamic property of watched object
-	// to reduce installation lookup at eventFilter()
-	obj->setProperty( "__installationIndex", QVariant::fromValue( static_cast<qint32>( index ) ) );
-
-	obj->installEventFilter( this );
-
-	return index;
-}
-
-bool EventHub::eventFilter( QObject* watched, QEvent* event )
-{
-	QVariant index = watched->property( "__installationIndex" );
-	co::int32 cookie = static_cast<co::int32>( index.toInt() );
-
-	assert( cookie >= 0 && cookie < _filteredObjects.size() );
-	assert( _filteredObjects[cookie] );
-
-	co::Any args[MAX_ARGS];
-	extractArguments( event, args, MAX_ARGS );
-
-	_filteredObjects[cookie]->handler->onEvent( cookie, event->type(), args[0], args[1], args[2], args[3], args[4], args[5] );
-	return false;
-}
-
-co::int32 EventHub::findFilteredObject( QObject* watched )
-{
-	for( int i = 0; i < _filteredObjects.size(); ++i )
-		if( _filteredObjects[i]->watched == watched ) return i;
-
-	return -1;
+	const QMetaObject &mo = EventHub::staticMetaObject;
+	int prop_index = mo.indexOfProperty( "_qtKeyEnum" );
+	QMetaProperty metaProperty = mo.property( prop_index );
+	_qtKeyMetaEnum = metaProperty.enumerator();
 }

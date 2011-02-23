@@ -56,9 +56,9 @@ namespace qt {
 class System : public qt::System_Base
 {
 public:
-	System()
+	System() // must force _app initialization before _eventHub since _eventHub uses Qt qApp in constructor
+		: _app( new QApplication( dummy_argc, const_cast<char**>( dummy_argv ) ) ), _eventHub()
 	{
-		_app = new QApplication( dummy_argc, const_cast<char**>( dummy_argv ) );
 		_appObj.set( _app );
 	}
 
@@ -129,11 +129,10 @@ public:
 	}
 
 	void getOpenFileNames( const qt::Object& parent, const std::string& caption, const std::string& initialDir,
-								  std::vector<std::string>& selectedFiles )
+						   const std::string& filter, std::vector<std::string>& selectedFiles )
 	{
 		QStringList files = QFileDialog::getOpenFileNames( qobject_cast<QWidget*>( parent.get() ),
-														 QString::fromStdString( caption ),
-														 QString::fromStdString( initialDir ) );
+														 caption.c_str(), initialDir.c_str(), filter.c_str() );
 		for( int i = 0; i < files.size(); ++i )
 		{
 			selectedFiles.push_back( files[i].toStdString() );
@@ -360,7 +359,7 @@ public:
 		QObject::connect( qtView, SIGNAL( pressed( const QModelIndex& ) ), qtModel, SLOT( pressed( const QModelIndex& ) ) );
 	}
 
-	co::int32 installEventHandler( const qt::Object& watched, qt::IEventHandler* handler )
+	co::int64 installEventHandler( const qt::Object& watched, qt::IEventHandler* handler )
 	{
 		return _eventHub.installEventHandler( watched, handler );
 	}
@@ -393,8 +392,8 @@ public:
 private:
 	QApplication* _app;
 	qt::Object _appObj;
-	ConnectionHub _connectionHub;
 	EventHub _eventHub;
+	ConnectionHub _connectionHub;
 };
 
 } // namespace qt

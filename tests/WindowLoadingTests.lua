@@ -16,5 +16,5 @@ function shouldThrowAnExceptionWithAnInexistantFile()
 end
 
 function shouldThrowAnExceptionWithAnInvalidFile()
-	EXPECT_EXCEPTION( "error loading ui file", qt.loadUi, "coral:/invalid.ui" )
+	EXPECT_EXCEPTION( "error loading ui file", qt.loadUi, "coral:/Invalid.ui" )
 end

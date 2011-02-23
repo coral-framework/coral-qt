@@ -4,6 +4,6 @@
 interface IEventHandler
 {
 	// Called whenever a event occurs.
-	void onEvent( in int32 cookie, in int32 eventType, in any a1, in any a2, in any a3, in any a4, in any a5, in any a6 );
+	void onEvent( in int64 cookie, in int32 eventType, in any a1, in any a2, in any a3, in any a4, in any a5, in any a6 );
 };
 

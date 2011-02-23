@@ -147,9 +147,9 @@ void variantToAny( const QVariant& v, co::Any& value )
 	case QVariant::Color:
 	case QVariant::Brush:
 		{
-			// sets a qt::Variant
-			qt::Variant& refVariant = value.createComplexValue<qt::Variant>();
-			refVariant = v;
+			// sets a qt::Variant into co:Any
+			qt::Variant& variant = value.createComplexValue<qt::Variant>();
+			variant = v;
 			break;
 		}
 	default:

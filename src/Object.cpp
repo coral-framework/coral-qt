@@ -14,6 +14,11 @@
 #include <sstream>
 #include <cstdio>
 
+co::int64 qt::Object_Adapter::getHash( qt::Object& instance )
+{
+	return reinterpret_cast<co::int64>( instance.get() );
+}
+
 void qt::Object_Adapter::getPropertyOrChild( qt::Object& instance, const std::string& name, co::Any& value )
 {
 	QVariant v = instance.get()->property( name.c_str() );

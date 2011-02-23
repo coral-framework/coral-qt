@@ -1,0 +1,12 @@
+/*
+	Struct that represent keyboard modifiers state.
+ */
+struct KeyboardModifiers
+{
+	bool shift;
+	bool control;
+	bool alt;
+	bool meta;
+	bool keypad;
+	bool groupSwitch;
+};

@@ -3,6 +3,8 @@
  */
 native class Object ( <QObjectWrapper.h> QObjectWrapper )
 {
+	readonly attribute int64 hash;
+
 	void getPropertyOrChild( in string name, out any value ) raises co.IllegalCastException;
 	void setProperty( in string name, in any value ) raises co.IllegalCastException;
 
