@@ -1,7 +1,7 @@
 Event Handling
 ====================================
 
-Coral-Qt module supports Object events through Lua closures. Each closure name must be in the form on&ltEventName&gt, as listed below in the supported events list:
+Coral-Qt module supports Object events through Lua closures. Each closure name must be in the form on{_EventName_}, where {_EventName_} is one of the values for events listed below:
 
 - Show (onShow)
 - Hide (onHide)
