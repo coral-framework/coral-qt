@@ -1,18 +1,22 @@
+-- performed before requiring other dependent submodules since they might use 
+-- system service
+
+-------------------------------------------------------------------------------
+-- Required modules
+-------------------------------------------------------------------------------
 local path = require "path"
 local types = require "qt.Types"
 local eventHandler = require "qt.EventHandler"
 local connectionHandler = require "qt.ConnectionHandler"
 
-local M = {}
-
--- copy types to module table
-for k, v in pairs( types ) do
-	M[k] = v
-end
-
--- for now we're manually registering the qt.ISystem service here
+-------------------------------------------------------------------------------
+-- Coral-Qt system service registration
+-------------------------------------------------------------------------------
+-- For now we're manually registering the qt.ISystem service here.
 co.system.services:addServiceImplementation( co.Type "qt.ISystem", "qt.System" )
 local system = co.getService( "qt.ISystem" )
+
+local M = {}
 
 -------------------------------------------------------------------------------
 -- ObjectWrapper
@@ -31,7 +35,7 @@ local function ObjectWrapper( object )
 end
 
 function MT.connect( wrapper, signal, handlerClosure )
-	connectionHandler.connect( wrapper, signal, handlerClosure, system )
+	connectionHandler.connect( wrapper, signal, handlerClosure )
 end
 
 function MT.invoke( wrapper, name, a1, a2, a3, a4, a5, a6, a7 )
@@ -53,7 +57,7 @@ function MT.__index( wrapper, name )
 end
 
 function MT.__newindex( wrapper, name, value )
-	if eventHandler.installEventHandler( wrapper, name, value, system )	then
+	if eventHandler.installEventHandler( wrapper, name, value )	then
 		return
 	end
 	wrapper._obj:setProperty( name, value )
@@ -212,6 +216,21 @@ end
 
 function M.quit()
 	return system:quit()
+end
+
+-------------------------------------------------------------------------------
+-- Sub-modules configurations
+-------------------------------------------------------------------------------
+-- types must access ObjectWrapper functions from this (parent) module
+types.parent = M
+
+-- eventHandler/connectinoHandler must access system service
+eventHandler.system = system
+connectionHandler.system = system
+
+-- copy types to module table
+for k, v in pairs( types ) do
+	M[k] = v
 end
 
 return M

@@ -60,13 +60,13 @@ end
 local eventHandlerClosures = {}
 local eventHandler = ( LuaEventHandler{ closures = eventHandlerClosures } ).handler
 
-function M.installEventHandler( wrapper, eventName, closure, systemService )
+function M.installEventHandler( wrapper, eventName, closure )
 	-- checks whether the event name exists and closure is valid
-	if not systemService or type( closure ) ~= "function" or not eventNames[eventName] then
+	if type( closure ) ~= "function" or not eventNames[eventName] then
 		return false
 	end
 
-	local cookie = systemService:installEventHandler( wrapper._obj, eventHandler )
+	local cookie = M.system:installEventHandler( wrapper._obj, eventHandler )
 	eventHandlerClosures[cookie] = eventHandlerClosures[cookie] or {}
 	eventHandlerClosures[cookie][eventName] = closure
 	eventHandlerClosures[cookie].source = wrapper

@@ -451,7 +451,7 @@ local function generateHtmlInformation( fullName, elementType, docs )
 end
 
 function TypeTreeModel:itemClicked( view, index )
-	local element = typeTree[index]	
+	local element = typeTree[index]	or {}
 	M.docsTextBrowser.html = generateHtmlInformation( element.fullName, element.type, element.docs )
 	if element.docs and element.docs ~= "" then
 		M.docsTextBrowser.enabled = true
@@ -488,6 +488,8 @@ local function onActionEditCoralPathTriggered()
 	typeTree = TypeTree:new()
 	M.treeView:invoke( "reset()" )
 	treeModel:notifyDataChanged( 1, typeTree.nextIndex - 1 )
+	M.docsTextBrowser.plainText = "<no documentation available>"
+	M.docsTextBrowser.enabled = false
 end
 
 local function onButtonCloseClicked()

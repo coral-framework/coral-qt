@@ -12,8 +12,8 @@ end
 local connectionHandlerClosures = {}
 local connectionHandler = ( LuaConnectionHandler{ closures = connectionHandlerClosures } ).handler
 
-function M.connect( wrapper, signal, handlerClosure, systemService )
-	local cookie = systemService:connect( wrapper._obj, signal, connectionHandler )
+function M.connect( wrapper, signal, handlerClosure )
+	local cookie = M.system:connect( wrapper._obj, signal, connectionHandler )
 	connectionHandlerClosures[cookie] = handlerClosure
 end
 

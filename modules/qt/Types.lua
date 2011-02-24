@@ -156,7 +156,7 @@ end
 -- Constructor for qt.Menu using qt.newInstanceOf() of ISystem
 -------------------------------------------------------------------------------
 function M.Menu( title )
-	local menu = M.new( "QMenu" )
+	local menu = M.parent.new( "QMenu" )
 	menu.title = title or ""
 	return menu
 end
