@@ -17,10 +17,11 @@
 class EventHub : public QObject
 {
 	Q_GADGET
-	Q_PROPERTY( Qt::Key _qtKeyEnum )
+	Q_PROPERTY( Qt::Key _qtKeyEnum READ getKeyEnum )
 
 public:
-	Qt::Key _qtKeyEnum;
+	//! Accessor for qt property (necessary to avoid Qt warnings)
+	Qt::Key getKeyEnum() { return _qtKeyEnum; }
 
 public:
 	EventHub();
@@ -46,6 +47,7 @@ private:
 	void initializeKeyMetaEnum();
 
 private:
+	Qt::Key _qtKeyEnum;
 	QMetaEnum _qtKeyMetaEnum;
 	static const int MAX_ARGS = 6;
 	typedef std::map<QObject*, qt::IEventHandler*> FilteredObjectMap;
