@@ -21,6 +21,7 @@ local icons =
 -------------------------------------------------------------------------------
 --- Utility functions
 -------------------------------------------------------------------------------
+
 -- Locate all lua scripts file in plugins folder and require
 -- them, saving returned modules in the global plugins table
 local function requirePlugins( dir )
@@ -75,6 +76,7 @@ local function setupUi()
 
 	-- creates the 'Plugins' menu in the menubar
 	for k, v in ipairs( M.pluginList ) do
+	
 		-- main plugins menu
 		local action = M.mainWindow.menuPlugins:addAction( v.name, v.icon )
 		local subMenu = qt.Menu()
@@ -108,7 +110,10 @@ local function setupUi()
 	M.mainWindow.visible = true
 end
 
-setupUi()
+-------------------------------------------------------------------------------
+--- Main Execution
+-------------------------------------------------------------------------------
 
+setupUi()
 qt.exec()
 

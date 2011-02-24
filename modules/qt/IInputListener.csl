@@ -11,3 +11,4 @@ interface IInputListener
 	void mouseMoved( in int32 x, in int32 y );
 	void mouseWheel( in int32 x, in int32 y, in int32 delta );
 };
+

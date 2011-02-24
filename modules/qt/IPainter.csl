@@ -7,3 +7,4 @@
 	void paint();
 	void resize( in int32 width, in int32 height );
 };
+
