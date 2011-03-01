@@ -2,11 +2,12 @@
 #include "QObjectWrapper.h"
 
 #include <qt/IPainter.h>
+#include <qt/MouseButtons.h>
+#include <qt/KeyboardModifiers.h>
 
 #include <QKeyEvent>
 #include <QMouseEvent>
-#include <Qt/KeyboardModifiers.h>
-#include <Qt/MouseButtons.h>
+
 
 // shamefully copied from EventHub.cpp
 
