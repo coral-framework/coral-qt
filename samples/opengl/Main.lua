@@ -41,18 +41,18 @@ end
 -- Those qt.IInputListener methods are unused; providing empty implementations
 function SampleInputListener:keyPressed( key ) end
 function SampleInputListener:keyReleased( key ) end
-function SampleInputListener:mouseReleased( x, y, button ) end
-function SampleInputListener:mouseDoubleClicked( x, y, button ) end
-function SampleInputListener:mouseWheel( x, y, button ) end
+function SampleInputListener:mouseReleased( x, y, button, modifiers ) end
+function SampleInputListener:mouseDoubleClicked( x, y, button, modifiers ) end
+function SampleInputListener:mouseWheel( x, y, button, modifiers ) end
 
 -- Handles mouse button press event
-function SampleInputListener:mousePressed( x, y, button )
+function SampleInputListener:mousePressed( x, y, button, modifiers )
 	self.lastx = x
 	self.lasty = y
 end
 
 -- Handles mouse motion while any mouse button is pressed
-function SampleInputListener:mouseMoved( x, y )
+function SampleInputListener:mouseMoved( x, y, buttons, modifiers )
 	-- updates the cube rotation parameters
 	self._params.pitch = self._params.pitch - ( self.lastx - x ) * 0.5
 	self._params.yaw   = self._params.yaw   - ( self.lasty - y ) * 0.5

@@ -1,0 +1,9 @@
+/*
+	Struct that represent mouse buttons state.
+ */
+struct MouseButtons
+{
+	bool left;
+	bool right;
+	bool middle;
+};

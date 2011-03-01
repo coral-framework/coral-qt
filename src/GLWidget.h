@@ -50,9 +50,9 @@ protected:
 	void setReceptacleInputListener( IInputListener* inputListener );
 
 private:
-	IPainter* _painter;
+	IPainter*       _painter;
 	IInputListener* _inputListener;
-	QObjectWrapper _wrapper;
+	QObjectWrapper  _wrapper;
 };
 
 } // namespace qt;
