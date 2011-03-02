@@ -152,6 +152,17 @@ void GLWidget::makeCurrent()
 	QGLWidget::makeCurrent();
 }
 
+void GLWidget::update()
+{
+	QGLWidget::updateGL();
+}
+
+void GLWidget::setMouseTracking( bool enable )
+{
+	QGLWidget::setMouseTracking( enable );
+}
+
+
 const qt::Object& GLWidget::getObject()
 {
 	return _wrapper;

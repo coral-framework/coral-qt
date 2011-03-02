@@ -12,4 +12,8 @@ interface IGLContext
 	void swapBuffers();
 	// Makes this rendering context the current context.
 	void makeCurrent();
+	// Triggers a redraw of the widget;
+	void update();
+	// Defines if the widget should track mouse motion even if no button is pressed.
+	void setMouseTracking( in bool enabled );
 };

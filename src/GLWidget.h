@@ -30,6 +30,8 @@ public:
 	void setFormat( co::int32 desiredFormat );
 	void swapBuffers();
 	void makeCurrent();
+	void update();
+	void setMouseTracking( bool enable );
 
 	// qt.IObjecSource method
 	const qt::Object& getObject();
