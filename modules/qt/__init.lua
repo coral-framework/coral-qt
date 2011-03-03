@@ -198,8 +198,8 @@ function M.getExistingDirectory( parent, caption, initialDir )
 	return system:getExistingDirectory( parent._obj, caption, initialDir )
 end
 
-function M.getOpenFileNames( parent, caption, initialDir )
-	return system:getOpenFileNames( parent._obj, caption, initialDir )
+function M.getOpenFileNames( parent, caption, initialDir, filter )
+	return system:getOpenFileNames( parent._obj, caption, initialDir, filter )
 end
 
 function M.setSearchPaths( prefix, paths )
