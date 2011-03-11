@@ -188,6 +188,6 @@ void GLWidget::setReceptacleInputListener( IInputListener* inputListener )
 	_inputListener = inputListener;
 }
 
-}
+CORAL_EXPORT_COMPONENT( GLWidget, GLWidget );
 
-CORAL_EXPORT_COMPONENT( qt::GLWidget, GLWidget );
+} // namespace qt

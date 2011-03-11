@@ -4,6 +4,7 @@
 /_*/
 /@*/
 /build/
+/build.debug/
 
 ######################
 # OS generated files #

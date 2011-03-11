@@ -186,6 +186,6 @@ void AbstractItemModel::assertDelegateValid() const
 		CORAL_THROW( co::Exception, "delegate attribute not set" );
 }
 
-} // namespace qt
+CORAL_EXPORT_COMPONENT( AbstractItemModel, AbstractItemModel )
 
-CORAL_EXPORT_COMPONENT( qt::AbstractItemModel, AbstractItemModel )
+} // namespace qt

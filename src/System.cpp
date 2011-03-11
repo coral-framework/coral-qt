@@ -396,6 +396,7 @@ private:
 	ConnectionHub _connectionHub;
 };
 
+CORAL_EXPORT_COMPONENT( System, System )
+
 } // namespace qt
 
-CORAL_EXPORT_COMPONENT( qt::System, System )
