@@ -26,6 +26,7 @@ public:
 	// qt.IGLContext.autoSwapBuffers attribute
 	void setAutoSwapBuffers( bool autoSwapBuffers );
 	bool getAutoSwapBuffers();
+
 	// qt.IGLContext methods
 	void setFormat( co::int32 desiredFormat );
 	void swapBuffers();
