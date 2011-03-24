@@ -93,5 +93,7 @@ void BasicCubeSample::paint()
 	glFlush();
 }
 
+CORAL_EXPORT_COMPONENT( BasicCubeSample, BasicCubeSample )
+
 } // namespace opengl
-CORAL_EXPORT_COMPONENT( opengl::BasicCubeSample, BasicCubeSample )
+
