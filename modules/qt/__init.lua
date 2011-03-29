@@ -82,6 +82,16 @@ function MT.removeWidget( parent, widget )
 	return widget
 end
 
+function MT.addDockWidget( mainWindow, area, dockWidget )
+	system:addDockWidget( mainWindow._obj, area, dockWidget._obj )
+	return mainWindow
+end
+
+function MT.setWidget( dockWidget, widget )
+	system:setWidget( dockWidget._obj, widget._obj )
+	return dockWidget
+end
+
 function MT.setLayout( widget, layout )
 	local layoutInstance = layout
 	if type( layout ) == "string" then

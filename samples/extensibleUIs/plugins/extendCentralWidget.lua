@@ -17,7 +17,6 @@ function M.load( mainWindow )
 		local msg = "[Extended Central Widget]: Click unload in the plugins "
 		msg = msg .. "access menu to unload the Central Widget Plugin and remove this widget."
 		M.textEdit.plainText = msg
-		M.textEdit:invoke( "setAlignment(Qt::Alignment)", qt.AlignCenter )
 		M.initialized = true
 	end
 	M.layout:addWidget( M.textEdit )

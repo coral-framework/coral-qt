@@ -18,7 +18,7 @@ glWidget.context:setFormat( qt.FormatOption.Rgba + qt.FormatOption.DoubleBuffer 
 -------------------------------------------------------------------------------
 -- Creates and configures the InputListener for the sample
 
-local SampleInputListener = co.Component {
+local SampleInputListener = co.IComponent {
 	name = "qt.samples.opengl.SampleInputListener",
 	provides = { listener   = "qt.IInputListener" },
 	receives = { parameters = "opengl.ICubeParameters" }

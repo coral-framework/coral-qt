@@ -68,14 +68,13 @@ void anyToVariant( const co::Any& any, int expectedTypeId, QVariant& var )
 			return;
 		}
 
-	default:
+	case QVariant::UserType:
 		// check our registered type
-		if( expectedTypeId == s_QtAlignmentTypeId )
-		{
-			var = QVariant::fromValue( static_cast<Qt::Alignment>( any.get<co::int64>() ) );
+		var = QVariant::fromValue( static_cast<Qt::Alignment>( any.get<co::int64>() ) );
+		if( var.userType() == s_QtAlignmentTypeId )
 			return;
-		}
 
+	default:
 		CORAL_THROW( co::IllegalArgumentException, "no conversion from " << any << " to " << QMetaType::typeName( expectedTypeId ) );
 	}
 }

@@ -96,4 +96,3 @@ void BasicCubeSample::paint()
 CORAL_EXPORT_COMPONENT( BasicCubeSample, BasicCubeSample )
 
 } // namespace opengl
-

@@ -78,6 +78,23 @@ interface ISystem
 	void removeWidget( in Object parent, in Object widget )
 		raises IllegalArgumentException;
 
+	/* 
+		Adds \a dockWidget into dock widget area of \a mainWindow.
+	
+		\throw co.IllegalArgumentException if the \a mainWindow is not an instance
+		of QMainWindow or \a dockWidget is not an instance of QDockWidget.
+	 */
+	void addDockWidget( in Object mainWindow, in int32 dockArea, in Object dockWidget )
+		raises IllegalArgumentException;
+
+	/* 
+		Sets \a widget into \a dockWidget.
+	
+		\throw co.IllegalArgumentException if the \a dockWidget is not an instance
+		of QDockWidget or \a widget is not an instance of QWidget.
+	 */
+	void setWidget( in Object dockWidget, in Object widget );
+
 	/*! 
 		Sets a layout in the given widget.
 		

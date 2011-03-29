@@ -18,6 +18,8 @@
 #include <QStringListModel>
 #include <QStackedLayout>
 #include <QApplication>
+#include <QMainWindow>
+#include <QDockWidget>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QStatusBar>
@@ -242,6 +244,33 @@ public:
 													   "QBoxLayout, QStatusBar nor QStackedLayout classs" );
 
 		qwidget->setParent( 0 );
+	}
+
+	void addDockWidget( const qt::Object& mainWindow, co::int32 dockArea, const qt::Object& dockWidget )
+	{
+		QMainWindow* qMainWindow = qobject_cast<QMainWindow*>( mainWindow.get() );
+		if( !qMainWindow )
+			CORAL_THROW( co::IllegalArgumentException, "cannot add QDockWidget: 'mainWindow' is not an instace of QMainWindow" );
+
+		QDockWidget* qDockWidget = qobject_cast<QDockWidget*>( dockWidget.get() );
+		if( !qDockWidget )
+			CORAL_THROW( co::IllegalArgumentException, "cannot add QDockWidget: 'dockWidget' is not an instace of QDockWidget" );
+
+		Qt::DockWidgetArea qDockArea = static_cast<Qt::DockWidgetArea>( dockArea );
+		qMainWindow->addDockWidget( qDockArea, qDockWidget );
+	}
+
+	void setWidget( const qt::Object& dockWidget, const qt::Object& widget )
+	{
+		QDockWidget* qDockWidget = qobject_cast<QDockWidget*>( dockWidget.get() );
+		if( !qDockWidget )
+			CORAL_THROW( co::IllegalArgumentException, "cannot set widget: 'dockWidget' is not an instace of QDockWidget" );
+
+		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
+		if( !qDockWidget )
+			CORAL_THROW( co::IllegalArgumentException, "cannot set widget: 'widget' is not an instace of QWidget" );
+
+		qDockWidget->setWidget( qwidget );
 	}
 
 	void setLayout( const qt::Object& widget, const qt::Object& layout )
