@@ -15,10 +15,14 @@
 
 QMetaEnum EventHub::sm_qtKeyMetaEnum = EventHub::initializeKeyMetaEnum();
 
-static void fillKeyboardModifiers( Qt::KeyboardModifiers modifiers, co::Any& any )
+void EventHub::fillKeyboardModifiers( Qt::KeyboardModifiers modifiers, co::Any& any )
 {
 	qt::KeyboardModifiers& km = any.createComplexValue<qt::KeyboardModifiers>();
+	fillKeyboardModifiers( modifiers, km );
+}
 
+void EventHub::fillKeyboardModifiers( Qt::KeyboardModifiers modifiers, qt::KeyboardModifiers& km )
+{
 	km.alt = modifiers & Qt::AltModifier;
 	km.meta = modifiers & Qt::MetaModifier;
 	km.shift = modifiers & Qt::ShiftModifier;
@@ -32,6 +36,12 @@ void EventHub::fillKeyCodeString( int keyCode, co::Any& any )
 	const char* name = sm_qtKeyMetaEnum.valueToKey( keyCode );
 	if( name )
 		any.createString() = name;
+}
+void EventHub::fillMouseButtons( Qt::MouseButtons buttons, qt::MouseButtons& mb )
+{
+	mb.left = buttons & Qt::LeftButton;
+	mb.right = buttons & Qt::RightButton;
+	mb.middle = buttons & Qt::MiddleButton;
 }
 
 EventHub::EventHub()

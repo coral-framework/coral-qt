@@ -2,33 +2,11 @@
 #include "QObjectWrapper.h"
 
 #include <qt/IPainter.h>
-#include <qt/MouseButtons.h>
-#include <qt/KeyboardModifiers.h>
 
 #include "EventHub.h"
 
 #include <QKeyEvent>
 #include <QMouseEvent>
-
-
-// shamefully copied from EventHub.cpp
-
-static void fillKeyboardModifiers( Qt::KeyboardModifiers modifiers, qt::KeyboardModifiers& km )
-{
-	km.alt = modifiers & Qt::AltModifier;
-	km.meta = modifiers & Qt::MetaModifier;
-	km.shift = modifiers & Qt::ShiftModifier;
-	km.keypad = modifiers & Qt::KeypadModifier;
-	km.control = modifiers & Qt::ControlModifier;
-	km.groupSwitch = modifiers & Qt::GroupSwitchModifier;
-}
-
-static void fillMouseButtons( Qt::MouseButtons buttons, qt::MouseButtons& mb )
-{
-	mb.left = buttons & Qt::LeftButton;
-	mb.right = buttons & Qt::RightButton;
-	mb.middle = buttons & Qt::MiddleButton;
-}
 
 namespace qt {
 
@@ -90,7 +68,7 @@ void GLWidget::mousePressEvent( QMouseEvent* event )
 	if( _inputListener )
 	{
 		qt::KeyboardModifiers modifiers;
-		fillKeyboardModifiers( event->modifiers(), modifiers );
+		EventHub::fillKeyboardModifiers( event->modifiers(), modifiers );
 		_inputListener->mousePressed( event->x(), event->y(), event->button(), modifiers );
 	}
 	else
@@ -102,7 +80,7 @@ void GLWidget::mouseReleaseEvent( QMouseEvent* event )
 	if( _inputListener )
 	{
 		qt::KeyboardModifiers modifiers;
-		fillKeyboardModifiers( event->modifiers(), modifiers );
+		EventHub::fillKeyboardModifiers( event->modifiers(), modifiers );
 		_inputListener->mouseReleased( event->x(), event->y(), event->button(), modifiers );
 	}
 	else
@@ -114,9 +92,9 @@ void GLWidget::mouseMoveEvent( QMouseEvent* event )
 	if( _inputListener )
 	{
 		qt::KeyboardModifiers modifiers;
-		fillKeyboardModifiers( event->modifiers(), modifiers );
+		EventHub::fillKeyboardModifiers( event->modifiers(), modifiers );
 		qt::MouseButtons buttons;
-		fillMouseButtons( event->buttons(), buttons );
+		EventHub::fillMouseButtons( event->buttons(), buttons );
 		_inputListener->mouseMoved( event->x(), event->y(), buttons, modifiers );
 	}
 	else
@@ -128,7 +106,7 @@ void GLWidget::mouseDoubleClickEvent( QMouseEvent* event )
 	if( _inputListener )
 	{
 		qt::KeyboardModifiers modifiers;
-		fillKeyboardModifiers( event->modifiers(), modifiers );
+		EventHub::fillKeyboardModifiers( event->modifiers(), modifiers );
 		_inputListener->mouseDoubleClicked( event->x(), event->y(), event->button(), modifiers );
 	}
 	else
