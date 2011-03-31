@@ -5,6 +5,8 @@
 #include <qt/MouseButtons.h>
 #include <qt/KeyboardModifiers.h>
 
+#include "EventHub.h"
+
 #include <QKeyEvent>
 #include <QMouseEvent>
 
@@ -63,16 +65,22 @@ void GLWidget::resizeGL( int w, int h )
 
 void GLWidget::keyPressEvent( QKeyEvent* event )
 {
+	co::Any keyCode;
+	EventHub::fillKeyCodeString( event->key(), keyCode );
+
 	if( _inputListener )
-		_inputListener->keyPressed( event->key() );
+		_inputListener->keyPressed( keyCode.get<std::string&>() );
 	else
 		event->ignore();
 }
 
 void GLWidget::keyReleaseEvent( QKeyEvent* event )
 {
+	co::Any keyCode;
+	EventHub::fillKeyCodeString( event->key(), keyCode );
+
 	if( _inputListener )
-		_inputListener->keyReleased( event->key() );
+		_inputListener->keyReleased( keyCode.get<std::string&>() );
 	else
 		event->ignore();
 }

@@ -20,6 +20,9 @@ class EventHub : public QObject
 	Q_PROPERTY( Qt::Key _qtKeyEnum READ getKeyEnum )
 
 public:
+	static void fillKeyCodeString( int keyCode, co::Any& any );
+
+public:
 	//! Accessor for qt property (necessary to avoid Qt warnings)
 	Qt::Key getKeyEnum() { return _qtKeyEnum; }
 
@@ -44,11 +47,11 @@ private:
 	// returns whether the given object is already filtered.
 	void extractArguments( QEvent* event, co::Any* args, int maxArgs );
 	bool isObjectFiltered( QObject* watched );
-	void initializeKeyMetaEnum();
+	static QMetaEnum initializeKeyMetaEnum();
 
 private:
 	Qt::Key _qtKeyEnum;
-	QMetaEnum _qtKeyMetaEnum;
+	static QMetaEnum sm_qtKeyMetaEnum;
 	static const int MAX_ARGS = 6;
 	typedef std::map<QObject*, qt::IEventHandler*> FilteredObjectMap;
 	FilteredObjectMap _filteredObjects;

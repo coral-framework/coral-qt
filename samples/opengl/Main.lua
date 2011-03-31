@@ -28,6 +28,7 @@ local SampleInputListener = co.IComponent {
 SampleInputListener.lastx = 0  -- Last drag x coordinate
 SampleInputListener.lasty = 0  -- Last drag y coordinate
 SampleInputListener.target = qt.objectCast( glWidget ) -- Target widget
+SampleInputListener.target.focusPolicy = qt.StrongFocus -- necessary for good keyboard interaction
 SampleInputListener._params = nil -- internal reference of the opengl.ICubeParameters interface
 
 -- The 'receives opengl.ICubeParameters' required the following two methods
@@ -39,8 +40,8 @@ function SampleInputListener:getReceptacleParameters()
 end
 
 -- Those qt.IInputListener methods are unused; providing empty implementations
-function SampleInputListener:keyPressed( key ) end
-function SampleInputListener:keyReleased( key ) end
+function SampleInputListener:keyPressed( key ) print( ">>>>", key ) end
+function SampleInputListener:keyReleased( key ) print( ">>>>", key ) end
 function SampleInputListener:mouseReleased( x, y, button, modifiers ) end
 function SampleInputListener:mouseDoubleClicked( x, y, button, modifiers ) end
 function SampleInputListener:mouseWheel( x, y, button, modifiers ) end

@@ -28,6 +28,15 @@ M.FormatOption.NoSampleBuffers			= 33554432
 M.FormatOption.NoDeprecatedFunctions	= 67108864
 
 -------------------------------------------------------------------------------
+-- Export Qt::FocusPolicy enum
+-------------------------------------------------------------------------------
+M.TabFocus 					= 0x1
+M.ClickFocus				= 0x2
+M.StrongFocus				= M.TabFocus + M.ClickFocus + 0x8
+M.WheelFocus				= M.StrongFocus + 0x4
+M.NoFocus					= 0
+
+-------------------------------------------------------------------------------
 -- Export Qt::ItemFlag enum (see AbstractItemModelDelegate:getData())
 -------------------------------------------------------------------------------
 M.NoItemFlags				= 0

@@ -13,6 +13,8 @@
 #include <QCoreApplication>
 #include <qt/KeyboardModifiers.h>
 
+QMetaEnum EventHub::sm_qtKeyMetaEnum = EventHub::initializeKeyMetaEnum();
+
 static void fillKeyboardModifiers( Qt::KeyboardModifiers modifiers, co::Any& any )
 {
 	qt::KeyboardModifiers& km = any.createComplexValue<qt::KeyboardModifiers>();
@@ -25,16 +27,16 @@ static void fillKeyboardModifiers( Qt::KeyboardModifiers modifiers, co::Any& any
 	km.groupSwitch = modifiers & Qt::GroupSwitchModifier;
 }
 
-static void fillKeyCodeString( const QMetaEnum& metaEnum, int keyCode, co::Any& any )
+void EventHub::fillKeyCodeString( int keyCode, co::Any& any )
 {
-	const char* name = metaEnum.valueToKey( keyCode );
+	const char* name = sm_qtKeyMetaEnum.valueToKey( keyCode );
 	if( name )
 		any.createString() = name;
 }
 
 EventHub::EventHub()
 {
-	initializeKeyMetaEnum();
+	// empty
 }
 
 EventHub::~EventHub()
@@ -103,7 +105,7 @@ void EventHub::extractArguments( QEvent* event, co::Any* args, int maxArgs )
 			QKeyEvent* keyEvent = dynamic_cast<QKeyEvent*>( event );
 			assert( keyEvent );
 
-			fillKeyCodeString( _qtKeyMetaEnum, keyEvent->key(), args[0] );
+			fillKeyCodeString( keyEvent->key(), args[0] );
 			fillKeyboardModifiers( keyEvent->modifiers(), args[1] );
 			return;
 		}
@@ -145,10 +147,10 @@ bool EventHub::isObjectFiltered( QObject* watched )
 	return _filteredObjects.find( watched ) != _filteredObjects.end();
 }
 
-void EventHub::initializeKeyMetaEnum()
+QMetaEnum EventHub::initializeKeyMetaEnum()
 {
 	const QMetaObject &mo = EventHub::staticMetaObject;
 	int prop_index = mo.indexOfProperty( "_qtKeyEnum" );
 	QMetaProperty metaProperty = mo.property( prop_index );
-	_qtKeyMetaEnum = metaProperty.enumerator();
+	return metaProperty.enumerator();
 }
