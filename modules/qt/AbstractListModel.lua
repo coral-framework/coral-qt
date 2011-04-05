@@ -35,4 +35,3 @@ return function( componentName )
 	end
 	return prototype
 end
-

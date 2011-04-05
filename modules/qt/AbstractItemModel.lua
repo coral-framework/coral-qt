@@ -2,7 +2,7 @@
 -- Returns an AbstractItemModel component prototype factory
 -------------------------------------------------------------------------------
 return function( componentName )
-	local AbstractItemModel = co.IComponent { name = componentName, provides = { delegate = "qt.IAbstractItemModelDelegate" } }
+	local AbstractItemModel = co.Component { name = componentName, provides = { delegate = "qt.IAbstractItemModelDelegate" } }
 
 	-- defines a default empty implementation for AbstractItemViewDelegate signal handling methods
 	AbstractItemModel.itemActivated = function( self, view, index ) end

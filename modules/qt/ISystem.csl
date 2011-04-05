@@ -7,7 +7,7 @@ import co.IllegalArgumentException;
 interface ISystem
 {
 	// The 'qApp' object.
-	readonly attribute Object app;
+	readonly Object app;
 
 	/* 
 		Loads a QWidget from a .ui file created in Qt Designer.

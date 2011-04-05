@@ -3,7 +3,6 @@
  */
 interface ICubeParameters
 {
-	attribute double yaw; //< Rotation angle (in degrees) around the x axis.
-	attribute double pitch; //< Rotation angle (in degrees) around the y axis.
+	double yaw; //< Rotation angle (in degrees) around the x axis.
+	double pitch; //< Rotation angle (in degrees) around the y axis.
 };
-

@@ -4,7 +4,7 @@
 interface IAbstractItemModel
 {
 	// Data delegate for model instance
-	attribute IAbstractItemModelDelegate delegate;
+	IAbstractItemModelDelegate delegate;
 
 	// Notifies listeners about some change in the model. This 
 	// is used to inform views that an update is necessary.

@@ -5,7 +5,7 @@
 interface IGLContext
 {
 	// Defines whether the widget will automatically swap buffers
-	attribute bool autoSwapBuffers;
+	bool autoSwapBuffers;
 
 	// Changes the pixel format of the widget.
 	void setFormat( in int32 desiredFormat );

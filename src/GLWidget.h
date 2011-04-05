@@ -46,11 +46,11 @@ protected:
 	void mouseDoubleClickEvent( QMouseEvent* event );
 
 protected:
-	IPainter* getReceptaclePainter();
-	void setReceptaclePainter( IPainter* painter );
+	IPainter* getPainterService();
+	void setPainterService( IPainter* painter );
 
-	IInputListener* getReceptacleInputListener();
-	void setReceptacleInputListener( IInputListener* inputListener );
+	IInputListener* getInputListenerService();
+	void setInputListenerService( IInputListener* inputListener );
 
 private:
 	IPainter*       _painter;

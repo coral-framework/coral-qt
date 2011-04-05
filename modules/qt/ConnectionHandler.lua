@@ -3,7 +3,7 @@ local M = {}
 -------------------------------------------------------------------------------
 -- IConnectionHandler component that dispatches all signals
 -------------------------------------------------------------------------------
-local LuaConnectionHandler = co.IComponent { name = "qt.LuaConnectionHandler", provides = { handler = "qt.IConnectionHandler" } }
+local LuaConnectionHandler = co.Component { name = "qt.LuaConnectionHandler", provides = { handler = "qt.IConnectionHandler" } }
 function LuaConnectionHandler.handler:onSignal( cookie, ... )
 	local closure = assert( self.closures[cookie], "LuaConnectionHandler: invalid closure for the emitted signal" )
 	closure( ... )

@@ -1,4 +1,4 @@
 interface IObjectSource
 {
-	readonly attribute Object object; //< Object instance
+	readonly Object object; //< Object instance
 };

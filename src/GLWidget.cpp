@@ -153,22 +153,22 @@ const qt::Object& GLWidget::getObject()
 	return _wrapper;
 }
 
-void GLWidget::setReceptaclePainter( IPainter* painter )
+void GLWidget::setPainterService( IPainter* painter )
 {
 	_painter = painter;
 }
 
-qt::IPainter* GLWidget::getReceptaclePainter()
+qt::IPainter* GLWidget::getPainterService()
 {
 	return _painter;
 }
 
-IInputListener* GLWidget::getReceptacleInputListener()
+IInputListener* GLWidget::getInputListenerService()
 {
 	return _inputListener;
 }
 
-void GLWidget::setReceptacleInputListener( IInputListener* inputListener )
+void GLWidget::setInputListenerService( IInputListener* inputListener )
 {
 	_inputListener = inputListener;
 }
@@ -176,3 +176,4 @@ void GLWidget::setReceptacleInputListener( IInputListener* inputListener )
 CORAL_EXPORT_COMPONENT( GLWidget, GLWidget );
 
 } // namespace qt
+

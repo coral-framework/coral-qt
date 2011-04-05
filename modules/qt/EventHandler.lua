@@ -47,7 +47,7 @@ local eventNames = {
 }
 
 -- IEventHandler component that dispatches all events
-local LuaEventHandler = co.IComponent { name = "qt.LuaEventHandler", provides = { handler = "qt.IEventHandler" } }
+local LuaEventHandler = co.Component { name = "qt.LuaEventHandler", provides = { handler = "qt.IEventHandler" } }
 function LuaEventHandler.handler:onEvent( cookie, eventType, ... )
 	local eventName = eventNames[eventType]
 	if not eventName or not self.closures[cookie][eventName] then

@@ -108,7 +108,7 @@ public:
 		widget.set( resWidget );
 	}
 
-	void setSearchPaths( const std::string& prefix, co::ArrayRange<std::string const> searchPaths )
+	void setSearchPaths( const std::string& prefix, co::Range<std::string const> searchPaths )
 	{
 		QStringList qtSearchPaths;
 		while( searchPaths )

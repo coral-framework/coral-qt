@@ -13,7 +13,7 @@ local connectionHandler = require "qt.ConnectionHandler"
 -- Coral-Qt system service registration
 -------------------------------------------------------------------------------
 -- For now we're manually registering the qt.ISystem service here.
-co.system.services:addServiceImplementation( co.Type "qt.ISystem", "qt.System" )
+co.system.services:addServiceProvider( co.Type "qt.ISystem", "qt.System" )
 local system = co.getService( "qt.ISystem" )
 
 local M = {}
