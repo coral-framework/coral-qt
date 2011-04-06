@@ -5,6 +5,7 @@
 /@*/
 /build/
 /build.debug/
+/build.release/
 
 ######################
 # OS generated files #
