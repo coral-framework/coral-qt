@@ -1,12 +1,16 @@
 #include "BasicCubeSample.h"
 
-// MS Windows obligates windows.h to be included before gl.h
-#ifdef WIN32
-# include <windows.h>
+#ifdef CORAL_OS_WIN
+	#include <windows.h>
 #endif
 
-#include <GL/gl.h> 
-#include <GL/glu.h>
+#ifdef CORAL_OS_MAC
+	#include <OpenGL/gl.h>
+	#include <OpenGL/glu.h>
+#else
+	#include <GL/gl.h> 
+	#include <GL/glu.h>
+#endif
 
 namespace opengl {
 
