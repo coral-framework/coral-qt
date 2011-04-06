@@ -138,6 +138,10 @@ function MT.setMenu( action, menu )
 	return menu
 end
 
+function MT.addActionIntoGroup( actionGroup, action )
+	system:addActionIntoGroup( actionGroup._obj, action._obj )
+end
+
 function MT.insertAction( widget, beforeActionIndex, v, icon )
 	-- adds support for inserting an action both from text 
 	-- and icon as well as from an actual QAction instance	

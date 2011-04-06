@@ -159,6 +159,10 @@ public:
 		{
 			object.set( loader.createAction( parentWidget ) );
 		}
+		else if( name == "QActionGroup" )
+		{
+			object.set( new QActionGroup( parentWidget ) );
+		}
 		else if( name == "QMessageBox" )
 		{
 			object.set( new QMessageBox( parentWidget ) );
@@ -293,6 +297,19 @@ public:
 			CORAL_THROW( co::IllegalArgumentException, "cannot get layout: 'widget' is not an instace of QWidget" );
 
 		layout.set( qwidget->layout() );
+	}
+	
+	void addActionIntoGroup( const qt::Object& actionGroup, const qt::Object& action )
+	{
+		QActionGroup* qActionGroup = qobject_cast<QActionGroup*>( actionGroup.get() );
+		if( !qActionGroup )
+			CORAL_THROW( co::IllegalArgumentException, "cannot insert action into group: 'actionGroup' is not an instance of QActionGroup" );
+		
+		QAction* qAction = qobject_cast<QAction*>( action.get() );
+		if( !qAction )
+			CORAL_THROW( co::IllegalArgumentException, "cannot insert action into group: 'action' is not an instance of QAction" );
+		
+		qActionGroup->addAction( qAction );
 	}
 
 	void insertAction( const qt::Object& widget, co::int32 beforeActionIndex, const qt::Object& action )

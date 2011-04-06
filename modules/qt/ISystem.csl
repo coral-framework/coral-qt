@@ -113,6 +113,15 @@ interface ISystem
 	 */
 	void getLayout( in Object widget, out Object layout ) raises IllegalArgumentException;
 
+	/* 
+		Adds an action into an action group.
+
+		\throw co.IllegalArgumentException if the \a actionGroup is not instance of
+		QActionGroup or \a action is not an instance of QAction.
+	 */
+	void addActionIntoGroup( in Object actionGroup, in Object action ) 
+		raises IllegalArgumentException;
+	
 	/*! 
 		Adds an action to the given widget before \a beforeAction action.
 		If \a beforeActionIndex is -1 the action is appended after the last
