@@ -220,6 +220,14 @@ function M.setSearchPaths( prefix, paths )
 	return system:setSearchPaths( prefix, paths )
 end
 
+function M.addTimerCallback( callback )
+	system:addTimerCallback( callback )
+end
+
+function M.removeTimerCallback( callback )
+	system:removeTimerCallback( callback )
+end
+
 function M.exec()
 	return system:exec()
 end

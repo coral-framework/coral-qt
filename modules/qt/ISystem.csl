@@ -196,6 +196,28 @@ interface ISystem
 	int64 installEventHandler( in Object watched, in IEventHandler handler );
 
 	/*
+		Adds a timer \a callback to be notified at frequency of 60 Hz. The
+		notification interval is not granted to be 1/60, since it depends on
+		the Qt's event queue and its single threaded, but the real time 
+		interval elapsed between two consecutive notifications is passed to the
+		callback through ITimerCallback interface method \a update(dt).
+		This time interval is measured in user time with a precision that
+		depends on the underlying operating system.
+	 */
+	void addTimerCallback( in ITimerCallback callback );
+
+	/*
+		Adds a timer \a callback to be notified at frequency of 60 Hz. The
+		notification interval is not granted to be 1/60, since it depends on
+		the Qt's event queue and its single threaded, but the real time 
+		interval elapsed between two consecutive notifications is passed to the
+		callback through ITimerCallback interface method \a update(dt).
+		This time interval is measured in user time with a precision that
+		depends on the underlying operating system.
+	 */
+	void removeTimerCallback( in ITimerCallback callback );
+
+	/*
 		Connects a \a signal from \a sender to a \a handler, and returns the 
 		connection cookie. \note To undo the connection, call disconnect() 
 		passing the returned connection cookie.

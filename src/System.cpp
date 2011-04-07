@@ -6,6 +6,7 @@
 #include "EventHub.h"
 #include "System_Base.h"
 #include "ConnectionHub.h"
+#include "TimerCallbackNotifier.h"
 
 #include <co/NotSupportedException.h>
 #include <co/IllegalArgumentException.h>
@@ -410,6 +411,22 @@ public:
 		return _eventHub.installEventHandler( watched, handler );
 	}
 
+	void addTimerCallback( qt::ITimerCallback* callback )
+	{
+		if( callback && _callbackNotifier.isEmpty() )
+			_callbackNotifier.start( 1.0 / 60 );
+
+		_callbackNotifier.addCallback( callback );
+	}
+
+	void removeTimerCallback( qt::ITimerCallback* callback )
+	{
+		_callbackNotifier.removeCallback( callback );
+
+		if( _callbackNotifier.isEmpty() )
+			_callbackNotifier.stop();
+	}
+
 	co::int32 connect( const qt::Object& sender, const std::string& signal, qt::IConnectionHandler* handler )
 	{
 		return _connectionHub.connect( sender, signal, handler );
@@ -440,6 +457,7 @@ private:
 	qt::Object _appObj;
 	EventHub _eventHub;
 	ConnectionHub _connectionHub;
+	TimerCallbackNotifier _callbackNotifier;
 };
 
 CORAL_EXPORT_COMPONENT( System, System )

@@ -13,6 +13,7 @@ SET( _MOC_HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/EventHub.h
 	${CMAKE_CURRENT_SOURCE_DIR}/GLWidget.h
 	${CMAKE_CURRENT_SOURCE_DIR}/AbstractItemModel.h
+	${CMAKE_CURRENT_SOURCE_DIR}/TimerCallbackNotifier.h	
 )
 
 # Generate moc_*.cpp files from mocable headers

@@ -1,0 +1,4 @@
+interface ITimerCallback
+{
+	void timeUpdate( in double dt );
+};
