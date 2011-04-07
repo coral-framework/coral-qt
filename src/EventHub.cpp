@@ -13,7 +13,7 @@
 #include <QCoreApplication>
 #include <qt/KeyboardModifiers.h>
 
-QMetaEnum const*  EventHub::sm_qtKeyMetaEnum = 0;
+QMetaEnum const* EventHub::sm_qtKeyMetaEnum = 0;
 
 void EventHub::fillKeyboardModifiers( Qt::KeyboardModifiers modifiers, co::Any& any )
 {
@@ -47,7 +47,7 @@ void EventHub::fillMouseButtons( Qt::MouseButtons buttons, qt::MouseButtons& mb 
 EventHub::EventHub()
 {
 	if( !sm_qtKeyMetaEnum )
-		sm_qtKeyMetaEnum = initializeKeyMetaEnum();
+		sm_qtKeyMetaEnum = createKeyMetaENum();
 }
 
 EventHub::~EventHub()
@@ -158,10 +158,10 @@ bool EventHub::isObjectFiltered( QObject* watched )
 	return _filteredObjects.find( watched ) != _filteredObjects.end();
 }
 
-QMetaEnum const* EventHub::initializeKeyMetaEnum()
+QMetaEnum const* EventHub::createKeyMetaENum()
 {
 	const QMetaObject &mo = EventHub::staticMetaObject;
 	int prop_index = mo.indexOfProperty( "_qtKeyEnum" );
 	QMetaProperty metaProperty = mo.property( prop_index );
-	return &(metaProperty.enumerator());
+	return new QMetaEnum( metaProperty.enumerator() );
 }

@@ -53,7 +53,7 @@ private:
 	// returns whether the given object is already filtered.
 	void extractArguments( QEvent* event, co::Any* args, int maxArgs );
 	bool isObjectFiltered( QObject* watched );
-	static QMetaEnum const* initializeKeyMetaEnum();
+	static QMetaEnum const* createKeyMetaENum();
 
 private:
 	Qt::Key _qtKeyEnum;
