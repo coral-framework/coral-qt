@@ -187,11 +187,11 @@ function MT.getCursorPosition( widget )
 end
 
 function MT.mapFromGlobal( widget, posX, posY )
-	return system:mapFromGlobal( widget, posX, posY )
+	return system:mapFromGlobal( widget._obj, posX, posY )
 end
 
 function MT.mapToGlobal( widget, posX, posY )
-	return system:mapToGlobal( widget, posX, posY )
+	return system:mapToGlobal( widget._obj, posX, posY )
 end
 
 -------------------------------------------------------------------------------
