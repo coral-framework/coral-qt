@@ -384,6 +384,57 @@ public:
 		selectedAction.set( selected );
 	}
 
+	void setCursor( const qt::Object& widget, co::int32 cursor )
+	{
+		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
+		if( !qwidget )
+			CORAL_THROW( co::IllegalArgumentException, "cannot set cursor: 'widget' is not an instance of QWidget." );
+
+		qwidget->setCursor( QCursor( Qt::CursorShape( cursor ) ) );
+	}
+
+	void setCursorPosition( const qt::Object& widget, co::int32 posX, co::int32 posY )
+	{
+		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
+		if( !qwidget )
+			CORAL_THROW( co::IllegalArgumentException, "cannot set cursor position: 'widget' is not an instance of QWidget." );
+
+		qwidget->cursor().setPos( QPoint( posX, posY ) );
+	}
+
+	void getCursorPosition( const qt::Object& widget, co::int32& posX, co::int32& posY )
+	{
+		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
+		if( !qwidget )
+			CORAL_THROW( co::IllegalArgumentException, "cannot get cursor position: 'widget' is not an instance of QWidget." );
+
+		QPoint pos = qwidget->cursor().pos();
+		posX = pos.x();
+		posY = pos.y();
+	}
+
+	void mapFromGlobal( const qt::Object& widget, co::int32& posX, co::int32& posY )
+	{
+		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
+		if( !qwidget )
+			CORAL_THROW( co::IllegalArgumentException, "cannot get cursor position: 'widget' is not an instance of QWidget." );
+
+		QPoint pos = qwidget->mapFromGlobal( QPoint( posX, posY ) );
+		posX = pos.x();
+		posY = pos.y();
+	}
+
+	void mapToGlobal( const qt::Object& widget, co::int32& posX, co::int32& posY )
+	{
+		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
+		if( !qwidget )
+			CORAL_THROW( co::IllegalArgumentException, "cannot get cursor position: 'widget' is not an instance of QWidget." );
+
+		QPoint pos = qwidget->mapToGlobal( QPoint( posX, posY ) );
+		posX = pos.x();
+		posY = pos.y();
+	}
+
 	void assignModelToView( qt::Object& view, qt::IAbstractItemModel* model )
 	{
 		QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );

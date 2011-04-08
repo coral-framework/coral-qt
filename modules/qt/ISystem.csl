@@ -150,7 +150,7 @@ interface ISystem
 
 		\throw co.IllegalArgumentException if the \a action is not an instance
 		of QAction class.
-  	 */
+	 */
 	void makeSeparator( in Object action ) raises IllegalArgumentException;
 
 	/*! Sets the a menu in the given \a action. It allows creation of submenus
@@ -161,7 +161,7 @@ interface ISystem
 
 		\throw co.IllegalArgumentException if the \a menu is not an instance
 		of QMenu class.
-  	 */
+	 */
 	void setMenu( in Object action, in Object menu ) raises IllegalArgumentException;
 
 	/*! 
@@ -177,6 +177,46 @@ interface ISystem
 	void execMenu( in Object menu, in int32 posX, in int32 posY, out Object selectedAction )
 		raises IllegalArgumentException;
 
+	/*
+		Sets the mouse cursor shape for the given widget.
+		The cursor shape is given by the value of \a cursor, who is assumed to be
+		a value in the Qt::CursorShape enumeration.
+		
+		\throw co.IllegalArgumentException if \a widget is not an instance of class QWidget.
+	 */
+	void setCursor( in Object widget, in int32 cursor ) raises IllegalArgumentException;
+
+	/*
+		Sets the given widget's cursor position.
+		The mouse cursor is warped to the global screen position (posX, posY).
+		
+		\throw co.IllegalArgumentException if \a widget is not an instance of class QWidget.
+	 */
+	void setCursorPosition( in Object widget, in int32 posX, in int32 posY );
+
+	/*
+		Gets the given widget's cursor position.
+		
+		Returns the global screen coordinates (posX, posY) of the mouse cursor.
+		
+		\throw co.IllegalArgumentException if \a widget is not an instance of class QWidget.
+	 */
+	void getCursorPosition( in Object widget, out int32 posX, out int32 posY );
+	
+	/*
+		Translates the global screen coordinates into the given widget's local coordinates.
+		
+		\throw co.IllegalArgumentException if \a widget is not an instance of class QWidget.
+	*/
+	void mapFromGlobal( in Object widget, inout int32 posX, inout int32 posY );
+
+	/*
+		Translates the given widget's local coordinates into screen's global coordinates.
+		
+		\throw co.IllegalArgumentException if \a widget is not an instance of class QWidget.
+	*/
+	void mapToGlobal( in Object widget, inout int32 posX, inout int32 posY );
+
 	/* 
 		Sets the given IAbstractItemModel as the model for the given view instance.
 
@@ -185,7 +225,6 @@ interface ISystem
 		QAbstractItemModel class.
 	 */
 	void assignModelToView( inout Object view, in IAbstractItemModel model ) raises IllegalArgumentException;
-
 
 	/*
 		Installs an event handler in \a watched object and returns a cookie 

@@ -72,6 +72,33 @@ M.RadialGradientPattern		= 16
 M.TexturePattern			= 24
 
 -------------------------------------------------------------------------------
+-- Export Qt::CusrorShape enum
+-------------------------------------------------------------------------------
+M.ArrowCursor				= 0
+M.UpArrowCursor				= 1
+M.CrossCursor				= 2
+M.WaitCursor				= 3
+M.IBeamCursor				= 4
+M.SizeVerCursor				= 5
+M.SizeHorCursor				= 6
+M.SizeBDiagCursor			= 7
+M.SizeFDiagCursor			= 8
+M.SizeAllCursor				= 9
+M.BlankCursor				= 10
+M.SplitVCursor				= 11
+M.SplitHCursor				= 12
+M.PointingHandCursor		= 13
+M.ForbiddenCursor			= 14
+M.OpenHandCursor			= 17
+M.ClosedHandCursor			= 18
+M.WhatsThisCursor			= 15
+M.BusyCursor				= 16
+M.DragMoveCursor			= 20
+M.DragCopyCursor			= 19
+M.DragLinkCursor			= 21
+M.BitmapCursor				= 24
+
+-------------------------------------------------------------------------------
 -- Export Qt::AlignmentFlag enum
 -------------------------------------------------------------------------------
 M.AlignLeft					= 0x0001

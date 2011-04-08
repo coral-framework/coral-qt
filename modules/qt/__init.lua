@@ -174,6 +174,26 @@ function MT.setModel( view, model )
 	system:assignModelToView( view._obj, model._obj or model )
 end
 
+function MT.setCursor( widget, cursor )
+	system:setCursor( widget._obj, cursor )
+end
+
+function MT.setCursorPosition( widget, posX, posY )
+	system:setCursorPosition( widget._obj, posX, posY )
+end
+
+function MT.getCursorPosition( widget )
+	return system:getCurstorPosition( widget._obj )
+end
+
+function MT.mapFromGlobal( widget, posX, posY )
+	return system:mapFromGlobal( widget, posX, posY )
+end
+
+function MT.mapToGlobal( widget, posX, posY )
+	return system:mapToGlobal( widget, posX, posY )
+end
+
 -------------------------------------------------------------------------------
 -- Casts IObjectSource components into an ObjectWrapper
 -------------------------------------------------------------------------------
