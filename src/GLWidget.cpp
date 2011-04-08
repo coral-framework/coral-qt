@@ -43,24 +43,30 @@ void GLWidget::resizeGL( int w, int h )
 
 void GLWidget::keyPressEvent( QKeyEvent* event )
 {
+	if( !_inputListener || event->isAutoRepeat() )
+	{
+		event->ignore();
+		return;
+	}
+
 	co::Any keyCode;
 	EventHub::fillKeyCodeString( event->key(), keyCode );
 
-	if( _inputListener )
-		_inputListener->keyPressed( keyCode.get<std::string&>() );
-	else
-		event->ignore();
+	_inputListener->keyPressed( keyCode.get<std::string&>() );
 }
 
 void GLWidget::keyReleaseEvent( QKeyEvent* event )
 {
+	if( !_inputListener || event->isAutoRepeat() )
+	{
+		event->ignore();
+		return;
+	}
+
 	co::Any keyCode;
 	EventHub::fillKeyCodeString( event->key(), keyCode );
 
-	if( _inputListener )
-		_inputListener->keyReleased( keyCode.get<std::string&>() );
-	else
-		event->ignore();
+	_inputListener->keyReleased( keyCode.get<std::string&>() );
 }
 
 void GLWidget::mousePressEvent( QMouseEvent* event )
