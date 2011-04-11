@@ -13,7 +13,7 @@
 #include <QCoreApplication>
 #include <qt/KeyboardModifiers.h>
 
-QMetaEnum const* EventHub::sm_qtKeyMetaEnum = 0;
+QMetaEnum EventHub::sm_qtKeyMetaEnum;
 
 void EventHub::fillKeyboardModifiers( Qt::KeyboardModifiers modifiers, co::Any& any )
 {
@@ -33,7 +33,7 @@ void EventHub::fillKeyboardModifiers( Qt::KeyboardModifiers modifiers, qt::Keybo
 
 void EventHub::fillKeyCodeString( int keyCode, co::Any& any )
 {
-	const char* name = sm_qtKeyMetaEnum->valueToKey( keyCode );
+	const char* name = sm_qtKeyMetaEnum.valueToKey( keyCode );
 	if( name )
 		any.createString() = name;
 }
@@ -46,8 +46,8 @@ void EventHub::fillMouseButtons( Qt::MouseButtons buttons, qt::MouseButtons& mb 
 
 EventHub::EventHub()
 {
-	if( !sm_qtKeyMetaEnum )
-		sm_qtKeyMetaEnum = createKeyMetaENum();
+	if( !sm_qtKeyMetaEnum.isValid() )
+		sm_qtKeyMetaEnum = createKeyMetaEnum();
 }
 
 EventHub::~EventHub()
@@ -158,10 +158,10 @@ bool EventHub::isObjectFiltered( QObject* watched )
 	return _filteredObjects.find( watched ) != _filteredObjects.end();
 }
 
-QMetaEnum const* EventHub::createKeyMetaENum()
+QMetaEnum EventHub::createKeyMetaEnum()
 {
 	const QMetaObject &mo = EventHub::staticMetaObject;
 	int prop_index = mo.indexOfProperty( "_qtKeyEnum" );
 	QMetaProperty metaProperty = mo.property( prop_index );
-	return new QMetaEnum( metaProperty.enumerator() );
+	return metaProperty.enumerator();
 }
