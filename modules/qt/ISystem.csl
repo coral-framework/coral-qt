@@ -187,6 +187,13 @@ interface ISystem
 	void setCursor( in Object widget, in int32 cursor ) raises IllegalArgumentException;
 
 	/*
+		Removes the custom mouse cursor shape for the given widget, restoring the system default cursor.
+		
+		\throw co.IllegalArgumentException if \a widget is not an instance of class QWidget.
+	 */
+	void unsetCursor( in Object widget ) raises IllegalArgumentException;
+
+	/*
 		Sets the given widget's cursor position.
 		The mouse cursor is warped to the global screen position (posX, posY).
 		

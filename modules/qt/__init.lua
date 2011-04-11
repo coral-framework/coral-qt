@@ -178,6 +178,10 @@ function MT.setCursor( widget, cursor )
 	system:setCursor( widget._obj, cursor )
 end
 
+function MT.unsetCursor( widget, cursor )
+	system:unsetCursor( widget._obj )
+end
+
 function MT.setCursorPosition( widget, posX, posY )
 	system:setCursorPosition( widget._obj, posX, posY )
 end

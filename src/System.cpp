@@ -393,6 +393,15 @@ public:
 		qwidget->setCursor( QCursor( Qt::CursorShape( cursor ) ) );
 	}
 
+	void unsetCursor( const qt::Object& widget )
+	{
+		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
+		if( !qwidget )
+			CORAL_THROW( co::IllegalArgumentException, "cannot set cursor: 'widget' is not an instance of QWidget." );
+
+		qwidget->unsetCursor();
+	}
+
 	void setCursorPosition( const qt::Object& widget, co::int32 posX, co::int32 posY )
 	{
 		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
