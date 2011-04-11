@@ -10,6 +10,8 @@
 #include <qt/Variant.h>
 #include <sstream>
 
+#include <co/Exception.h>
+
 namespace
 {
 	const int ID_INVALID = -1;
