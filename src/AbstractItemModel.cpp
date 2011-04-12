@@ -5,6 +5,7 @@
 
 #include "AbstractItemModel.h"
 #include <ValueConverters.h>
+#include <co/Exception.h>
 #include <QTextDocument>
 #include <qt/Variant.h>
 #include <sstream>
