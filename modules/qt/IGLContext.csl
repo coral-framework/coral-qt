@@ -4,21 +4,21 @@
  */
 interface IGLContext
 {
-	// Defines whether the widget will automatically swap buffers
+	//! Defines whether the widget will automatically swap buffers
 	bool autoSwapBuffers;
 
-	// Changes the pixel format of the widget.
+	//! Changes the pixel format of the widget.
 	void setFormat( in int32 desiredFormat );
 
-	// Triggers a buffer swap in a double-buffered widget.
+	//! Triggers a buffer swap in a double-buffered widget.
 	void swapBuffers();
 
-	// Makes this rendering context the current context.
+	//! Makes this rendering context the current context.
 	void makeCurrent();
 
-	// Triggers a redraw of the widget;
+	//! Triggers a redraw of the widget;
 	void update();
 
-	// Defines if the widget should track mouse motion even if no button is pressed.
+	//! Defines if the widget should track mouse motion even if no button is pressed.
 	void setMouseTracking( in bool enabled );
 };

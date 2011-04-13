@@ -3,9 +3,7 @@
  */
 interface IInputListener
 {
-	//! Activates the input listener. Called whenever its is set as current input listener of given \a glWidget instance.
-	void activate( in Object glWidget );
-	void deactivate();
+	bool enabled;
 
 	void keyPressed( in string key );
 	void keyReleased( in string key );
@@ -14,11 +12,5 @@ interface IInputListener
 	void mouseDoubleClicked( in int32 x, in int32 y, in int32 button, in KeyboardModifiers modifiers );
 	void mouseMoved( in int32 x, in int32 y, in MouseButtons buttons, in KeyboardModifiers modifiers );
 	void mouseWheel( in int32 x, in int32 y, in int32 delta, in KeyboardModifiers modifiers );
-
-	//! Current input cursor to be shown inside GLWidget
-	int32 cursor;
-
-	//! Listener current state.
-	readonly bool active;
 };
 
