@@ -492,7 +492,7 @@ public:
 	void addTimerCallback( qt::ITimerCallback* callback )
 	{
 		if( callback && _callbackNotifier.isEmpty() )
-			_callbackNotifier.start( 1.0 / 60 );
+			_callbackNotifier.start( 1000.0 / 60.0 );
 
 		_callbackNotifier.addCallback( callback );
 	}
