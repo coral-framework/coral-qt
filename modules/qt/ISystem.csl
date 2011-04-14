@@ -242,13 +242,27 @@ interface ISystem
 	int64 installEventHandler( in Object watched, in IEventHandler handler );
 
 	/*
+		Grabs the mouse input. 
+
+		The given \a widget receives all mouse events until releaseMouse() is 
+		called.	Other widgets get no mouse events at all. Keyboard events are 
+		not affected.
+		
+		\throw co.IllegalArgumentException if \a widget is not an instance of class QWidget.
+	 */
+	void grabMouse( in Object widget );
+
+	//! Releases the mouse grab. \see grabMouse().
+	//! \throw co.IllegalArgumentException if \a widget is not an instance of class QWidget.
+	void releaseMouse( in Object widget );
+
+	/*
 		Adds a timer \a callback to be notified at frequency of 60 Hz. The
 		notification interval is not granted to be 1/60, since it depends on
-		the Qt's event queue and its single threaded, but the real time 
-		interval elapsed between two consecutive notifications is passed to the
-		callback through ITimerCallback interface method \a update(dt).
-		This time interval is measured in user time with a precision that
-		depends on the underlying operating system.
+		the Qt's GUI's event queue, but the real user-time interval elapsed
+		between two consecutive notifications is passed to ITimerCallback 
+		method \a update(dt). The precision of elapsed interval \a dt depends
+		on the underlying operating system.
 	 */
 	void addTimerCallback( in ITimerCallback callback );
 

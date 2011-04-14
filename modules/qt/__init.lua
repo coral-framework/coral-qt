@@ -198,6 +198,14 @@ function MT.mapToGlobal( widget, posX, posY )
 	return system:mapToGlobal( widget._obj, posX, posY )
 end
 
+function MT.grabMouse( widget )
+	return system:grabMouse( widget._obj )
+end
+
+function MT.releaseMouse( widget )
+	return system:releaseMouse( widget._obj )
+end
+
 -------------------------------------------------------------------------------
 -- Casts IObjectSource components into an ObjectWrapper
 -------------------------------------------------------------------------------

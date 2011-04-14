@@ -471,6 +471,24 @@ public:
 		return _eventHub.installEventHandler( watched, handler );
 	}
 
+	void grabMouse( const qt::Object& widget )
+	{
+		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
+		if( !qwidget )
+			CORAL_THROW( co::IllegalArgumentException, "cannot grab mouse: 'widget' is not an instance of QWidget." );
+
+		qwidget->grabMouse();
+	}
+
+	void releaseMouse( const qt::Object& widget )
+	{
+		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
+		if( !qwidget )
+			CORAL_THROW( co::IllegalArgumentException, "cannot release mouse: 'widget' is not an instance of QWidget." );
+
+		qwidget->releaseMouse();
+	}
+
 	void addTimerCallback( qt::ITimerCallback* callback )
 	{
 		if( callback && _callbackNotifier.isEmpty() )
