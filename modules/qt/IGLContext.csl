@@ -18,7 +18,4 @@ interface IGLContext
 
 	//! Triggers a redraw of the widget;
 	void update();
-
-	//! Defines if the widget should track mouse motion even if no button is pressed.
-	void setMouseTracking( in bool enabled );
 };

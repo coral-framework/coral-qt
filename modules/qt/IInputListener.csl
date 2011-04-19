@@ -3,7 +3,8 @@
  */
 interface IInputListener
 {
-	bool enabled;
+	void activate();
+	void deactivate();
 
 	void keyPressed( in string key );
 	void keyReleased( in string key );

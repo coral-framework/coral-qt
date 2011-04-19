@@ -32,7 +32,6 @@ public:
 	void swapBuffers();
 	void makeCurrent();
 	void update();
-	void setMouseTracking( bool enable );
 
 	// qt.IObjecSource method
 	const qt::Object& getObject();
@@ -44,6 +43,7 @@ protected:
 	void mouseReleaseEvent( QMouseEvent* event );
 	void mouseMoveEvent( QMouseEvent* event );
 	void mouseDoubleClickEvent( QMouseEvent* event );
+	void wheelEvent( QWheelEvent* event );
 
 protected:
 	IPainter* getPainterService();

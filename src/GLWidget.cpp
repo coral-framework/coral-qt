@@ -119,6 +119,18 @@ void GLWidget::mouseDoubleClickEvent( QMouseEvent* event )
 		event->ignore();
 }
 
+void GLWidget::wheelEvent( QWheelEvent* event )
+{
+	if( _inputListener )
+	{
+		qt::KeyboardModifiers modifiers;
+		EventHub::fillKeyboardModifiers( event->modifiers(), modifiers );
+		_inputListener->mouseWheel( event->x(), event->y(), event->delta(), modifiers );
+	}
+	else
+		event->ignore();
+}
+
 void GLWidget::setAutoSwapBuffers( bool autoSwapBuffers )
 {
 	setAutoBufferSwap( autoSwapBuffers );
@@ -147,11 +159,6 @@ void GLWidget::makeCurrent()
 void GLWidget::update()
 {
 	QGLWidget::updateGL();
-}
-
-void GLWidget::setMouseTracking( bool enable )
-{
-	QGLWidget::setMouseTracking( enable );
 }
 
 const qt::Object& GLWidget::getObject()
