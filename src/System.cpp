@@ -492,7 +492,11 @@ public:
 	void addTimerCallback( qt::ITimerCallback* callback )
 	{
 		if( callback && _callbackNotifier.isEmpty() )
-			_callbackNotifier.start( 1000.0 / 60.0 );
+		{
+			// Needs to be less than 60 hertz or freezes on Windows since
+			// qt 4.7.0 has a reported bug on timer callbacks on Windows
+			_callbackNotifier.start( 2 * 1000.0 / 60.0 );
+		}
 
 		_callbackNotifier.addCallback( callback );
 	}
