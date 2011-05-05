@@ -11,6 +11,8 @@
 #include <sstream>
 
 #include <co/Exception.h>
+#include <co/IllegalArgumentException.h>
+#include <QAbstractItemView>
 
 namespace
 {
@@ -151,6 +153,24 @@ void AbstractItemModel::notifyDataChanged( co::int32 fromIndex, co::int32 toInde
 	QModelIndex to = makeIndex( _delegate->getRow( toIndex ), _delegate->getColumn( toIndex ), toIndex );
 
 	emit dataChanged( from, to );
+}
+
+void AbstractItemModel::setItemSelection( const QObjectWrapper& view, int index, bool selectionState )
+{
+	QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );
+	if( !qtView )
+		CORAL_THROW( co::IllegalArgumentException,
+					 "cannot assign model to view: 'view' object is not a subclass of QAbstractItemView" );
+
+	QModelIndex modelIndex = makeIndex( _delegate->getRow( index ), _delegate->getColumn( index ), index );
+	QItemSelectionModel* sm = qtView->selectionModel();
+	if( !sm )
+	{
+		sm = new QItemSelectionModel( this );
+		qtView->setSelectionModel( sm );
+	}
+
+	sm->select( modelIndex, selectionState ? QItemSelectionModel::Select : QItemSelectionModel::Deselect );
 }
 
 void AbstractItemModel::activated( const QModelIndex& index )

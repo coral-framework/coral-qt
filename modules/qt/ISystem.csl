@@ -1,7 +1,7 @@
 import co.NotSupportedException;
 import co.IllegalArgumentException;
 
-/*
+/*!
 	Exposes system-wide Qt operations.
  */
 interface ISystem
@@ -9,7 +9,7 @@ interface ISystem
 	// The 'qApp' object.
 	readonly Object app;
 
-	/* 
+	/*! 
 		Loads a QWidget from a .ui file created in Qt Designer.
 		If \a parent is not NULL, it will be set as the parent of the returned
 		widget.
@@ -34,7 +34,7 @@ interface ISystem
 	// list if no file was selected
 	void getOpenFileNames( in Object parent, in string caption, in string initialDir, in string filter, out string[] selectedFiles );
 
-	/* 
+	/*! 
 		Creates a new object using the class specified by className. This 
 		function supports creation of any widget class listed in 
 		QUILoader::availableWidgets() method plus QActions, any QLayout 
@@ -45,7 +45,7 @@ interface ISystem
 	void newInstanceOf( in string className, in Object parent, out Object object ) 
 		raises NotSupportedException;
 
-	/* 
+	/*! 
 		Inserts a widget in the given \a parent before widget with index 
 		\a beforeIndex. Parameter \a parent must be an instance of 
 		QStatusBar, QBoxLayout, QStackedLayout or QSplitter. If \a beforeIndex
@@ -60,7 +60,7 @@ interface ISystem
 	void insertWidget( in Object parent, in int32 beforeIndex, in Object widget ) 
 		raises IllegalArgumentException;
 
-	/* 
+	/*! 
 		Removes \a widget from \a parent.
 	
 		\throw co.IllegalArgumentException if the \a parent is not an instance
@@ -78,7 +78,7 @@ interface ISystem
 	void removeWidget( in Object parent, in Object widget )
 		raises IllegalArgumentException;
 
-	/* 
+	/*! 
 		Adds \a dockWidget into dock widget area of \a mainWindow.
 	
 		\throw co.IllegalArgumentException if the \a mainWindow is not an instance
@@ -87,7 +87,7 @@ interface ISystem
 	void addDockWidget( in Object mainWindow, in int32 dockArea, in Object dockWidget )
 		raises IllegalArgumentException;
 
-	/* 
+	/*! 
 		Sets \a widget into \a dockWidget.
 	
 		\throw co.IllegalArgumentException if the \a dockWidget is not an instance
@@ -113,7 +113,7 @@ interface ISystem
 	 */
 	void getLayout( in Object widget, out Object layout ) raises IllegalArgumentException;
 
-	/* 
+	/*! 
 		Adds an action into an action group.
 
 		\throw co.IllegalArgumentException if the \a actionGroup is not instance of
@@ -177,7 +177,7 @@ interface ISystem
 	void execMenu( in Object menu, in int32 posX, in int32 posY, out Object selectedAction )
 		raises IllegalArgumentException;
 
-	/*
+	/*!
 		Sets the mouse cursor shape for the given widget.
 		The cursor shape is given by the value of \a cursor, who is assumed to be
 		a value in the Qt::CursorShape enumeration.
@@ -186,14 +186,14 @@ interface ISystem
 	 */
 	void setCursor( in Object widget, in int32 cursor ) raises IllegalArgumentException;
 
-	/*
+	/*!
 		Removes the custom mouse cursor shape for the given widget, restoring the system default cursor.
 		
 		\throw co.IllegalArgumentException if \a widget is not an instance of class QWidget.
 	 */
 	void unsetCursor( in Object widget ) raises IllegalArgumentException;
 
-	/*
+	/*!
 		Sets the given widget's cursor position.
 		The mouse cursor is warped to the global screen position (posX, posY).
 		
@@ -201,7 +201,7 @@ interface ISystem
 	 */
 	void setCursorPosition( in Object widget, in int32 posX, in int32 posY );
 
-	/*
+	/*!
 		Gets the given widget's cursor position.
 		
 		Returns the global screen coordinates (posX, posY) of the mouse cursor.
@@ -210,21 +210,21 @@ interface ISystem
 	 */
 	void getCursorPosition( in Object widget, out int32 posX, out int32 posY );
 	
-	/*
+	/*!
 		Translates the global screen coordinates into the given widget's local coordinates.
 		
 		\throw co.IllegalArgumentException if \a widget is not an instance of class QWidget.
 	*/
 	void mapFromGlobal( in Object widget, inout int32 posX, inout int32 posY );
 
-	/*
+	/*!
 		Translates the given widget's local coordinates into screen's global coordinates.
 		
 		\throw co.IllegalArgumentException if \a widget is not an instance of class QWidget.
 	*/
 	void mapToGlobal( in Object widget, inout int32 posX, inout int32 posY );
 
-	/* 
+	/*! 
 		Sets the given IAbstractItemModel as the model for the given view instance.
 
 		\throw co.IllegalArgumentException if the given \a view instance is not an
@@ -233,7 +233,7 @@ interface ISystem
 	 */
 	void assignModelToView( inout Object view, in IAbstractItemModel model ) raises IllegalArgumentException;
 
-	/*
+	/*!
 		Installs an event handler in \a watched object and returns a cookie 
 		for the installation. Once installed, the event handler will be 
 		notified of all events from \a watched object. If \a watched already
@@ -241,7 +241,7 @@ interface ISystem
 	 */
 	int64 installEventHandler( in Object watched, in IEventHandler handler );
 
-	/*
+	/*!
 		Grabs the mouse input. 
 
 		The given \a widget receives all mouse events until releaseMouse() is 
@@ -256,7 +256,7 @@ interface ISystem
 	//! \throw co.IllegalArgumentException if \a widget is not an instance of class QWidget.
 	void releaseMouse( in Object widget );
 
-	/*
+	/*!
 		Adds a timer \a callback to be notified at frequency of 60 Hz. The
 		notification interval is not granted to be 1/60, since it depends on
 		the Qt's GUI's event queue, but the real user-time interval elapsed
@@ -266,7 +266,7 @@ interface ISystem
 	 */
 	void addTimerCallback( in ITimerCallback callback );
 
-	/*
+	/*!
 		Adds a timer \a callback to be notified at frequency of 60 Hz. The
 		notification interval is not granted to be 1/60, since it depends on
 		the Qt's event queue and its single threaded, but the real time 
@@ -277,7 +277,7 @@ interface ISystem
 	 */
 	void removeTimerCallback( in ITimerCallback callback );
 
-	/*
+	/*!
 		Connects a \a signal from \a sender to a \a handler, and returns the 
 		connection cookie. \note To undo the connection, call disconnect() 
 		passing the returned connection cookie.

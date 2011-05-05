@@ -26,6 +26,10 @@ function MyListModel:getRowCount( parentIndex )
 	return #self.data
 end
 
+function MyListModel:getRow( index )
+	return index
+end
+
 return function()
 	-- creates the model instance
 	local model = co.new( "qt.AbstractItemModel" ).itemModel

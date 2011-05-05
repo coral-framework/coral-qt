@@ -174,6 +174,10 @@ function MT.setModel( view, model )
 	system:assignModelToView( view._obj, model._obj or model )
 end
 
+function MT.setItemSelection( view, model, index, selectionState )
+	model:setItemSelection( view._obj, index, selectionState )
+end
+
 function MT.setCursor( widget, cursor )
 	system:setCursor( widget._obj, cursor )
 end

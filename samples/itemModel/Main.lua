@@ -6,9 +6,10 @@ qt.setSearchPaths( "coral", co.getPaths() )
 
 local mainWindow = qt.loadUi( "coral:/itemModel/ListViewDialog.ui" )
 
-mainWindow.listView:setModel( ListItemModel() )
-
+local model = ListItemModel()
 mainWindow.visible = true
+mainWindow.listView:setModel( model )
+mainWindow.listView:setItemSelection( model, 2, true )
 
 qt.exec()
 

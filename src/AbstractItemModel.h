@@ -37,6 +37,8 @@ public:
 
 	virtual void notifyDataChanged( co::int32 fromIndex, co::int32 toIndex );
 
+	virtual void setItemSelection( const QObjectWrapper& view, int index, bool selectionState );
+
 public slots:
 	void activated( const QModelIndex& index );
 

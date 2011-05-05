@@ -14,6 +14,7 @@
 #include <qt/Exception.h>
 #include <qt/ItemDataRole.h>
 #include <qt/IAbstractItemModel.h>
+#include <qt/IAbstractItemModelDelegate.h>
 #include <QAbstractItemView>
 #include <QAbstractItemModel>
 #include <QStringListModel>

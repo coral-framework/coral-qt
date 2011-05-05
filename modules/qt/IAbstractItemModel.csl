@@ -9,4 +9,12 @@ interface IAbstractItemModel
 	// Notifies listeners about some change in the model. This 
 	// is used to inform views that an update is necessary.
 	void notifyDataChanged( in int32 fromIndex, in int32 toIndex );
+
+	/*!
+		Sets element selection at \a index position to \a selectionState.
+
+		\throw co.IllegalArgumentException if the given \a view instance is not an
+		instance of QAbstractItemView class.
+	 */	
+	void setItemSelection( in Object view, in int32 index, in bool selectionState );
 };
