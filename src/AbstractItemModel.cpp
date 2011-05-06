@@ -155,7 +155,7 @@ void AbstractItemModel::notifyDataChanged( co::int32 fromIndex, co::int32 toInde
 	emit dataChanged( from, to );
 }
 
-void AbstractItemModel::setItemSelection( const QObjectWrapper& view, int index, bool selectionState )
+void AbstractItemModel::setItemSelection( const QObjectWrapper& view, co::int32 index, bool selectionState )
 {
 	QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );
 	if( !qtView )
