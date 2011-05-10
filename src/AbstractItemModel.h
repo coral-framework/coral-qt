@@ -39,6 +39,8 @@ public:
 
 	virtual void setItemSelection( const QObjectWrapper& view, co::int32 index, bool selectionState );
 
+	virtual void clearSelection( const qt::Object& view );
+
 public slots:
 	void activated( const QModelIndex& index );
 

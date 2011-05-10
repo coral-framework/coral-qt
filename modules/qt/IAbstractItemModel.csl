@@ -17,4 +17,9 @@ interface IAbstractItemModel
 		instance of QAbstractItemView class.
 	 */	
 	void setItemSelection( in Object view, in int32 index, in bool selectionState );
+
+	/*!
+		Clears all selections in the view.
+	 */	
+	void clearSelection( in Object view );
 };

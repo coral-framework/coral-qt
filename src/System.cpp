@@ -7,6 +7,7 @@
 #include "System_Base.h"
 #include "ConnectionHub.h"
 #include "TimerCallbackNotifier.h"
+#include "AbstractItemModel.h"
 
 #include <co/NotSupportedException.h>
 #include <co/IllegalArgumentException.h>
@@ -460,11 +461,22 @@ public:
 		qtView->setModel( qtModel );
 
 		// connect AbstractItemView slots to model signals (to allow signal forwarding to delegate of IAbstractItemModel)
+		QObject::connect( qtModel, SIGNAL( dataChanged( QModelIndex,QModelIndex )), qtView, SLOT( dataChanged(QModelIndex,QModelIndex) ) );
 		QObject::connect( qtView, SIGNAL( activated( const QModelIndex& ) ), qtModel, SLOT( activated( const QModelIndex& ) ) );
 		QObject::connect( qtView, SIGNAL( clicked( const QModelIndex& ) ), qtModel, SLOT( clicked( const QModelIndex& ) ) );
 		QObject::connect( qtView, SIGNAL( doubleClicked( const QModelIndex& ) ), qtModel, SLOT( doubleClicked( const QModelIndex& ) ) );
 		QObject::connect( qtView, SIGNAL( entered( const QModelIndex& ) ), qtModel, SLOT( entered( const QModelIndex& ) ) );
 		QObject::connect( qtView, SIGNAL( pressed( const QModelIndex& ) ), qtModel, SLOT( pressed( const QModelIndex& ) ) );
+	}
+
+	void getModelFromView( const qt::Object& view, qt::IAbstractItemModel*& model  )
+	{
+		QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );
+		if( !qtView )
+			CORAL_THROW( co::IllegalArgumentException,
+						 "cannot retrieve model from view: 'view' object is not a subclass of QAbstractItemView" );
+
+		model = dynamic_cast<qt::IAbstractItemModel*>( qtView->model() );
 	}
 
 	co::int64 installEventHandler( const qt::Object& watched, qt::IEventHandler* handler )

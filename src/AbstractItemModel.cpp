@@ -160,7 +160,7 @@ void AbstractItemModel::setItemSelection( const QObjectWrapper& view, co::int32 
 	QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );
 	if( !qtView )
 		CORAL_THROW( co::IllegalArgumentException,
-					 "cannot assign model to view: 'view' object is not a subclass of QAbstractItemView" );
+					 "cannot change selection of given index: 'view' object is not a subclass of QAbstractItemView" );
 
 	QModelIndex modelIndex = makeIndex( _delegate->getRow( index ), _delegate->getColumn( index ), index );
 	QItemSelectionModel* sm = qtView->selectionModel();
@@ -171,6 +171,16 @@ void AbstractItemModel::setItemSelection( const QObjectWrapper& view, co::int32 
 	}
 
 	sm->select( modelIndex, selectionState ? QItemSelectionModel::Select : QItemSelectionModel::Deselect );
+}
+
+void AbstractItemModel::clearSelection( const qt::Object& view )
+{
+	QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );
+	if( !qtView )
+		CORAL_THROW( co::IllegalArgumentException,
+					 "cannot clear selection: 'view' object is not a subclass of QAbstractItemView" );
+
+	qtView->clearSelection();
 }
 
 void AbstractItemModel::activated( const QModelIndex& index )

@@ -233,6 +233,14 @@ interface ISystem
 	 */
 	void assignModelToView( inout Object view, in IAbstractItemModel model ) raises IllegalArgumentException;
 
+	/*! 
+		Retrieves views \a model instance.
+
+		\throw co.IllegalArgumentException if the given \a view instance is not an
+		instance of QAbstractItemView class.
+	 */
+	void getModelFromView( in Object view, out IAbstractItemModel model );
+
 	/*!
 		Installs an event handler in \a watched object and returns a cookie 
 		for the installation. Once installed, the event handler will be 
