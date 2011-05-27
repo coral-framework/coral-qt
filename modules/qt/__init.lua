@@ -1,6 +1,3 @@
--- performed before requiring other dependent submodules since they might use 
--- system service
-
 -------------------------------------------------------------------------------
 -- Required modules
 -------------------------------------------------------------------------------
@@ -60,6 +57,7 @@ function MT.__newindex( wrapper, name, value )
 	if eventHandler.installEventHandler( wrapper, name, value )	then
 		return
 	end
+
 	wrapper._obj:setProperty( name, value )
 end
 

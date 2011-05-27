@@ -28,6 +28,15 @@ M.FormatOption.NoSampleBuffers			= 33554432
 M.FormatOption.NoDeprecatedFunctions	= 67108864
 
 -------------------------------------------------------------------------------
+-- Export Qt::MouseButton enum
+-------------------------------------------------------------------------------
+M.NoButton		= 0x00000000
+M.LeftButton	= 0x00000001
+M.RightButton	= 0x00000002
+M.MidButton		= 0x00000004
+M.MiddleButton	= M.MidButton
+
+-------------------------------------------------------------------------------
 -- Export Qt::FocusPolicy enum
 -------------------------------------------------------------------------------
 M.TabFocus 					= 0x1

@@ -25,25 +25,25 @@ GLWidget::~GLWidget()
 
 void GLWidget::initializeGL()
 {
-	if( _painter )
+	if( _painter.get() )
 		_painter->initialize();
 }
 
 void GLWidget::paintGL()
 {
-	if( _painter )
+	if( _painter.get() )
 		_painter->paint();
 }
 
 void GLWidget::resizeGL( int w, int h )
 {
-	if( _painter )
+	if( _painter.get() )
 		_painter->resize( w, h );
 }
 
 void GLWidget::keyPressEvent( QKeyEvent* event )
 {
-	if( !_inputListener || event->isAutoRepeat() )
+	if( !_inputListener.get() || event->isAutoRepeat() )
 	{
 		event->ignore();
 		return;
@@ -57,7 +57,7 @@ void GLWidget::keyPressEvent( QKeyEvent* event )
 
 void GLWidget::keyReleaseEvent( QKeyEvent* event )
 {
-	if( !_inputListener || event->isAutoRepeat() )
+	if( !_inputListener.get() || event->isAutoRepeat() )
 	{
 		event->ignore();
 		return;
@@ -71,7 +71,7 @@ void GLWidget::keyReleaseEvent( QKeyEvent* event )
 
 void GLWidget::mousePressEvent( QMouseEvent* event )
 {
-	if( _inputListener )
+	if( _inputListener.get() )
 	{
 		qt::KeyboardModifiers modifiers;
 		EventHub::fillKeyboardModifiers( event->modifiers(), modifiers );
@@ -83,7 +83,7 @@ void GLWidget::mousePressEvent( QMouseEvent* event )
 
 void GLWidget::mouseReleaseEvent( QMouseEvent* event )
 {
-	if( _inputListener )
+	if( _inputListener.get() )
 	{
 		qt::KeyboardModifiers modifiers;
 		EventHub::fillKeyboardModifiers( event->modifiers(), modifiers );
@@ -95,7 +95,7 @@ void GLWidget::mouseReleaseEvent( QMouseEvent* event )
 
 void GLWidget::mouseMoveEvent( QMouseEvent* event )
 {
-	if( _inputListener )
+	if( _inputListener.get() )
 	{
 		qt::KeyboardModifiers modifiers;
 		EventHub::fillKeyboardModifiers( event->modifiers(), modifiers );
@@ -109,7 +109,7 @@ void GLWidget::mouseMoveEvent( QMouseEvent* event )
 
 void GLWidget::mouseDoubleClickEvent( QMouseEvent* event )
 {
-	if( _inputListener )
+	if( _inputListener.get() )
 	{
 		qt::KeyboardModifiers modifiers;
 		EventHub::fillKeyboardModifiers( event->modifiers(), modifiers );
@@ -121,7 +121,7 @@ void GLWidget::mouseDoubleClickEvent( QMouseEvent* event )
 
 void GLWidget::wheelEvent( QWheelEvent* event )
 {
-	if( _inputListener )
+	if( _inputListener.get() )
 	{
 		qt::KeyboardModifiers modifiers;
 		EventHub::fillKeyboardModifiers( event->modifiers(), modifiers );
@@ -173,12 +173,12 @@ void GLWidget::setPainterService( IPainter* painter )
 
 qt::IPainter* GLWidget::getPainterService()
 {
-	return _painter;
+	return _painter.get();
 }
 
 IInputListener* GLWidget::getInputListenerService()
 {
-	return _inputListener;
+	return _inputListener.get();
 }
 
 void GLWidget::setInputListenerService( IInputListener* inputListener )

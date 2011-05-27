@@ -4,6 +4,8 @@
 #include <QGLWidget>
 #include "GLWidget_Base.h"
 
+#include <co/RefPtr.h>
+
 namespace qt {
 
 // Forward declaration
@@ -53,8 +55,8 @@ protected:
 	void setInputListenerService( IInputListener* inputListener );
 
 private:
-	IPainter*       _painter;
-	IInputListener* _inputListener;
+	co::RefPtr<IPainter> _painter;
+	co::RefPtr<IInputListener> _inputListener;
 	QObjectWrapper  _wrapper;
 };
 
