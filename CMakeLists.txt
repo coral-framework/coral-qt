@@ -55,6 +55,12 @@ IF( NOT CMAKE_INSTALL_PREFIX MATCHES "coral-qt" )
 	SET( CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/coral-qt" )
 ENDIF()
 
+# install shared library
+INSTALL( DIRECTORY ${CMAKE_BINARY_DIR}/modules/qt DESTINATION modules )
+
+# install CSL files
+INSTALL( DIRECTORY ${CMAKE_SOURCE_DIR}/modules/ DESTINATION modules )
+
 ################################################################################
 # Packaging
 ################################################################################
@@ -63,12 +69,6 @@ SET( CPACK_PACKAGE_VERSION_MAJOR		"${CORAL_VERSION_MAJOR}" )
 SET( CPACK_PACKAGE_VERSION_MINOR		"${CORAL_VERSION_MINOR}" )
 SET( CPACK_PACKAGE_VERSION_PATCH		"${CORAL_VERSION_PATCH}" )
 SET( CPACK_PACKAGE_DESCRIPTION_SUMMARY	"A module for integrating [Qt](http://qt.nokia.com/) into Coral" )
-
-# install shared library
-INSTALL( DIRECTORY ${CMAKE_BINARY_DIR}/modules/qt DESTINATION modules )
-
-# install CSL files
-INSTALL( DIRECTORY ${CMAKE_SOURCE_DIR}/modules/ DESTINATION modules )
 
 IF( WIN32 )
 	SET( CPACK_GENERATOR "ZIP" )
