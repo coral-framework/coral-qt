@@ -186,7 +186,7 @@ function MT.setCursor( widget, cursor )
 	system:setCursor( widget._obj, cursor )
 end
 
-function MT.unsetCursor( widget, cursor )
+function MT.unsetCursor( widget )
 	system:unsetCursor( widget._obj )
 end
 
@@ -206,8 +206,8 @@ function MT.mapToGlobal( widget, posX, posY )
 	return system:mapToGlobal( widget._obj, posX, posY )
 end
 
-function MT.grabMouse( widget )
-	return system:grabMouse( widget._obj )
+function MT.grabMouse( widget, cursor )
+	return system:grabMouse( widget._obj, cursor )
 end
 
 function MT.releaseMouse( widget )

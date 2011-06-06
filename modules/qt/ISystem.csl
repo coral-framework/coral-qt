@@ -254,11 +254,11 @@ interface ISystem
 
 		The given \a widget receives all mouse events until releaseMouse() is 
 		called.	Other widgets get no mouse events at all. Keyboard events are 
-		not affected.
+		not affected. sets \a cursor that will be unset on releaseMouse()
 		
 		\throw co.IllegalArgumentException if \a widget is not an instance of class QWidget.
 	 */
-	void grabMouse( in Object widget );
+	void grabMouse( in Object widget, in int32 cursor );
 
 	//! Releases the mouse grab. \see grabMouse().
 	//! \throw co.IllegalArgumentException if \a widget is not an instance of class QWidget.

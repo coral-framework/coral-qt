@@ -392,7 +392,7 @@ public:
 		if( !qwidget )
 			CORAL_THROW( co::IllegalArgumentException, "cannot set cursor: 'widget' is not an instance of QWidget." );
 
-		qwidget->setCursor( QCursor( Qt::CursorShape( cursor ) ) );
+		qwidget->setCursor( static_cast<Qt::CursorShape>( cursor ) );
 	}
 
 	void unsetCursor( const qt::Object& widget )
@@ -484,13 +484,13 @@ public:
 		return _eventHub.installEventHandler( watched, handler );
 	}
 
-	void grabMouse( const qt::Object& widget )
+	void grabMouse( const qt::Object& widget, co::int32 cursor )
 	{
 		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
 		if( !qwidget )
 			CORAL_THROW( co::IllegalArgumentException, "cannot grab mouse: 'widget' is not an instance of QWidget." );
 
-		qwidget->grabMouse();
+		qwidget->grabMouse( static_cast<Qt::CursorShape>( cursor ) );
 	}
 
 	void releaseMouse( const qt::Object& widget )
