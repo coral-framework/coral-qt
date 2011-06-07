@@ -267,6 +267,16 @@ public:
 		qMainWindow->addDockWidget( qDockArea, qDockWidget );
 	}
 
+	void setCorner( const qt::Object& mainWindow, co::int32 corner, co::int32 dockArea )
+	{
+		QMainWindow* qMainWindow = qobject_cast<QMainWindow*>( mainWindow.get() );
+		if( !qMainWindow )
+			CORAL_THROW( co::IllegalArgumentException, "cannot set corner: 'mainWindow' is not an instace of QMainWindow" );
+
+		Qt::DockWidgetArea qDockArea = static_cast<Qt::DockWidgetArea>( dockArea );
+		qMainWindow->setCorner( static_cast<Qt::Corner>( corner ), qDockArea );
+	}
+
 	void setWidget( const qt::Object& dockWidget, const qt::Object& widget )
 	{
 		QDockWidget* qDockWidget = qobject_cast<QDockWidget*>( dockWidget.get() );

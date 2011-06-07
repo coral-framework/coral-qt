@@ -123,6 +123,24 @@ M.Horizontal 				= 0x1
 M.Vertical 					= 0x2
 
 -------------------------------------------------------------------------------
+-- Export Qt::Corner enum
+-------------------------------------------------------------------------------
+M.TopLeftCorner			= 0x00000
+M.TopRightCorner			= 0x00001
+M.BottomLeftCorner		= 0x00002
+M.BottomRightCorner		= 0x0
+
+-------------------------------------------------------------------------------
+-- Export Qt::DockWidgetArea enum
+-------------------------------------------------------------------------------
+M.LeftDockWidgetArea		= 0x1
+M.RightDockWidgetArea		= 0x2
+M.TopDockWidgetArea			= 0x4
+M.BottomDockWidgetArea		= 0x8
+M.AllDockWidgetAreas		= 0xf
+M.NoDockWidgetArea			= 0
+
+-------------------------------------------------------------------------------
 -- Export QMessageBox enums
 -------------------------------------------------------------------------------
 M.MessageBox = {}

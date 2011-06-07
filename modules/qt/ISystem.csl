@@ -87,6 +87,15 @@ interface ISystem
 	void addDockWidget( in Object mainWindow, in int32 dockArea, in Object dockWidget )
 		raises IllegalArgumentException;
 
+	/*!
+		Sets the given dock widget area to occupy the specified corner of the \a mainWindow.
+	
+		\throw co.IllegalArgumentException if the \a mainWindow is not an instance
+		of QMainWindow.
+	 */
+	void setCorner( in Object mainWindow,  in int32 corner, in int32 dockArea )	
+		raises IllegalArgumentException;
+
 	/*! 
 		Sets \a widget into \a dockWidget.
 	

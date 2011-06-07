@@ -85,6 +85,11 @@ function MT.addDockWidget( mainWindow, area, dockWidget )
 	return mainWindow
 end
 
+function MT.setCorner( mainWindow, corner, area )
+	system:setCorner( mainWindow._obj, corner, area )
+	return mainWindow
+end
+
 function MT.setWidget( dockWidget, widget )
 	system:setWidget( dockWidget._obj, widget._obj )
 	return dockWidget
