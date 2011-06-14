@@ -277,10 +277,10 @@ function TypeTree:addTypeMembers( currentType, parentIndex )
 	self:addGenericMembers( currentType, "receptacles", "receptacle", M.icons.receptacle, parentIndex )
 
 	-- add attributes (all types)
-	self:addMemberAttributes( currentType, "memberAttributes", "attribute", M.icons.attribute, parentIndex )
+	self:addMemberAttributes( currentType, "fields", "attribute", M.icons.attribute, parentIndex )
 
 	-- add methods (native class and interface only)
-	self:addMethods( currentType, "memberMethods", "method", M.icons.method, parentIndex )
+	self:addMethods( currentType, "methods", "method", M.icons.method, parentIndex )
 end
 
 function TypeTree:addType( currentType, parentIndex )

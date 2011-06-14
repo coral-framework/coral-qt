@@ -132,7 +132,7 @@ interface ISystem
 		raises IllegalArgumentException;
 	
 	/*! 
-		Adds an action to the given widget before \a beforeAction action.
+		Inserts an action to the given widget before \a beforeAction action.
 		If \a beforeActionIndex is -1 the action is appended after the last
 		action in widgets list.
 
@@ -185,6 +185,22 @@ interface ISystem
 	 */
 	void execMenu( in Object menu, in int32 posX, in int32 posY, out Object selectedAction )
 		raises IllegalArgumentException;
+
+	/*! 
+		Inserts an new item to the given \a comboBox before at specified \a index.
+		If \a index is -1 the item is appended after the last item in list.
+
+		\throw co.IllegalArgumentException if the \a comboBox is not instance of
+		QComboBox.
+		\throw qt.Exception if the \a index is out-of-bounds.
+	 */
+	void insertItem( in Object comboBox, in int32 index, in string text, in any userData );
+
+	//! Shows comboBox popup list.
+	void showPopup( in Object comboBox );
+
+	//! Hides comboBox popup list.
+	void hidePopup( in Object comboBox );
 
 	/*!
 		Sets the mouse cursor shape for the given widget.

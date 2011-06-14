@@ -173,6 +173,22 @@ function MT.exec( menu, x, y )
 	return ObjectWrapper( system:execMenu( menu._obj, x or -1, y or -1 ) )
 end
 
+function MT.addItem( comboBox, text, userData )
+	system:insertItem( comboBox._obj, -1, text, userData or 0 )
+end
+
+function MT.insertItem( comboBox, index, text, userData )
+	system:insertItem( comboBox._obj, index, text, userData or 0 )
+end
+
+function MT.showPopup( comboBox )
+	system:showPopup( comboBox._obj )
+end
+
+function MT.hidePopup( comboBox )
+	system:hidePopup( comboBox._obj )
+end
+
 function MT.setModel( view, model )
 	system:assignModelToView( view._obj, model._obj or model )
 end

@@ -8,6 +8,7 @@
 #include "ConnectionHub.h"
 #include "TimerCallbackNotifier.h"
 #include "AbstractItemModel.h"
+#include "ValueConverters.h"
 
 #include <co/NotSupportedException.h>
 #include <co/IllegalArgumentException.h>
@@ -30,6 +31,7 @@
 #include <QFileInfo>
 #include <QSplitter>
 #include <QUiLoader>
+#include <QComboBox>
 #include <QToolBar>
 #include <QAction>
 #include <QLayout>
@@ -56,6 +58,20 @@ namespace {
 		element->addWidget( widget ); \
 	}
 
+template <class T>
+T* tryCastObject( const qt::Object& instance, const std::string& errorMsg )
+{
+	T* t = qobject_cast<T*>( instance.get() );
+	if( !t )
+	{
+		QString objName = "<n/a>";
+		if( instance.get() )
+			objName = instance.get()->objectName();
+
+		CORAL_THROW( co::IllegalArgumentException, errorMsg << ": '" << objName.toLatin1().data() << "' is not a valid instance" );
+	}
+}
+
 namespace qt {
 
 class System : public qt::System_Base
@@ -78,11 +94,7 @@ public:
 	{
 		QWidget* parentWidget = 0;
 		if( parent.get() )
-		{
-			parentWidget = qobject_cast<QWidget*>( parent.get() );
-			if( !parentWidget )
-				CORAL_THROW( co::IllegalArgumentException, "cannot set parent widget: 'parent' is not an instace of QWidget" );
-		}
+			parentWidget = tryCastObject<QWidget>( parent, "cannot set parent widget" );
 
 		QUiLoader loader;
 
@@ -179,9 +191,7 @@ public:
 
 	void addWidget( const qt::Object& parent, const qt::Object& widget )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot add widget: 'widget' is not an instace of QWidget" );
+		QWidget* qwidget = tryCastObject<QWidget>( parent, "cannot add widget" );
 
 		QLayout* qlayout = qobject_cast<QLayout*>( parent.get() );
 		QSplitter* qsplitter = qobject_cast<QSplitter*>( parent.get() );
@@ -195,9 +205,7 @@ public:
 
 	void insertWidget( const qt::Object& parent, co::int32 beforeIndex, const qt::Object& widget )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot add widget: 'widget' is not an instace of QWidget" );
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot insert widget" );
 
 		QSplitter* qsplitter = qobject_cast<QSplitter*>( parent.get() );
 		QBoxLayout* qlayout = qobject_cast<QBoxLayout*>( parent.get() );
@@ -233,9 +241,7 @@ public:
 
 	void removeWidget( const qt::Object& parent, const qt::Object& widget )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot remove widget: 'widget' is not an instace of QWidget" );
+		QWidget* qwidget = tryCastObject<QWidget>( parent, "cannot remove widget" );
 
 		QBoxLayout* qlayout = qobject_cast<QBoxLayout*>( parent.get() );
 		QStatusBar* qstatusBar = qobject_cast<QStatusBar*>( parent.get() );
@@ -255,13 +261,8 @@ public:
 
 	void addDockWidget( const qt::Object& mainWindow, co::int32 dockArea, const qt::Object& dockWidget )
 	{
-		QMainWindow* qMainWindow = qobject_cast<QMainWindow*>( mainWindow.get() );
-		if( !qMainWindow )
-			CORAL_THROW( co::IllegalArgumentException, "cannot add QDockWidget: 'mainWindow' is not an instace of QMainWindow" );
-
-		QDockWidget* qDockWidget = qobject_cast<QDockWidget*>( dockWidget.get() );
-		if( !qDockWidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot add QDockWidget: 'dockWidget' is not an instace of QDockWidget" );
+		QMainWindow* qMainWindow = tryCastObject<QMainWindow>( mainWindow, "cannot add QDockWidget" );
+		QDockWidget* qDockWidget = tryCastObject<QDockWidget>( dockWidget, "cannot add QDockWidget" );
 
 		Qt::DockWidgetArea qDockArea = static_cast<Qt::DockWidgetArea>( dockArea );
 		qMainWindow->addDockWidget( qDockArea, qDockWidget );
@@ -269,9 +270,7 @@ public:
 
 	void setCorner( const qt::Object& mainWindow, co::int32 corner, co::int32 dockArea )
 	{
-		QMainWindow* qMainWindow = qobject_cast<QMainWindow*>( mainWindow.get() );
-		if( !qMainWindow )
-			CORAL_THROW( co::IllegalArgumentException, "cannot set corner: 'mainWindow' is not an instace of QMainWindow" );
+		QMainWindow* qMainWindow = tryCastObject<QMainWindow>( mainWindow, "cannot set corner" );
 
 		Qt::DockWidgetArea qDockArea = static_cast<Qt::DockWidgetArea>( dockArea );
 		qMainWindow->setCorner( static_cast<Qt::Corner>( corner ), qDockArea );
@@ -279,61 +278,36 @@ public:
 
 	void setWidget( const qt::Object& dockWidget, const qt::Object& widget )
 	{
-		QDockWidget* qDockWidget = qobject_cast<QDockWidget*>( dockWidget.get() );
-		if( !qDockWidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot set widget: 'dockWidget' is not an instace of QDockWidget" );
-
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qDockWidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot set widget: 'widget' is not an instace of QWidget" );
-
+		QDockWidget* qDockWidget = tryCastObject<QDockWidget>( dockWidget, "cannot set widget" );
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot set widget" );
 		qDockWidget->setWidget( qwidget );
 	}
 
 	void setLayout( const qt::Object& widget, const qt::Object& layout )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot set layout: 'widget' is not an instace of QWidget" );
-
-		QLayout* qlayout = qobject_cast<QLayout*>( layout.get() );
-		if( !qlayout )
-			CORAL_THROW( co::IllegalArgumentException, "cannot set layout: 'layout' is not an instace of QLayout" );
-
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot set layout" );
+		QLayout* qlayout = tryCastObject<QLayout>( layout, "cannot set layout" );
 		qwidget->setLayout( qlayout );
 	}
 
 	void getLayout( const qt::Object& widget, qt::Object& layout )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot get layout: 'widget' is not an instace of QWidget" );
-
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot get layout" );
 		layout.set( qwidget->layout() );
 	}
 	
 	void addActionIntoGroup( const qt::Object& actionGroup, const qt::Object& action )
 	{
-		QActionGroup* qActionGroup = qobject_cast<QActionGroup*>( actionGroup.get() );
-		if( !qActionGroup )
-			CORAL_THROW( co::IllegalArgumentException, "cannot insert action into group: 'actionGroup' is not an instance of QActionGroup" );
-		
-		QAction* qAction = qobject_cast<QAction*>( action.get() );
-		if( !qAction )
-			CORAL_THROW( co::IllegalArgumentException, "cannot insert action into group: 'action' is not an instance of QAction" );
-		
+		QActionGroup* qActionGroup = tryCastObject<QActionGroup>( actionGroup, "cannot insert action into group" );
+		QAction* qAction = tryCastObject<QAction>( action, "cannot insert action into group" );
 		qActionGroup->addAction( qAction );
 	}
 
 	void insertAction( const qt::Object& widget, co::int32 beforeActionIndex, const qt::Object& action )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot insert action: 'widget' is not an instace of QWidget" );
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot insert action" );
 
-		QAction* qaction = qobject_cast<QAction*>( action.get() );
-		if( !qaction )
-			CORAL_THROW( co::IllegalArgumentException, "cannot insert action: 'action' is not an instace of QAction" );
+		QAction* qaction = tryCastObject<QAction>( action, "cannot insert action" );
 
 		if( beforeActionIndex >= 0 )
 		{
@@ -349,44 +323,29 @@ public:
 
 	void removeAction( const qt::Object& widget, const qt::Object& action )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot remove action: 'widget' is not an instace of QWidget" );
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot remove action" );
 
-		QAction* qaction = qobject_cast<QAction*>( action.get() );
-		if( !qaction )
-			CORAL_THROW( co::IllegalArgumentException, "cannot remove action: 'action' is not an instace of QAction" );
+		QAction* qaction = tryCastObject<QAction>( action, "cannot remove action" );
 
 		qwidget->removeAction( qaction );
 	}
 
 	void makeSeparator( const qt::Object& action )
 	{
-		QAction* qaction = qobject_cast<QAction*>( action.get() );
-		if( !qaction )
-			CORAL_THROW( co::IllegalArgumentException, "cannot make separator: 'action' is not an instace of QAction" );
-
+		QAction* qaction = tryCastObject<QAction>( action, "cannot make separator" );
 		qaction->setSeparator( true );
 	}
 
 	void setMenu( const qt::Object& action, const qt::Object& menu )
 	{
-		QAction* qaction = qobject_cast<QAction*>( action.get() );
-		if( !qaction )
-			CORAL_THROW( co::IllegalArgumentException, "cannot set menu: 'action' is not an instace of QAction" );
-
-		QMenu* qmenu = qobject_cast<QMenu*>( menu.get() );
-		if( !qmenu )
-			CORAL_THROW( co::IllegalArgumentException, "cannot set menu: 'menu' is not an instace of QMenu" );
-
+		QAction* qaction = tryCastObject<QAction>( action, "cannot set menu" );
+		QMenu* qmenu = tryCastObject<QMenu>( menu, "cannot set menu" );
 		qaction->setMenu( qmenu );
 	}
 
 	void execMenu( const qt::Object& menu, co::int32 posX, co::int32 posY, qt::Object& selectedAction )
 	{
-		QMenu* qmenu = qobject_cast<QMenu*>( menu.get() );
-		if( !qmenu )
-			CORAL_THROW( co::IllegalArgumentException, "'menu' is not an instance of QMenu." );
+		QMenu* qmenu = tryCastObject<QMenu>( menu, "cannot exec menu" );
 
 		QPoint p( posX, posY );
 		if( posX < 0 || posY < 0 )
@@ -396,38 +355,53 @@ public:
 		selectedAction.set( selected );
 	}
 
+
+	void insertItem( const qt::Object& comboBox, co::int32 index, const std::string& text, const co::Any& userData )
+	{
+		QComboBox* qcomboBox = tryCastObject<QComboBox>( comboBox, "cannot insert new item" );
+
+		QVariant v;
+		anyToVariant( userData, QMetaType::QVariant, v );
+
+		if( index == -1 )
+			qcomboBox->addItem( text.c_str(), v );
+		else
+			qcomboBox->insertItem( index, text.c_str(), v );
+	}
+
+	void showPopup( const qt::Object& comboBox )
+	{
+		QComboBox* qcomboBox = tryCastObject<QComboBox>( comboBox, "cannot show popup" );
+		qcomboBox->showPopup();
+	}
+
+	void hidePopup( const qt::Object& comboBox )
+	{
+		QComboBox* qcomboBox = tryCastObject<QComboBox>( comboBox, "cannot hide popup" );
+		qcomboBox->hidePopup();
+	}
+
 	void setCursor( const qt::Object& widget, co::int32 cursor )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot set cursor: 'widget' is not an instance of QWidget." );
-
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot set cursor" );
 		qwidget->setCursor( static_cast<Qt::CursorShape>( cursor ) );
 	}
 
 	void unsetCursor( const qt::Object& widget )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot set cursor: 'widget' is not an instance of QWidget." );
-
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot set cursor" );
 		qwidget->unsetCursor();
 	}
 
 	void setCursorPosition( const qt::Object& widget, co::int32 posX, co::int32 posY )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot set cursor position: 'widget' is not an instance of QWidget." );
-
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot set cursor position" );
 		qwidget->cursor().setPos( QPoint( posX, posY ) );
 	}
 
 	void getCursorPosition( const qt::Object& widget, co::int32& posX, co::int32& posY )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot get cursor position: 'widget' is not an instance of QWidget." );
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot get cursor position" );
 
 		QPoint pos = qwidget->cursor().pos();
 		posX = pos.x();
@@ -436,9 +410,7 @@ public:
 
 	void mapFromGlobal( const qt::Object& widget, co::int32& posX, co::int32& posY )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot get cursor position: 'widget' is not an instance of QWidget." );
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot get cursor position" );
 
 		QPoint pos = qwidget->mapFromGlobal( QPoint( posX, posY ) );
 		posX = pos.x();
@@ -447,9 +419,7 @@ public:
 
 	void mapToGlobal( const qt::Object& widget, co::int32& posX, co::int32& posY )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot get cursor position: 'widget' is not an instance of QWidget." );
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot get cursor position" );
 
 		QPoint pos = qwidget->mapToGlobal( QPoint( posX, posY ) );
 		posX = pos.x();
@@ -458,15 +428,10 @@ public:
 
 	void assignModelToView( qt::Object& view, qt::IAbstractItemModel* model )
 	{
-		QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );
-		if( !qtView )
-			CORAL_THROW( co::IllegalArgumentException,
-						 "cannot assign model to view: 'view' object is not a subclass of QAbstractItemView" );
-
+		QAbstractItemView* qtView = tryCastObject<QAbstractItemView>( view, "cannot assign model to view" );
 		QAbstractItemModel* qtModel = dynamic_cast<QAbstractItemModel*>( model );
 		if( !qtModel )
-			CORAL_THROW( co::IllegalArgumentException,
-						 "cannot assign model to view: 'model' object is not a subclass of QAbstractItemModel" );
+			CORAL_THROW( co::IllegalArgumentException, "cannot assign model to view: invalid 'model' instance" );
 
 		qtView->setModel( qtModel );
 
@@ -481,11 +446,7 @@ public:
 
 	void getModelFromView( const qt::Object& view, qt::IAbstractItemModel*& model  )
 	{
-		QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );
-		if( !qtView )
-			CORAL_THROW( co::IllegalArgumentException,
-						 "cannot retrieve model from view: 'view' object is not a subclass of QAbstractItemView" );
-
+		QAbstractItemView* qtView = tryCastObject<QAbstractItemView>( view, "cannot retrieve model from view" );
 		model = dynamic_cast<qt::IAbstractItemModel*>( qtView->model() );
 	}
 
@@ -496,18 +457,14 @@ public:
 
 	void grabMouse( const qt::Object& widget, co::int32 cursor )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot grab mouse: 'widget' is not an instance of QWidget." );
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot grab mouse" );
 
 		qwidget->grabMouse( static_cast<Qt::CursorShape>( cursor ) );
 	}
 
 	void releaseMouse( const qt::Object& widget )
 	{
-		QWidget* qwidget = qobject_cast<QWidget*>( widget.get() );
-		if( !qwidget )
-			CORAL_THROW( co::IllegalArgumentException, "cannot release mouse: 'widget' is not an instance of QWidget." );
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot release mouse" );
 
 		qwidget->releaseMouse();
 	}
