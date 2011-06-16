@@ -3,9 +3,6 @@
  */
 interface IInputListener
 {
-	void activate();
-	void deactivate();
-
 	void keyPressed( in string key );
 	void keyReleased( in string key );
 	void mousePressed( in int32 x, in int32 y, in int32 button, in KeyboardModifiers modifiers );

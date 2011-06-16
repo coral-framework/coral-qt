@@ -259,6 +259,13 @@ public:
 		qwidget->setParent( 0 );
 	}
 
+	void setCentralWidget( const qt::Object& parent, const qt::Object& widget )
+	{
+		QMainWindow* qMainWindow = tryCastObject<QMainWindow>( parent, "cannot set central widget" );
+		QWidget* qWidget = tryCastObject<QWidget>( widget, "cannot set central widget" );
+		qMainWindow->setCentralWidget( qWidget );
+	}
+
 	void addDockWidget( const qt::Object& mainWindow, co::int32 dockArea, const qt::Object& dockWidget )
 	{
 		QMainWindow* qMainWindow = tryCastObject<QMainWindow>( mainWindow, "cannot add QDockWidget" );

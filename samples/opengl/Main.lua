@@ -18,7 +18,7 @@ glWidget.context:setFormat( qt.FormatOption.Rgba + qt.FormatOption.DoubleBuffer 
 -------------------------------------------------------------------------------
 -- Creates and configures the InputListener for the sample
 
-local SampleInputListener = co.IComponent {
+local SampleInputListener = co.Component {
 	name = "qt.samples.opengl.SampleInputListener",
 	provides = { listener   = "qt.IInputListener" },
 	receives = { parameters = "opengl.ICubeParameters" }
@@ -32,10 +32,10 @@ SampleInputListener.target.focusPolicy = qt.StrongFocus -- necessary for good ke
 SampleInputListener._params = nil -- internal reference of the opengl.ICubeParameters interface
 
 -- The 'receives opengl.ICubeParameters' required the following two methods
-function SampleInputListener:setReceptacleParameters( value )
+function SampleInputListener:setParametersService( value )
 	self._params = value
 end
-function SampleInputListener:getReceptacleParameters()
+function SampleInputListener:getParametersService()
 	return self._params
 end
 
