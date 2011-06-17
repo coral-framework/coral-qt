@@ -70,6 +70,8 @@ T* tryCastObject( const qt::Object& instance, const std::string& errorMsg )
 
 		CORAL_THROW( co::IllegalArgumentException, errorMsg << ": '" << objName.toLatin1().data() << "' is not a valid instance" );
 	}
+
+	return t;
 }
 
 namespace qt {
