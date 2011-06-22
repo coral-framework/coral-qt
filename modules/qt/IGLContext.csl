@@ -18,4 +18,7 @@ interface IGLContext
 
 	//! Triggers a redraw of the widget;
 	void update();
+
+	//! Retrieves whether the 
+	bool isValid();
 };

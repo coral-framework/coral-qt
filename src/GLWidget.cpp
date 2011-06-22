@@ -161,6 +161,11 @@ void GLWidget::update()
 	QGLWidget::updateGL();
 }
 
+bool GLWidget::isValid()
+{
+	return QGLWidget::isValid();
+}
+
 const qt::Object& GLWidget::getObject()
 {
 	return _wrapper;

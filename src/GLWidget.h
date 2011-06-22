@@ -34,6 +34,7 @@ public:
 	void swapBuffers();
 	void makeCurrent();
 	void update();
+	bool isValid();
 
 	// qt.IObjecSource method
 	const qt::Object& getObject();
