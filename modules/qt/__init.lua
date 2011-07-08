@@ -42,6 +42,10 @@ end
 function MT.__index( wrapper, name )
 	-- returns one of the ObjectWrapper utility functions
 	if MT[name] then return MT[name] end
+	
+	if name:sub( 1, 1 ) == '_' then
+		return wrapper[name]
+	end
 
 	local v = wrapper._obj:getPropertyOrChild( name )
 
@@ -58,6 +62,13 @@ function MT.__newindex( wrapper, name, value )
 		return
 	end
 
+	-- if name is an special name, then just set the property within the owner table
+	-- and returns (do not accept qt properties beggining with underscore symbol)
+	if name:sub( 1, 1 ) == '_' then
+		wrapper[name] = value
+		return
+	end
+		
 	wrapper._obj:setProperty( name, value )
 end
 
@@ -93,6 +104,10 @@ end
 function MT.setWidget( dockWidget, widget )
 	system:setWidget( dockWidget._obj, widget._obj )
 	return dockWidget
+end
+
+function MT.setCentralWidget( mainWindow, centralWidget )
+	system:setCentralWidget( mainWindow._obj, centralWidget._obj )
 end
 
 function MT.setLayout( widget, layout )
