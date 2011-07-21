@@ -158,6 +158,14 @@ public:
 		}
 	}
 
+	void getSaveFileName( const qt::Object& parent, const std::string& caption, const std::string& initialDir,
+						   const std::string& filter, std::string& selectedFile )
+	{
+		QString file = QFileDialog::getSaveFileName( qobject_cast<QWidget*>( parent.get() ),
+														 caption.c_str(), initialDir.c_str(), filter.c_str() );
+		selectedFile = file.toStdString();
+	}
+	
 	void newInstanceOf( const std::string& className, const qt::Object& parent, qt::Object& object )
 	{
 		QUiLoader loader;

@@ -292,6 +292,10 @@ function M.getOpenFileNames( parent, caption, initialDir, filter )
 	return system:getOpenFileNames( parent._obj, caption, initialDir, filter )
 end
 
+function M.getSaveFileName( parent, caption, initialDir, filter )
+	return system:getSaveFileName( parent._obj, caption, initialDir, filter )
+end
+
 function M.setSearchPaths( prefix, paths )
 	return system:setSearchPaths( prefix, paths )
 end

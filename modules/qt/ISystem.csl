@@ -33,6 +33,9 @@ interface ISystem
 	// Opens a file selection dialog and returns the selected files or an empty
 	// list if no file was selected
 	void getOpenFileNames( in Object parent, in string caption, in string initialDir, in string filter, out string[] selectedFiles );
+	
+	// Opens a file saving dialog and returns the fileName
+	void getSaveFileName( in Object parent, in string caption, in string initialDir, in string filter, out string selectedFile );
 
 	/*! 
 		Creates a new object using the class specified by className. This 
