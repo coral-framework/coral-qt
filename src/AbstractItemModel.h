@@ -34,6 +34,13 @@ public:
 	virtual qt::IAbstractItemModelDelegate* getDelegate();
 
 	virtual void setDelegate( qt::IAbstractItemModelDelegate* delegate );
+    
+    void reset();
+    
+    void notifyColumnsInserted( co::int32 parentIndex, co::int32 startIndex, co::int32 endIndex );
+	void notifyColumnsRemoved( co::int32 parentIndex, co::int32 startIndex, co::int32 endIndex );
+	void notifyRowsInserted( co::int32 parentIndex, co::int32 startIndex, co::int32 endIndex );
+	void notifyRowsRemoved( co::int32 parentIndex, co::int32 startIndex, co::int32 endIndex );
 
 	virtual void notifyDataChanged( co::int32 fromIndex, co::int32 toIndex );
 

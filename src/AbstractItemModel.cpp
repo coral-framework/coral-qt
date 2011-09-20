@@ -144,6 +144,57 @@ void AbstractItemModel::setDelegate( qt::IAbstractItemModelDelegate* delegate )
 {
 	_delegate = delegate;
 }
+    
+void AbstractItemModel::reset()
+{
+    // by now just notify begin and end (the model has already been modified)
+    beginResetModel();
+    endResetModel();
+}
+    
+void AbstractItemModel::notifyColumnsInserted( co::int32 parentIndex, co::int32 startIndex, co::int32 endIndex )
+{
+    // by now just notify columns are inserted using begin and end (the model has already been modified)
+    QModelIndex parent;
+    // check whether parent index is a valid index. Otherwise it has no column or row (root index)
+    if( parentIndex >= 0 )
+        parent = makeIndex( _delegate->getRow( parentIndex ), _delegate->getColumn( parentIndex ), parentIndex );
+    beginInsertColumns( parent, _delegate->getColumn( startIndex ), _delegate->getColumn( endIndex ) );
+    endInsertColumns();
+}
+    
+void AbstractItemModel::notifyColumnsRemoved( co::int32 parentIndex, co::int32 startIndex, co::int32 endIndex )
+{
+    // by now just notify begin and end (the model has already been modified)
+    QModelIndex parent;
+    // check whether parent index is a valid index. Otherwise it has no column or row (root index)
+    if( parentIndex >= 0 )
+        parent = makeIndex( _delegate->getRow( parentIndex ), _delegate->getColumn( parentIndex ), parentIndex );
+    beginRemoveColumns( parent, _delegate->getColumn( startIndex ), _delegate->getColumn( endIndex ) );
+    endRemoveColumns();
+}
+    
+void AbstractItemModel::notifyRowsInserted( co::int32 parentIndex, co::int32 startIndex, co::int32 endIndex )
+{
+    // by now just notify begin and end (the model has already been modified)
+    QModelIndex parent;
+    // check whether parent index is a valid index. Otherwise it has no column or row (root index)
+    if( parentIndex >= 0 )
+        parent = makeIndex( _delegate->getRow( parentIndex ), _delegate->getColumn( parentIndex ), parentIndex );
+    beginInsertRows( parent, _delegate->getRow( startIndex ), _delegate->getRow( endIndex ) );
+    endInsertRows();
+}
+    
+void AbstractItemModel::notifyRowsRemoved( co::int32 parentIndex, co::int32 startIndex, co::int32 endIndex )
+{
+    // by now just notify begin and end (the model has already been modified)
+    QModelIndex parent;
+    // check whether parent index is a valid index. Otherwise it has no column or row (root index)
+    if( parentIndex >= 0 )
+        parent = makeIndex( _delegate->getRow( parentIndex ), _delegate->getColumn( parentIndex ), parentIndex );
+    beginRemoveRows( parent, _delegate->getRow( startIndex ), _delegate->getRow( endIndex ) );
+    endRemoveRows();
+}
 
 void AbstractItemModel::notifyDataChanged( co::int32 fromIndex, co::int32 toIndex )
 {

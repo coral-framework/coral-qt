@@ -5,9 +5,23 @@ interface IAbstractItemModel
 {
 	// Data delegate for model instance
 	IAbstractItemModelDelegate delegate;
+	
+	//! Resets the model to its current state in any attached views.
+	//! It marks all data in the views to be invalid (any cached data is erased).
+	void reset();
+	
+	//! Notifies columns/rows insertion or removal.
+	void notifyColumnsInserted( in int32 parentIndex, in int32 startIndex, in int32 endIndex );
+	void notifyColumnsRemoved( in int32 parentIndex, in int32 startIndex, in int32 endIndex );
+	void notifyRowsInserted( in int32 parentIndex, in int32 startIndex, in int32 endIndex );
+	void notifyRowsRemoved( in int32 parentIndex, in int32 startIndex, in int32 endIndex );
 
-	// Notifies listeners about some change in the model. This 
-	// is used to inform views that an update is necessary.
+	/*! 
+		Notifies listeners about some change in the model. This 
+		is used to inform views that an update is necessary.
+		Important: this function is for existing index only. For added or removed
+		rows/columnd use columnsInserted or columnsRemoved.
+	 */
 	void notifyDataChanged( in int32 fromIndex, in int32 toIndex );
 
 	/*!
