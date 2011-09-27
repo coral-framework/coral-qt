@@ -11,10 +11,14 @@ interface IAbstractItemModel
 	void reset();
 	
 	//! Notifies columns/rows insertion or removal.
-	void notifyColumnsInserted( in int32 parentIndex, in int32 startIndex, in int32 endIndex );
-	void notifyColumnsRemoved( in int32 parentIndex, in int32 startIndex, in int32 endIndex );
-	void notifyRowsInserted( in int32 parentIndex, in int32 startIndex, in int32 endIndex );
-	void notifyRowsRemoved( in int32 parentIndex, in int32 startIndex, in int32 endIndex );
+	void beginInsertColumns( in int32 parentIndex, in int32 startCol, in int32 endCol );
+	void endInsertColumns();
+	void beginRemoveColumns( in int32 parentIndex, in int32 startCol, in int32 endCol );
+	void endRemoveColumns();
+	void beginInsertRows( in int32 parentIndex, in int32 startRow, in int32 endRow );
+	void endInsertRows();
+	void beginRemoveRows( in int32 parentIndex, in int32 startRow, in int32 endRow );
+	void endRemoveRows();
 
 	/*! 
 		Notifies listeners about some change in the model. This 

@@ -37,10 +37,14 @@ public:
     
     void reset();
     
-    void notifyColumnsInserted( co::int32 parentIndex, co::int32 startIndex, co::int32 endIndex );
-	void notifyColumnsRemoved( co::int32 parentIndex, co::int32 startIndex, co::int32 endIndex );
-	void notifyRowsInserted( co::int32 parentIndex, co::int32 startIndex, co::int32 endIndex );
-	void notifyRowsRemoved( co::int32 parentIndex, co::int32 startIndex, co::int32 endIndex );
+    void beginInsertColumns( co::int32 parentIndex, co::int32 startCol, co::int32 endCol );
+	void endInsertColumns();
+	void beginRemoveColumns( co::int32 parentIndex, co::int32 startCol, co::int32 endCol );
+	void endRemoveColumns();
+	void beginInsertRows( co::int32 parentIndex, co::int32 startRow, co::int32 endRow );
+	void endInsertRows();
+	void beginRemoveRows( co::int32 parentIndex, co::int32 startRow, co::int32 endRow );
+	void endRemoveRows();
 
 	virtual void notifyDataChanged( co::int32 fromIndex, co::int32 toIndex );
 

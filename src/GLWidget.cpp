@@ -16,6 +16,7 @@ GLWidget::GLWidget()
 	_painter = 0;
 	_inputListener = 0;
 	_wrapper.set( this );
+    setAutoSwapBuffers( true );
 }
 
 GLWidget::~GLWidget()
@@ -158,7 +159,7 @@ void GLWidget::makeCurrent()
 
 void GLWidget::update()
 {
-	QGLWidget::updateGL();
+	QGLWidget::update();
 }
 
 bool GLWidget::isValid()
