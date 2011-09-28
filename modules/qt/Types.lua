@@ -46,15 +46,6 @@ M.WheelFocus				= M.StrongFocus + 0x4
 M.NoFocus					= 0
 
 -------------------------------------------------------------------------------
--- Export Qt::ContextMenuPolicy enum
--------------------------------------------------------------------------------
-M.NoContextMenu			= 0
-M.PreventContextMenu	= 4
-M.DefaultContextMenu	= 1
-M.ActionsContextMenu	= 2
-M.CustomContextMenu		= 3
-
--------------------------------------------------------------------------------
 -- Export Qt::ItemFlag enum (see AbstractItemModelDelegate:getData())
 -------------------------------------------------------------------------------
 M.NoItemFlags				= 0
@@ -135,7 +126,7 @@ M.Vertical 					= 0x2
 -- Export Qt::Corner enum
 -------------------------------------------------------------------------------
 M.TopLeftCorner			= 0x00000
-M.TopRightCorner		= 0x00001
+M.TopRightCorner			= 0x00001
 M.BottomLeftCorner		= 0x00002
 M.BottomRightCorner		= 0x0
 

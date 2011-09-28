@@ -100,14 +100,14 @@ int ConnectionHub::qt_metacall( QMetaObject::Call call, int id, void **arguments
 	assert( c );
 
 	// create the array of arguments
-	co::Any args[4 * MAX_ARGS];
-	for( int i = 0; i < MAX_ARGS; )
+	co::Any args[MAX_ARGS];
+	for( int i = 0; i < MAX_ARGS; ++i )
 	{
 		if( c->argTypes[i] == -1 )
 			break;
 		QMetaType::Type tp = static_cast<QMetaType::Type>( c->argTypes[i] );
 		QVariant variant( tp, arguments[i + 1] );
-		i += variantToAny( variant, args[i], args[i+1], args[i+2], args[i+3] );
+		variantToAny( variant, args[i] );
 	}
 
 	// dispatch the signal
