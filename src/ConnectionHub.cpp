@@ -100,7 +100,7 @@ int ConnectionHub::qt_metacall( QMetaObject::Call call, int id, void **arguments
 	assert( c );
 
 	// create the array of arguments
-	co::Any args[MAX_ARGS];
+	co::Any args[4 * MAX_ARGS];
 	for( int i = 0; i < MAX_ARGS; )
 	{
 		if( c->argTypes[i] == -1 )
