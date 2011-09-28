@@ -8,6 +8,7 @@
 #include <co/IllegalCastException.h>
 #include <co/IllegalArgumentException.h>
 #include <qt/Variant.h>
+#include <QPointF>
 #include <QVariant>
 #include <sstream>
 
@@ -114,45 +115,60 @@ void variantToArgument( QVariant& var, QGenericArgument& arg )
 	}
 }
 
-void variantToAny( const QVariant& v, co::Any& value )
+int variantToAny( const QVariant& v, co::Any& value0, co::Any& value1, co::Any& value2, co::Any& value3  )
 {
 	if( !v.isValid() )
 	{
-		value = co::Any();
-		return;
+		value0 = co::Any();
+		return 1;
 	}
+    
+    int numWritten = 0;
 
 	QVariant::Type type = v.type();
 	switch( type )
 	{
-	case QVariant::Bool:		value.set( v.toBool() ); break;
-	case QVariant::Int:			value.set( v.toInt() ); break;
-	case QVariant::UInt:		value.set( v.toUInt() ); break;
-	case QVariant::Double:		value.set( v.toDouble() ); break;
-
-	case QVariant::Char:
-	case QVariant::String:
-	case QVariant::StringList:
-	case QVariant::ByteArray:
-	case QVariant::Date:
-	case QVariant::Time:
-	case QVariant::DateTime:
-		value.createString() = v.toString().toLatin1().data();
-		break;
-	case QVariant::Icon:
-	case QVariant::Size:
-	case QVariant::Font:
-	case QVariant::Point:
-	case QVariant::Color:
-	case QVariant::Brush:
-		{
-			// sets a qt::Variant into co:Any
-			qt::Variant& variant = value.createComplexValue<qt::Variant>();
-			variant = v;
-			break;
-		}
-	default:
-		CORAL_THROW( co::IllegalCastException, "cannot convert " << v.typeName() << " to a Coral any." );
-		break;
+        case QVariant::Bool: { value0.set( v.toBool() ); numWritten = 1; break; }
+        case QVariant::Int:	{ value0.set( v.toInt() ); numWritten = 1; break; }
+        case QVariant::UInt: { value0.set( v.toUInt() ); numWritten = 1; break; }
+        case QVariant::Double: { value0.set( v.toDouble() ); numWritten = 1; break; }
+        case QVariant::Point:
+        case QVariant::PointF:
+            {
+                numWritten = 2;
+                QPointF p = v.toPointF();
+                value0.set( p.x() );
+                value1.set( p.y() );
+                break;
+            }
+        case QVariant::Char:
+        case QVariant::String:
+        case QVariant::StringList:
+        case QVariant::ByteArray:
+        case QVariant::Date:
+        case QVariant::Time:
+        case QVariant::DateTime:
+            {
+                numWritten = 1;   
+                value0.createString() = v.toString().toLatin1().data();
+                break;
+            }
+        case QVariant::Icon:
+        case QVariant::Size:
+        case QVariant::Font:
+        case QVariant::Color:
+        case QVariant::Brush:
+            {
+                numWritten = 1;  
+                // sets a qt::Variant into co:Any
+                qt::Variant& variant = value0.createComplexValue<qt::Variant>();
+                variant = v;
+                break;
+            }
+        default:
+            CORAL_THROW( co::IllegalCastException, "cannot convert " << v.typeName() << " to a Coral any." );
+            break;
 	}
+    
+    return numWritten;
 }
