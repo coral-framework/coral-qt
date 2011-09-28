@@ -58,6 +58,7 @@ function MT.__index( wrapper, name )
 end
 
 function MT.__newindex( wrapper, name, value )
+	assert( value )
 	if eventHandler.installEventHandler( wrapper, name, value )	then
 		return
 	end
@@ -68,7 +69,6 @@ function MT.__newindex( wrapper, name, value )
 		wrapper[name] = value
 		return
 	end
-		
 	wrapper._obj:setProperty( name, value )
 end
 
