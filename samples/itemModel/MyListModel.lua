@@ -30,12 +30,12 @@ function MyListModel:getRow( index )
 	return index
 end
 
-return function()
+return function( data )
 	-- creates the model instance
 	local model = co.new( "qt.AbstractItemModel" ).itemModel
 
 	-- creates a new instance of item model delegate along with a data setter function
-	local listDelegate = MyListModel{ data = { "First Row", "Second Row", "Third Row" } }
+	local listDelegate = MyListModel{ data = data }
 	
 	-- sets the list delegate into the model
 	model.delegate = listDelegate.delegate
