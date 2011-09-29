@@ -58,7 +58,7 @@ function MT.__index( wrapper, name )
 end
 
 function MT.__newindex( wrapper, name, value )
-	assert( value )
+	assert( value ~= nil )
 	if eventHandler.installEventHandler( wrapper, name, value )	then
 		return
 	end
