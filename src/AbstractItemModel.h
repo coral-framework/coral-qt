@@ -67,11 +67,11 @@ private:
 	void assertDelegateValid() const;
 
 	// Portable wrap for createIndex() for gcc-32
-	inline QModelIndex makeIndex( int row, int col, int id ) const
+	inline QModelIndex makeIndex( int row, int col, int ident ) const
 	{
 		// explicity casts to int because gcc 32-bits can't resolve createIndex()
 		// overload (between int or pointer) since they have the same size in 32-bits platforms
-		return createIndex( row, col, static_cast<int>( id ) );
+		return createIndex( row, col, static_cast<int>( ident ) );
 	}
 
 private:

@@ -157,6 +157,8 @@ void AbstractItemModel::reset()
 
 void AbstractItemModel::beginInsertColumns( co::int32 parentIndex, co::int32 startCol, co::int32 endCol )
 {
+    assertDelegateValid();
+    
     // by now just notify columns are inserted using begin and end (the model has already been modified)
     QModelIndex parent;
     // check whether parent index is a valid index. Otherwise it has no column or row (root index)
@@ -172,6 +174,8 @@ void AbstractItemModel::endInsertColumns()
     
 void AbstractItemModel::beginRemoveColumns( co::int32 parentIndex, co::int32 startCol, co::int32 endCol )
 {
+    assertDelegateValid();
+    
     // by now just notify begin and end (the model has already been modified)
     QModelIndex parent;
     // check whether parent index is a valid index. Otherwise it has no column or row (root index)
@@ -187,6 +191,8 @@ void AbstractItemModel::endRemoveColumns()
     
 void AbstractItemModel::beginInsertRows( co::int32 parentIndex, co::int32 startRow, co::int32 endRow )
 {
+    assertDelegateValid();
+    
     // by now just notify begin and end (the model has already been modified)
     QModelIndex parent;
     // check whether parent index is a valid index. Otherwise it has no column or row (root index)
@@ -202,6 +208,8 @@ void AbstractItemModel::endInsertRows()
     
 void AbstractItemModel::beginRemoveRows( co::int32 parentIndex, co::int32 startRow, co::int32 endRow )
 {
+    assertDelegateValid();
+    
     // by now just notify begin and end (the model has already been modified)
     QModelIndex parent;
     // check whether parent index is a valid index. Otherwise it has no column or row (root index)
@@ -218,7 +226,6 @@ void AbstractItemModel::endRemoveRows()
 void AbstractItemModel::notifyDataChanged( co::int32 fromIndex, co::int32 toIndex )
 {
 	assertDelegateValid();
-
 	QModelIndex from = makeIndex( _delegate->getRow( fromIndex ), _delegate->getColumn( fromIndex ), fromIndex );
 	QModelIndex to = makeIndex( _delegate->getRow( toIndex ), _delegate->getColumn( toIndex ), toIndex );
 
