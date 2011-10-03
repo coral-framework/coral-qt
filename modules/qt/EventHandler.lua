@@ -51,10 +51,10 @@ local LuaEventHandler = co.Component { name = "qt.LuaEventHandler", provides = {
 function LuaEventHandler.handler:onEvent( cookie, eventType, ... )
 	local eventName = eventNames[eventType]
 	if not eventName or not self.closures[cookie][eventName] then
-		return
+		return false
 	end
 	-- dispatch the event to corresponding closure passing the source object
-	self.closures[cookie][eventName]( self.closures[cookie].source, ... )
+	return self.closures[cookie][eventName]( self.closures[cookie].source, ... ) == true
 end
 
 local eventHandlerClosures = {}

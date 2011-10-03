@@ -84,9 +84,13 @@ bool EventHub::eventFilter( QObject* watched, QEvent* event )
 	co::Any args[MAX_ARGS];
 	extractArguments( event, args, MAX_ARGS );
 
-	_filteredObjects[watched]->onEvent( reinterpret_cast<co::int64>( watched ), event->type(),
-										args[0], args[1], args[2], args[3], args[4], args[5] );
-	return false;
+	if( !_filteredObjects[watched]->onEvent( reinterpret_cast<co::int64>( watched ), event->type(),
+										args[0], args[1], args[2], args[3], args[4], args[5] ) )
+    {
+        event->ignore();
+    }
+    
+	return true;
 }
 
 // Extract event-specific arguments to co::Any array
