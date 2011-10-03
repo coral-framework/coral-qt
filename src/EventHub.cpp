@@ -88,9 +88,10 @@ bool EventHub::eventFilter( QObject* watched, QEvent* event )
 										args[0], args[1], args[2], args[3], args[4], args[5] ) )
     {
         event->ignore();
+        return true;
     }
     
-	return true;
+	return false;
 }
 
 // Extract event-specific arguments to co::Any array
