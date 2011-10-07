@@ -15,8 +15,10 @@
 
 #include <qt/Exception.h>
 #include <qt/ItemDataRole.h>
+#include <qt/ITimerCallback.h>
 #include <qt/IAbstractItemModel.h>
 #include <qt/IAbstractItemModelDelegate.h>
+
 #include <QAbstractItemView>
 #include <QAbstractItemModel>
 #include <QStringListModel>
@@ -485,26 +487,50 @@ public:
 
 		qwidget->releaseMouse();
 	}
+    
+    co::int32 addTimer( ITimerCallback* callback )
+    {
+        TimerCallbackNotifier* tcn = new TimerCallbackNotifier();
+        tcn->setCallback( callback );
+        _timers.push_back( tcn );
+        
+        return _timers.size() - 1;
+    }
+                          
+    void startTimer( co::int32 cookie, double milliseconds )
+    {
+        assert( cookie < static_cast<co::int32>( _timers.size() ) );
+        
+        TimerCallbackNotifier* tcn = _timers[cookie];
+        assert( tcn );
+        
+        tcn->start( milliseconds );
+    }
+	
 
-	void addTimerCallback( qt::ITimerCallback* callback )
-	{
-		if( callback && _callbackNotifier.isEmpty() )
-		{
-			// Needs to be less than 60 hertz or freezes on Windows since
-			// qt 4.7.0 has a reported bug on timer callbacks on Windows
-			_callbackNotifier.start( 1000.0 / 60.0 );
-		}
+    void stopTimer( co::int32 cookie )
+    {
+        assert( cookie < static_cast<co::int32>( _timers.size() ) );
+        
+        TimerCallbackNotifier* tcn = _timers[cookie];
+        assert( tcn );
+        
+        tcn->stop();
+    }
 
-		_callbackNotifier.addCallback( callback );
-	}
+    void deleteTimer( co::int32 cookie )
+    {
+        assert( cookie < static_cast<co::int32>( _timers.size() ) );
+        
+        TimerCallbackNotifier* tcn = _timers[cookie];
+        assert( tcn );
+        
+        tcn->stop();
+        
+        delete tcn;
 
-	void removeTimerCallback( qt::ITimerCallback* callback )
-	{
-		_callbackNotifier.removeCallback( callback );
-
-		if( _callbackNotifier.isEmpty() )
-			_callbackNotifier.stop();
-	}
+        _timers[cookie] = NULL;
+    }
 
 	co::int32 connect( const qt::Object& sender, const std::string& signal, qt::IConnectionHandler* handler )
 	{
@@ -536,7 +562,8 @@ private:
 	qt::Object _appObj;
 	EventHub _eventHub;
 	ConnectionHub _connectionHub;
-	TimerCallbackNotifier _callbackNotifier;
+    typedef std::vector<TimerCallbackNotifier*> Timers;
+	Timers _timers;
 };
 
 CORAL_EXPORT_COMPONENT( System, System )

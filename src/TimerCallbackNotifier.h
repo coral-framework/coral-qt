@@ -17,13 +17,10 @@ class TimerCallbackNotifier : public QTimer
 public:
 	TimerCallbackNotifier( QObject* parent = 0 );
 
-	void addCallback( ITimerCallback* callback );
-	void removeCallback( ITimerCallback* callback );
+	void setCallback( ITimerCallback* callback );
 
 	void start( int msec );
 	void stop();
-
-	bool isEmpty() { return _callbacks.empty(); }
 
 private slots:
 	void timeout();
@@ -31,20 +28,7 @@ private slots:
 private:
 	void notify( double dt );
 
-	typedef co::RefVector<ITimerCallback> CallbackList;
-	CallbackList _callbacks;
-
-	inline CallbackList::iterator find( ITimerCallback* callback )
-	{
-		CallbackList::iterator it = _callbacks.begin();
-		for( /*empty*/; it != _callbacks.end(); ++it )
-		{
-			if( (*it).get() == callback )
-				break;
-		}
-
-		return it;
-	}
+    co::RefPtr<ITimerCallback> _callback;
 
 private:
 	QTime _userClock;

@@ -300,12 +300,20 @@ function M.setSearchPaths( prefix, paths )
 	return system:setSearchPaths( prefix, paths )
 end
 
-function M.addTimerCallback( callback )
-	system:addTimerCallback( callback )
+function M.addTimer( callback )
+	return system:addTimer( callback )
 end
 
-function M.removeTimerCallback( callback )
-	system:removeTimerCallback( callback )
+function M.startTimer( cookie, milliseconds )
+	system:startTimer( cookie, milliseconds )
+end
+
+function M.stopTimer( cookie )
+	system:stopTimer( cookie )
+end
+
+function M.deleteTimer( cookie )
+	system:deleteTimer( cookie )
 end
 
 function M.exec()

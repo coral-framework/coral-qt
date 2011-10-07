@@ -6,24 +6,13 @@ namespace qt
 TimerCallbackNotifier::TimerCallbackNotifier( QObject *parent ) :
 	QTimer( parent )
 {
-	connect( this, SIGNAL(timeout()), this, SLOT(timeout()) );
+	connect( this, SIGNAL( timeout() ), this, SLOT( timeout() ) );
+    _callback = 0;
 }
 
-void TimerCallbackNotifier::addCallback( ITimerCallback* callback )
+void TimerCallbackNotifier::setCallback( ITimerCallback* callback )
 {
-	if( find( callback ) != _callbacks.end() )
-		return;
-
-	_callbacks.push_back( callback );
-}
-
-void TimerCallbackNotifier::removeCallback( ITimerCallback* callback )
-{
-	CallbackList::iterator pos = find( callback );
-	if( pos == _callbacks.end() )
-		return;
-
-	_callbacks.erase( pos );
+	_callback = callback;
 }
 
 void TimerCallbackNotifier::start( int msec )
@@ -44,8 +33,8 @@ void TimerCallbackNotifier::timeout()
 
 void TimerCallbackNotifier::notify( double dt )
 {
-	for( CallbackList::iterator it = _callbacks.begin(); it != _callbacks.end(); ++it )
-		(*it)->timeUpdate( dt );
+    if( _callback.get() )
+        _callback->timeUpdate( dt );
 }
 
 } // namespace qt
