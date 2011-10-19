@@ -5,7 +5,7 @@ local qt = require "qt"
 qt.setSearchPaths( "coral", co.getPaths() )
 
 local mockState = false
-local function slotCheckedMock( checked )
+local function slotCheckedMock( sender, checked )
 	mockState = checked
 end
 
