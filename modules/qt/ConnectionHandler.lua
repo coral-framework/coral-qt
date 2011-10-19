@@ -5,16 +5,17 @@ local M = {}
 -------------------------------------------------------------------------------
 local LuaConnectionHandler = co.Component { name = "qt.LuaConnectionHandler", provides = { handler = "qt.IConnectionHandler" } }
 function LuaConnectionHandler.handler:onSignal( cookie, ... )
-	local closure = assert( self.closures[cookie], "LuaConnectionHandler: invalid closure for the emitted signal" )
-	closure( ... )
+	local connection = self.connections[cookie]
+ 	assert( connection.sender and connection.closure, "LuaConnectionHandler: invalid closure for the emitted signal" )
+	connection.closure( connection.sender, ... )
 end
 
-local connectionHandlerClosures = {}
-local connectionHandler = ( LuaConnectionHandler{ closures = connectionHandlerClosures } ).handler
+local connections = {}
+local connectionHandler = ( LuaConnectionHandler{ connections = connections } ).handler
 
 function M.connect( wrapper, signal, handlerClosure )
 	local cookie = M.system:connect( wrapper._obj, signal, connectionHandler )
-	connectionHandlerClosures[cookie] = handlerClosure
+	connections[cookie] = { sender = wrapper, closure = handlerClosure }
 end
 
 return M
