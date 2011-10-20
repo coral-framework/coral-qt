@@ -328,6 +328,55 @@ function M.quit()
 	return system:quit()
 end
 
+local function makeNamedSlotsTable( slotsTable )
+	local namedSlotsTable = {}
+	for k, v in pairs( slotsTable ) do
+		if type( v ) == "function" then
+			local parametersChunk = string.match( k, "on_[%w_%d]*__([%w_]*)" )
+			local slotInfoChunk = k
+			local parametersString = "("
+			if parametersChunk then
+				slotInfoChunk = string.sub( k, 1, string.len( k ) - string.len( parametersChunk ) - 2 )
+				local p = {}
+				for w in string.gmatch( parametersChunk, "([%w]*)" ) do
+					if w and w ~= "" then
+						table.insert( p, w )
+					end
+				end
+				for i, v in ipairs( p ) do
+					parametersString = parametersString .. v
+					if i < #p then
+						parametersString = parametersString .. ","
+					end
+				end
+			end
+			parametersString = parametersString .. ")"
+			local childName = string.match( slotInfoChunk, "on_([%w_%d]*)_" )
+			if childName and childName ~= "" then
+				local qtSlotName = string.sub( slotInfoChunk, 4 - string.len( slotInfoChunk ) + string.len( childName ) )
+				namedSlotsTable[childName] = { closure = v, qtSignalSignature = qtSlotName .. parametersString }
+			end
+		end
+	end
+	
+	return namedSlotsTable
+end
+
+function M.connectSlotsByName( wrapper, slotsTable )
+	local namedSlotsTable = makeNamedSlotsTable( slotsTable )
+	for k, v in pairs( namedSlotsTable ) do
+		local child = wrapper[k]
+		local signalSignature = v.qtSignalSignature
+		if child and child._obj then
+			child:connect( signalSignature, v.closure )
+		else
+			local msg = "connectSlotsByName: warning: no match child QObject for given slot'" .. signalSignature 
+			msg = msg .. "'. You might have mistyped signal name. Closures signature must be of form on_(child QObject name)_(signal name)[__type1_type2_...typeN]"
+			print( msg )
+		end
+	end
+end
+
 -------------------------------------------------------------------------------
 -- Sub-modules configurations
 -------------------------------------------------------------------------------
