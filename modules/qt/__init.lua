@@ -297,7 +297,22 @@ function M.getSaveFileName( parent, caption, initialDir, filter )
 end
 
 function M.setSearchPaths( prefix, paths )
-	return system:setSearchPaths( prefix, paths )
+	if type( paths ) == "table" then
+		-- paths is a table with a list of absolute paths
+		return system:setSearchPaths( prefix, paths )
+	elseif type( paths ) == "string" then
+		-- paths is a module name
+		local subPath = string.gsub( paths, "%.", "/" )
+		local coPaths = co.getPaths()
+		local newSearchPaths = {}
+		for k, v in pairs( coPaths ) do
+			local newPath = v .. "/" .. subPath
+			if path.exists( newPath ) and path.isDir( newPath ) then
+				table.insert( newSearchPaths, path.normalize( newPath ) )
+			end
+		end
+		return system:setSearchPaths( prefix, newSearchPaths )
+	end
 end
 
 function M.addTimer( callback )
