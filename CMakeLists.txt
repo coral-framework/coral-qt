@@ -31,20 +31,9 @@ FIND_PACKAGE( Coral REQUIRED )
 
 # Configure the coral path
 SET( CORAL_PATH
-	"${CORAL_ROOT}/modules"
 	"${CMAKE_BINARY_DIR}/modules"
 	"${CMAKE_SOURCE_DIR}/modules"
 )
-
-################################################################################
-# Global Coral-Qt Settings
-################################################################################
-
-# The official Coral Version
-SET( CORAL_VERSION_MAJOR	"0" )
-SET( CORAL_VERSION_MINOR	"5" )
-SET( CORAL_VERSION_PATCH	"2" )
-SET( CORAL_VERSION "${CORAL_VERSION_MAJOR}.${CORAL_VERSION_MINOR}.${CORAL_VERSION_PATCH}" )
 
 ################################################################################
 # Installation
@@ -65,9 +54,9 @@ INSTALL( DIRECTORY ${CMAKE_SOURCE_DIR}/modules/ DESTINATION modules )
 # Packaging
 ################################################################################
 SET( CPACK_PACKAGE_NAME					"coral-qt" )
-SET( CPACK_PACKAGE_VERSION_MAJOR		"${CORAL_VERSION_MAJOR}" )
-SET( CPACK_PACKAGE_VERSION_MINOR		"${CORAL_VERSION_MINOR}" )
-SET( CPACK_PACKAGE_VERSION_PATCH		"${CORAL_VERSION_PATCH}" )
+SET( CPACK_PACKAGE_VERSION_MAJOR		"0" )
+SET( CPACK_PACKAGE_VERSION_MINOR		"5" )
+SET( CPACK_PACKAGE_VERSION_PATCH		"2" )
 SET( CPACK_PACKAGE_DESCRIPTION_SUMMARY	"A module for integrating [Qt](http://qt.nokia.com/) into Coral" )
 
 IF( WIN32 )
