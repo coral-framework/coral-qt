@@ -232,7 +232,7 @@ void AbstractItemModel::notifyDataChanged( co::int32 fromIndex, co::int32 toInde
 	emit dataChanged( from, to );
 }
 
-void AbstractItemModel::setItemSelection( const QObjectWrapper& view, co::int32 index, bool selectionState )
+void AbstractItemModel::setItemSelection( const qt::Object& view, co::int32 index, bool selectionState )
 {
 	QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );
 	if( !qtView )
@@ -264,31 +264,31 @@ void AbstractItemModel::clearSelection( const qt::Object& view )
 void AbstractItemModel::activated( const QModelIndex& index )
 {
 	assertDelegateValid();
-	_delegate->itemActivated( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
+	_delegate->itemActivated( qt::Object( QObject::sender() ), getInternalId( index ) );
 }
 
 void AbstractItemModel::clicked( const QModelIndex& index )
 {
 	assertDelegateValid();
-	_delegate->itemClicked( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
+	_delegate->itemClicked( qt::Object( QObject::sender() ), getInternalId( index ) );
 }
 
 void AbstractItemModel::doubleClicked( const QModelIndex& index )
 {
 	assertDelegateValid();
-	_delegate->itemDoubleClicked( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
+	_delegate->itemDoubleClicked( qt::Object( QObject::sender() ), getInternalId( index ) );
 }
 
 void AbstractItemModel::entered( const QModelIndex& index )
 {
 	assertDelegateValid();
-	_delegate->itemEntered( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
+	_delegate->itemEntered( qt::Object( QObject::sender() ), getInternalId( index ) );
 }
 
 void AbstractItemModel::pressed( const QModelIndex& index )
 {
 	assertDelegateValid();
-	_delegate->itemPressed( QObjectWrapper( QObject::sender() ), getInternalId( index ) );
+	_delegate->itemPressed( qt::Object( QObject::sender() ), getInternalId( index ) );
 }
 
 void AbstractItemModel::assertDelegateValid() const

@@ -1,8 +1,17 @@
 /*
 	Wraps a QVariant.
  */
-native class Variant ( <QVariant> QVariant )
+@co.Include( "QVariant" )
+native class Variant
 {
+	<c++
+		// Forward Declaration:
+		class QVariant;
+		namespace qt {
+			typedef QVariant Variant;
+		} // namespace qt
+	c++>
+
 	// Checks whether this variant instance is valid.
 	bool isValid();
 	void setAny( in any value );
@@ -13,4 +22,3 @@ native class Variant ( <QVariant> QVariant )
 	void setBrush( in int32 r, in int32 g, in int32 b, in int32 a, in int32 style );
 	void setFont( in string family, in int32 pointSize, in int32 weight, in bool italic );
 };
-

@@ -1,10 +1,6 @@
 #include "GLWidget.h"
-#include "QObjectWrapper.h"
-
-#include <qt/IPainter.h>
-
 #include "EventHub.h"
-
+#include <qt/IPainter.h>
 #include <QKeyEvent>
 #include <QMouseEvent>
 
