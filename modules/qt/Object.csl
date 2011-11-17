@@ -1,8 +1,25 @@
 /*
 	Wraps a QObject.
  */
-native class Object ( <QObjectWrapper.h> QObjectWrapper )
+native class Object
 {
+	<c++
+		class QObject;
+
+		namespace qt {
+			class Object
+			{
+			public:
+				inline Object( QObject* obj ) : _obj( obj ) {;}
+				inline Object() : _obj( 0 ) {;}
+				inline void set( QObject* obj ) { _obj = obj; }
+				inline QObject* get() const { return _obj; }
+			private:
+				QObject* _obj;
+			};
+		} // namespace qt
+	c++>
+
 	readonly int64 hash;
 
 	void getPropertyOrChild( in string name, out any value ) raises co.IllegalCastException;

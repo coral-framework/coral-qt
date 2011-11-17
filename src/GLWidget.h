@@ -1,18 +1,17 @@
 #ifndef _GLWIDGET_H_
 #define _GLWIDGET_H_
 
-#include <QGLWidget>
 #include "GLWidget_Base.h"
-
 #include <co/RefPtr.h>
+#include <QGLWidget>
 
 namespace qt {
 
 // Forward declaration
 class IPainter;
 
-class GLWidget : public QGLWidget, public GLWidget_Base {
-
+class GLWidget : public QGLWidget, public GLWidget_Base
+{
 	Q_OBJECT
 
 public:
@@ -37,7 +36,7 @@ public:
 	bool isValid();
 
 	// qt.IObjecSource method
-	const qt::Object& getObject();
+	const Object& getObject();
 
 protected:
 	void keyPressEvent( QKeyEvent* event );
@@ -58,7 +57,7 @@ protected:
 private:
 	co::RefPtr<IPainter> _painter;
 	co::RefPtr<IInputListener> _inputListener;
-	QObjectWrapper  _wrapper;
+	Object _wrapper;
 };
 
 } // namespace qt;

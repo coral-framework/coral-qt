@@ -8,6 +8,7 @@
 
 #include <qt/Object.h>
 #include <qt/IConnectionHandler.h>
+#include <QObject>
 #include <vector>
 
 /*!
