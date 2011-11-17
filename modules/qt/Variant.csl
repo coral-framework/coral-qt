@@ -1,16 +1,8 @@
 /*
 	Wraps a QVariant.
  */
-@co.Include( "QVariant.h" )
-native class Variant
+native class Variant ( <QVariant> QVariant )
 {
-	<c++
-		#ifdef QVARIANT_H
-			namespace qt { typedef QVariant Variant; }
-		#else
-			namespace qt { class Variant; }
-		#endif
-	c++>
 	// Checks whether this variant instance is valid.
 	bool isValid();
 	void setAny( in any value );

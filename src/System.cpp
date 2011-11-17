@@ -3,8 +3,6 @@
  * See copyright notice in LICENSE.md
  */
 
-#include <QObjectWrapper.h>
-#include <qt/Object.h>
 #include "EventHub.h"
 #include "System_Base.h"
 #include "ConnectionHub.h"

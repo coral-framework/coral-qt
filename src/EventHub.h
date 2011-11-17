@@ -7,7 +7,6 @@
 #define _EVENTHUB_H_
 
 #include <QMetaEnum>
-#include <QObjectWrapper.h> // QObjectWrapper must be included before Object
 #include <qt/Object.h>
 #include <qt/MouseButtons.h>
 #include <qt/IEventHandler.h>

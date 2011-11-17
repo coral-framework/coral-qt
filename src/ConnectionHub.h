@@ -6,12 +6,9 @@
 #ifndef _CONNECTIONHUB_H_
 #define _CONNECTIONHUB_H_
 
-#include <vector>
-#include <QObjectWrapper.h> // QObjectWrapper must be included before Object
 #include <qt/Object.h>
-
 #include <qt/IConnectionHandler.h>
-
+#include <vector>
 
 /*!
 	A dynamic QObject for dispatching signals to IConnectionHandlers.

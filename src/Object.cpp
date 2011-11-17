@@ -3,11 +3,10 @@
  * See copyright notice in LICENSE.md
  */
 
-#include <QObjectWrapper.h>
-#include <qt/Object.h>
 #include "Object_Adapter.h"
 #include "ValueConverters.h"
 #include <co/IllegalArgumentException.h>
+#include <qt/Object.h>
 #include <qt/Variant.h>
 #include <qt/Exception.h>
 #include <QVariant>
