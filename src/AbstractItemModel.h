@@ -1,10 +1,11 @@
 #ifndef _ABSTRACTITEMMODEL_H_
 #define _ABSTRACTITEMMODEL_H_
 
+#include <QObjectWrapper.h>
+#include <qt/ItemDataRole.h>
 #include <QAbstractItemModel>
 #include "AbstractItemModel_Base.h"
 #include <qt/IAbstractItemModelDelegate.h>
-#include <qt/ItemDataRole.h>
 
 namespace qt {
 
@@ -48,7 +49,7 @@ public:
 
 	virtual void notifyDataChanged( co::int32 fromIndex, co::int32 toIndex );
 
-	virtual void setItemSelection( const QObjectWrapper& view, co::int32 index, bool selectionState );
+	virtual void setItemSelection( const qt::Object& view, co::int32 index, bool selectionState );
 
 	virtual void clearSelection( const qt::Object& view );
 

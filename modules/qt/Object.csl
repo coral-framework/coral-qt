@@ -1,8 +1,16 @@
 /*
 	Wraps a QObject.
  */
-native class Object ( <QObjectWrapper.h> QObjectWrapper )
+@co.Include( "QObjectWrapper.h" )
+native class Object
 {
+	<c++
+		#ifdef QOBJECT_H
+			namespace qt { typedef QObjectWrapper Object; }
+		#else
+			namespace qt { class Object; }
+		#endif
+	c++>
 	readonly int64 hash;
 
 	void getPropertyOrChild( in string name, out any value ) raises co.IllegalCastException;

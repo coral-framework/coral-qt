@@ -25,4 +25,5 @@ private:
 	QObject* _obj;
 };
 
+
 #endif //_QOBJECTWRAPPER_H_

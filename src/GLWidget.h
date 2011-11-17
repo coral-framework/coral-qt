@@ -1,6 +1,8 @@
 #ifndef _GLWIDGET_H_
 #define _GLWIDGET_H_
 
+#include <QObjectWrapper.h> // QObjectWrapper must be included before Object
+#include <qt/Object.h>
 #include <QGLWidget>
 #include "GLWidget_Base.h"
 
@@ -58,7 +60,7 @@ protected:
 private:
 	co::RefPtr<IPainter> _painter;
 	co::RefPtr<IInputListener> _inputListener;
-	QObjectWrapper  _wrapper;
+    qt::Object  _wrapper;
 };
 
 } // namespace qt;

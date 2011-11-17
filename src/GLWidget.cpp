@@ -1,5 +1,4 @@
 #include "GLWidget.h"
-#include "QObjectWrapper.h"
 
 #include <qt/IPainter.h>
 
