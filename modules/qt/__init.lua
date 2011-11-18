@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
 -- Required modules
 -------------------------------------------------------------------------------
-local path = require "path"
+local path = require "lua.path"
 local types = require "qt.Types"
 local eventHandler = require "qt.EventHandler"
 local connectionHandler = require "qt.ConnectionHandler"

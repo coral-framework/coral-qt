@@ -1,4 +1,4 @@
-require "testkit.Unit"
+local env = require "testkit.env"
 
 local qt = require "qt"
 
@@ -9,5 +9,5 @@ function testEventNotification()
 	testWidget.onClose = function() hit = true end
 	testWidget.visible = true
 	testWidget:invoke( "close()" )
-	ASSERT_TRUE( hit, "The event was not called" )
+	env.ASSERT_TRUE( hit, "The event was not called" )
 end
