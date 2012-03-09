@@ -291,7 +291,7 @@ function TypeTree:addType( currentType, parentIndex )
 									 type = M.typeNames[currentType.kind] }, parentIndex or -1 )
 
 	local childTypes = currentType.types
-	if childType then
+	if childTypes then
 		for i, v in ipairs( childTypes ) do
 			self:addType( v, currentIndex )
 		end

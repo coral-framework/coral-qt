@@ -91,6 +91,15 @@ interface ISystem
 		raises IllegalArgumentException;
 		
 	/*! 
+		Gets the centralWidget of given \a mainWindow instance.
+	
+		\throw co.IllegalArgumentException if \a mainWindow is not an instance
+		of QMainWindow.
+	 */
+	void getCentralWidget( in Object mainWindow, out Object widget ) 
+		raises IllegalArgumentException;
+		
+	/*! 
 		Adds \a dockWidget into dock widget area of \a mainWindow.
 	
 		\throw co.IllegalArgumentException if the \a mainWindow is not an instance

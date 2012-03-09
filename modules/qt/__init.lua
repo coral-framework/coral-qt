@@ -110,6 +110,10 @@ function MT.setCentralWidget( mainWindow, centralWidget )
 	system:setCentralWidget( mainWindow._obj, centralWidget._obj )
 end
 
+function MT.getCentralWidget( mainWindow )
+	return ObjectWrapper( system:getCentralWidget( mainWindow._obj ) )
+end
+
 function MT.setLayout( widget, layout )
 	local layoutInstance = layout
 	if type( layout ) == "string" then
