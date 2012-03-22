@@ -5,10 +5,10 @@ interface IInputListener
 {
 	void keyPressed( in string key );
 	void keyReleased( in string key );
-	void mousePressed( in int32 x, in int32 y, in int32 button, in KeyboardModifiers modifiers );
-	void mouseReleased( in int32 x, in int32 y, in int32 button, in KeyboardModifiers modifiers );
-	void mouseDoubleClicked( in int32 x, in int32 y, in int32 button, in KeyboardModifiers modifiers );
-	void mouseMoved( in int32 x, in int32 y, in MouseButtons buttons, in KeyboardModifiers modifiers );
+	void mousePressed( in int32 x, in int32 y, in uint32 button, in KeyboardModifiers modifiers );
+	void mouseReleased( in int32 x, in int32 y, in uint32 button, in KeyboardModifiers modifiers );
+	void mouseDoubleClicked( in int32 x, in int32 y, in uint32 button, in KeyboardModifiers modifiers );
+	void mouseMoved( in int32 x, in int32 y, in uint32 buttons, in KeyboardModifiers modifiers );
 	void mouseWheel( in int32 x, in int32 y, in int32 delta, in KeyboardModifiers modifiers );
 };
 

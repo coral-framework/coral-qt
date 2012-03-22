@@ -96,9 +96,7 @@ void GLWidget::mouseMoveEvent( QMouseEvent* event )
 	{
 		qt::KeyboardModifiers modifiers;
 		EventHub::fillKeyboardModifiers( event->modifiers(), modifiers );
-		qt::MouseButtons buttons;
-		EventHub::fillMouseButtons( event->buttons(), buttons );
-		_inputListener->mouseMoved( event->x(), event->y(), buttons, modifiers );
+		_inputListener->mouseMoved( event->x(), event->y(), event->buttons(), modifiers );
 	}
 	else
 		event->ignore();

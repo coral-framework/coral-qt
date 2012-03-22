@@ -31,7 +31,7 @@ Example:
 
 	-- mouse events
 	mainWindow.onMousePress = function( source, x, y, button, modifiers ) end
-	mainWindow.onMouseMove = function( source, x, y, button, modifiers ) end
+	mainWindow.onMouseMove = function( source, x, y, buttons, modifiers ) end
 	mainWindow.onMouseRelease = function( source, x, y, button, modifiers ) end
 	mainWindow.onMouseDoubleClick = function( source, x, y, button, modifiers ) end
 	mainWindow.onWheel = function( source, x, y, delta, modifiers ) end
@@ -64,7 +64,7 @@ Modifiers example:
 The same is valid for mouse events:
 
 	local function onMousePress( source, x, y, button, modifiers )
-		print( "Mouse button pressed at pos", x, y )		
+		print( "Mouse button pressed at pos", x, y )
 		if modifiers.alt then
 			print( "ALT modifier is pressed!" )
 		end

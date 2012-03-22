@@ -37,12 +37,6 @@ void EventHub::fillKeyCodeString( int keyCode, co::Any& any )
 	if( name )
 		any.createString() = name;
 }
-void EventHub::fillMouseButtons( Qt::MouseButtons buttons, qt::MouseButtons& mb )
-{
-	mb.left = buttons & Qt::LeftButton;
-	mb.right = buttons & Qt::RightButton;
-	mb.middle = buttons & Qt::MiddleButton;
-}
 
 EventHub::EventHub()
 {
@@ -97,38 +91,36 @@ bool EventHub::eventFilter( QObject* watched, QEvent* event )
 // Extract event-specific arguments to co::Any array
 void EventHub::extractArguments( QEvent* event, co::Any* args, int maxArgs )
 {
-	switch( event->type() )
+	QEvent::Type ev = event->type();
+	switch( ev )
 	{
 	case QEvent::MouseButtonDblClick:
 	case QEvent::MouseButtonPress:
 	case QEvent::MouseButtonRelease:
 	case QEvent::MouseMove:
 		{
-			QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>( event );
-			assert( mouseEvent );
+			QMouseEvent* mouseEvent = static_cast<QMouseEvent*>( event );
 
-			// extract position (x and y ), button, modifiers
+			// extract (x and y), button, modifiers
 			const QPoint& pos = mouseEvent->pos();
 			args[0].set( pos.x() );
-			args[1].set( pos.x() );
-			args[2].set( static_cast<co::int32>( mouseEvent->button() ) );
+			args[1].set( pos.y() );
+			args[2].set( static_cast<co::uint32>( ev == QEvent::MouseMove ?
+							mouseEvent->buttons() : mouseEvent->button() ) );
 			fillKeyboardModifiers( mouseEvent->modifiers(), args[3] );
-			return;
 		}
+		break;
 	case QEvent::KeyPress:
 	case QEvent::KeyRelease:
 		{
-			QKeyEvent* keyEvent = dynamic_cast<QKeyEvent*>( event );
-			assert( keyEvent );
-
+			QKeyEvent* keyEvent = static_cast<QKeyEvent*>( event );
 			fillKeyCodeString( keyEvent->key(), args[0] );
 			fillKeyboardModifiers( keyEvent->modifiers(), args[1] );
-			return;
 		}
+		break;
 	case QEvent::Wheel:
 		{
-			QWheelEvent* wheelEvent = dynamic_cast<QWheelEvent*>( event );
-			assert( wheelEvent );
+			QWheelEvent* wheelEvent = static_cast<QWheelEvent*>( event );
 
 			// extract position (x and y ), delta, modifiers
 			const QPoint& pos = wheelEvent->pos();
@@ -136,12 +128,11 @@ void EventHub::extractArguments( QEvent* event, co::Any* args, int maxArgs )
 			args[1].set( pos.x() );
 			args[2].set( wheelEvent->delta() );
 			fillKeyboardModifiers( wheelEvent->modifiers(), args[3] );
-			return;
 		}
+		break;
 	case QEvent::Resize:
 		{
-			QResizeEvent* resizeEvent = dynamic_cast<QResizeEvent*>( event );
-			assert( resizeEvent );
+			QResizeEvent* resizeEvent = static_cast<QResizeEvent*>( event );
 
 			// extract size (width and height) and oldSize (width and height)
 			const QSize& size = resizeEvent->size();
@@ -150,8 +141,8 @@ void EventHub::extractArguments( QEvent* event, co::Any* args, int maxArgs )
 			args[1].set( size.height() );
 			args[2].set( oldSize.width() );
 			args[3].set( oldSize.height() );
-			return;
 		}
+		break;
 	default:
 		// Close, Show and Hide require no arguments
 		return;

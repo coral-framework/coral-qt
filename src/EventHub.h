@@ -8,7 +8,6 @@
 
 #include <QMetaEnum>
 #include <qt/Object.h>
-#include <qt/MouseButtons.h>
 #include <qt/IEventHandler.h>
 #include <qt/KeyboardModifiers.h>
 
@@ -26,7 +25,6 @@ public:
 	static void fillKeyCodeString( int keyCode, co::Any& any );
 	static void fillKeyboardModifiers( Qt::KeyboardModifiers modifiers, co::Any& any );
 	static void fillKeyboardModifiers( Qt::KeyboardModifiers modifiers, qt::KeyboardModifiers& km );
-	static void fillMouseButtons( Qt::MouseButtons buttons, qt::MouseButtons& mb );
 
 public:
 	//! Accessor for qt property (necessary to avoid Qt warnings)
