@@ -8,9 +8,7 @@
 #include <co/IllegalCastException.h>
 #include <co/IllegalArgumentException.h>
 #include <qt/Variant.h>
-#include <QKeySequence>
 #include <QVariant>
-#include <QString>
 #include <sstream>
 
 Q_DECLARE_METATYPE( Qt::Alignment )
@@ -44,10 +42,8 @@ void anyToVariant( const co::Any& any, int expectedTypeId, QVariant& var )
 	case QMetaType::QPoint:
 	case QMetaType::QColor:
 	case QMetaType::QBrush:
-        case QMetaType::QKeySequence:
-            var.setValue( QKeySequence( QString( any.get<std::string&>().c_str() ) ) ); break;
 	case QMetaType::QVariant:
-   		switch( any.getKind() )
+		switch( any.getKind() )
 		{
 		case co::TK_NONE:		return;
 		case co::TK_BOOLEAN:	var.setValue( any.get<bool>() ); return;
