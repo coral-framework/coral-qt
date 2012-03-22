@@ -21,6 +21,7 @@ co::int64 qt::Object_Adapter::getHash( qt::Object& instance )
 
 void qt::Object_Adapter::getPropertyOrChild( qt::Object& instance, const std::string& name, co::Any& value )
 {
+	assert( instance.get() );
 	QVariant v = instance.get()->property( name.c_str() );
 	if( v.isValid() )
 	{
@@ -29,13 +30,14 @@ void qt::Object_Adapter::getPropertyOrChild( qt::Object& instance, const std::st
 	}
 
 	QObject* child = instance.get()->findChild<QObject*>( name.c_str() );
-	value.createComplexValue<qt::Object>().set( child );
+	if( child )
+		value.createComplexValue<qt::Object>().set( child );
 }
 
 void qt::Object_Adapter::setProperty( qt::Object& instance, const std::string& name, const co::Any& value )
 {
-	QObject* obj = instance.get();
-	const QMetaObject* metaObj = obj->metaObject();
+	assert( instance.get() );
+	const QMetaObject* metaObj = instance.get()->metaObject();
 	QMetaProperty property = metaObj->property( metaObj->indexOfProperty( name.c_str() ) );
 
 	QVariant v;
