@@ -308,6 +308,12 @@ public:
 		qDockWidget->setWidget( qwidget );
 	}
 
+	void getToggleViewAction( const qt::Object& dockWidget, qt::Object& action )
+	{
+		QDockWidget* qDockWidget = tryCastObject<QDockWidget>( dockWidget, "cannot get view action" );
+		action.set( qDockWidget->toggleViewAction() );
+	}
+
 	void setLayout( const qt::Object& widget, const qt::Object& layout )
 	{
 		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot set layout" );

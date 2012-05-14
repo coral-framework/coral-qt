@@ -124,6 +124,15 @@ interface ISystem
 		of QDockWidget or \a widget is not an instance of QWidget.
 	 */
 	void setWidget( in Object dockWidget, in Object widget );
+	
+	/*! 
+		Retrieves action for enabling/disabling the corresponding dockWidget.
+
+		\throw co.IllegalArgumentException if the \a dockWidget is not an instance
+		of QDockWidget.
+	 */
+	void getToggleViewAction( in Object dockWidget, out Object action )
+		raises IllegalArgumentException;
 
 	/*! 
 		Sets a layout in the given widget.

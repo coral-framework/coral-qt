@@ -101,6 +101,10 @@ function MT.setCorner( mainWindow, corner, area )
 	return mainWindow
 end
 
+function MT.getToggleViewAction( dockWidget )
+	return ObjectWrapper( system:getToggleViewAction( dockWidget._obj ) )
+end
+
 function MT.setWidget( dockWidget, widget )
 	system:setWidget( dockWidget._obj, widget._obj )
 	return dockWidget
