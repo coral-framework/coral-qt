@@ -2,9 +2,14 @@
 #define _ABSTRACTITEMMODEL_H_
 
 #include <QAbstractItemModel>
+#include <QAbstractItemView.h>
+#include <QItemSelectionModel.h>
+#include <qt/IItemSelectionModel.h>
 #include "AbstractItemModel_Base.h"
 #include <qt/IAbstractItemModelDelegate.h>
 #include <qt/ItemDataRole.h>
+
+#include <co/RefPtr.h>
 
 namespace qt {
 
@@ -16,6 +21,10 @@ public:
 	AbstractItemModel();
 
 	virtual ~AbstractItemModel();
+
+	void installModel( const Object& view );
+
+	void installSelectionModel( const Object& view );
 
 	virtual int	rowCount( const QModelIndex& parent = QModelIndex() ) const;
 
@@ -33,7 +42,7 @@ public:
 
 	virtual qt::IAbstractItemModelDelegate* getDelegate();
 
-	virtual void setDelegate( qt::IAbstractItemModelDelegate* delegate );
+	void setDelegate( qt::IAbstractItemModelDelegate* delegate );
     
     void reset();
     
@@ -46,11 +55,11 @@ public:
 	void beginRemoveRows( co::int32 parentIndex, co::int32 startRow, co::int32 endRow );
 	void endRemoveRows();
 
-	virtual void notifyDataChanged( co::int32 fromIndex, co::int32 toIndex );
+	void notifyDataChanged( co::int32 fromIndex, co::int32 toIndex );
 
-	virtual void setItemSelection( const qt::Object& view, co::int32 index, bool selectionState );
+	void setItemSelection( co::int32 index, bool selectionState );
 
-	virtual void clearSelection( const qt::Object& view );
+	void clearSelection();
 
 public slots:
 	void activated( const QModelIndex& index );
@@ -75,7 +84,8 @@ private:
 	}
 
 private:
-	qt::IAbstractItemModelDelegate* _delegate;
+	QItemSelectionModel* _selectionModel;
+	co::RefPtr<qt::IAbstractItemModelDelegate> _delegate;
 };
 
 } // namespace qt

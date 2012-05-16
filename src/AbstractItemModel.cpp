@@ -34,6 +34,28 @@ AbstractItemModel::AbstractItemModel()
 AbstractItemModel::~AbstractItemModel()
 {;}
 
+void AbstractItemModel::installModel( const Object& view )
+{
+	QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );
+	assert( qtView );
+	qtView->setModel( this );
+
+	// connect AbstractItemView slots to model signals (to allow signal forwarding to delegate of IAbstractItemModel)
+	QObject::connect( this, SIGNAL( dataChanged( QModelIndex,QModelIndex )), qtView, SLOT( dataChanged(QModelIndex,QModelIndex) ) );
+	QObject::connect( qtView, SIGNAL( activated( const QModelIndex& ) ), this, SLOT( activated( const QModelIndex& ) ) );
+	QObject::connect( qtView, SIGNAL( clicked( const QModelIndex& ) ), this, SLOT( clicked( const QModelIndex& ) ) );
+	QObject::connect( qtView, SIGNAL( doubleClicked( const QModelIndex& ) ), this, SLOT( doubleClicked( const QModelIndex& ) ) );
+	QObject::connect( qtView, SIGNAL( entered( const QModelIndex& ) ), this, SLOT( entered( const QModelIndex& ) ) );
+	QObject::connect( qtView, SIGNAL( pressed( const QModelIndex& ) ), this, SLOT( pressed( const QModelIndex& ) ) );
+}
+
+void AbstractItemModel::installSelectionModel( const Object& view )
+{
+	QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );
+	assert( qtView );
+	qtView->setSelectionModel( _selectionModel );
+}
+
 int	AbstractItemModel::rowCount( const QModelIndex& parent ) const
 {
 	assertDelegateValid();
@@ -139,7 +161,7 @@ Qt::ItemFlags AbstractItemModel::flags( const QModelIndex& index ) const
 
 qt::IAbstractItemModelDelegate* AbstractItemModel::getDelegate()
 {
-	return _delegate;
+	return _delegate.get();
 }
 
 void AbstractItemModel::setDelegate( qt::IAbstractItemModelDelegate* delegate )
@@ -153,7 +175,6 @@ void AbstractItemModel::reset()
     beginResetModel();
     endResetModel();
 }
-    
 
 void AbstractItemModel::beginInsertColumns( co::int32 parentIndex, co::int32 startCol, co::int32 endCol )
 {
@@ -232,33 +253,20 @@ void AbstractItemModel::notifyDataChanged( co::int32 fromIndex, co::int32 toInde
 	emit dataChanged( from, to );
 }
 
-void AbstractItemModel::setItemSelection( const qt::Object& view, co::int32 index, bool selectionState )
+void AbstractItemModel::setItemSelection( co::int32 index, bool selectionState )
 {
-	QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );
-	if( !qtView )
-		CORAL_THROW( co::IllegalArgumentException,
-					 "cannot change selection of given index: 'view' object is not a subclass of QAbstractItemView" );
+	if( !_selectionModel )
+		return;
 
-	QModelIndex modelIndex = makeIndex( _delegate->getRow( index ), _delegate->getColumn( index ), index );
-	QItemSelectionModel* sm = qtView->selectionModel();
-	if( !sm )
-	{
-		sm = new QItemSelectionModel( this );
-		qtView->setSelectionModel( sm );
-	}
-
-	sm->select( modelIndex, selectionState ? QItemSelectionModel::Select : QItemSelectionModel::Deselect );
+	_selectionModel->select( makeIndex( _delegate->getRow( index ), _delegate->getColumn( index ), index ), selectionState?QItemSelectionModel::Select:QItemSelectionModel::Deselect );
 }
 
-void AbstractItemModel::clearSelection( const qt::Object& view )
+void AbstractItemModel::clearSelection()
 {
-	QAbstractItemView* qtView = qobject_cast<QAbstractItemView*>( view.get() );
-	if( !qtView )
-		CORAL_THROW( co::IllegalArgumentException,
-					 "cannot clear selection: 'view' object is not a subclass of QAbstractItemView" );
+	if( !_selectionModel )
+		return;
 
-	qtView->clearSelection();
-    qtView->update();
+	_selectionModel->clearSelection();
 }
 
 void AbstractItemModel::activated( const QModelIndex& index )

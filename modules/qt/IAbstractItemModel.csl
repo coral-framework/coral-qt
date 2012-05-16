@@ -3,20 +3,32 @@
  */
 interface IAbstractItemModel
 {
-	// Data delegate for model instance
+	//! Installs the concrete Qt model implementation into Qt subsystem.
+	void installModel( in Object view );
+	
+	/* 
+		Data delegate for model instance.
+		The delegate is used by model implentation to acquire access the model API
+		whenever UI data needs update. \see IAbstractItemModelDelegate.
+		
+	 */
 	IAbstractItemModelDelegate delegate;
 	
-	//! Resets the model to its current state in any attached views.
-	//! It marks all data in the views to be invalid (any cached data is erased).
+	/**** Below methods are used to notify UI of changes in the model ****/
+	
+	//! Notifies that the model was reset.
 	void reset();
 	
-	//! Notifies columns/rows insertion or removal.
+	//! Notifies UI of model columns/rows insertion or removal.
 	void beginInsertColumns( in int32 parentIndex, in int32 startCol, in int32 endCol );
 	void endInsertColumns();
+	
 	void beginRemoveColumns( in int32 parentIndex, in int32 startCol, in int32 endCol );
 	void endRemoveColumns();
+	
 	void beginInsertRows( in int32 parentIndex, in int32 startRow, in int32 endRow );
 	void endInsertRows();
+	
 	void beginRemoveRows( in int32 parentIndex, in int32 startRow, in int32 endRow );
 	void endRemoveRows();
 
@@ -27,17 +39,4 @@ interface IAbstractItemModel
 		rows/columnd use columnsInserted or columnsRemoved.
 	 */
 	void notifyDataChanged( in int32 fromIndex, in int32 toIndex );
-
-	/*!
-		Sets element selection at \a index position to \a selectionState.
-
-		\throw co.IllegalArgumentException if the given \a view instance is not an
-		instance of QAbstractItemView class.
-	 */	
-	void setItemSelection( in Object view, in int32 index, in bool selectionState );
-
-	/*!
-		Clears all selections in the view.
-	 */	
-	void clearSelection( in Object view );
 };

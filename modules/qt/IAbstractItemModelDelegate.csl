@@ -30,7 +30,6 @@ interface IAbstractItemModelDelegate
 	// column and parent index. 
 	int32 getIndex( in int32 row, in int32 col, in int32 parentIndex );
 
-
 	// Returns the parent of the model item with the given itemIndex. If the 
 	// item has no parent, an invalid index is returned (i.e -1).
 	int32 getParentIndex( in int32 index );

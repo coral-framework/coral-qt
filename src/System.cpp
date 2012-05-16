@@ -17,6 +17,7 @@
 #include <qt/ItemDataRole.h>
 #include <qt/ITimerCallback.h>
 #include <qt/IAbstractItemModel.h>
+#include <qt/IItemSelectionModel.h>
 #include <qt/IAbstractItemModelDelegate.h>
 
 #include <QAbstractItemView>
@@ -460,25 +461,29 @@ public:
 	void assignModelToView( qt::Object& view, qt::IAbstractItemModel* model )
 	{
 		QAbstractItemView* qtView = tryCastObject<QAbstractItemView>( view, "cannot assign model to view" );
-		QAbstractItemModel* qtModel = dynamic_cast<QAbstractItemModel*>( model );
-		if( !qtModel )
-			CORAL_THROW( co::IllegalArgumentException, "cannot assign model to view: invalid 'model' instance" );
+		model->installModel( qtView );
+	}
 
-		qtView->setModel( qtModel );
-
-		// connect AbstractItemView slots to model signals (to allow signal forwarding to delegate of IAbstractItemModel)
-		QObject::connect( qtModel, SIGNAL( dataChanged( QModelIndex,QModelIndex )), qtView, SLOT( dataChanged(QModelIndex,QModelIndex) ) );
-		QObject::connect( qtView, SIGNAL( activated( const QModelIndex& ) ), qtModel, SLOT( activated( const QModelIndex& ) ) );
-		QObject::connect( qtView, SIGNAL( clicked( const QModelIndex& ) ), qtModel, SLOT( clicked( const QModelIndex& ) ) );
-		QObject::connect( qtView, SIGNAL( doubleClicked( const QModelIndex& ) ), qtModel, SLOT( doubleClicked( const QModelIndex& ) ) );
-		QObject::connect( qtView, SIGNAL( entered( const QModelIndex& ) ), qtModel, SLOT( entered( const QModelIndex& ) ) );
-		QObject::connect( qtView, SIGNAL( pressed( const QModelIndex& ) ), qtModel, SLOT( pressed( const QModelIndex& ) ) );
+	void assignSelectionModelToView( qt::Object& view, qt::IItemSelectionModel* model )
+	{
+		QAbstractItemView* qtView = tryCastObject<QAbstractItemView>( view, "cannot assign model to view" );
+		model->installSelectionModel( qtView );
 	}
 
 	void getModelFromView( const qt::Object& view, qt::IAbstractItemModel*& model  )
 	{
 		QAbstractItemView* qtView = tryCastObject<QAbstractItemView>( view, "cannot retrieve model from view" );
-		model = dynamic_cast<qt::IAbstractItemModel*>( qtView->model() );
+		qt::IAbstractItemModel* ptr = dynamic_cast<qt::IAbstractItemModel*>( qtView->model() );
+		assert( ptr );
+		model = ptr;
+	}
+
+	void getSelectionModelFromView( const qt::Object& view, qt::IItemSelectionModel*& model  )
+	{
+		QAbstractItemView* qtView = tryCastObject<QAbstractItemView>( view, "cannot retrieve model from view" );
+		qt::IItemSelectionModel* ptr = dynamic_cast<qt::IItemSelectionModel*>( qtView->selectionModel() );
+		assert( ptr );
+		model = ptr;
 	}
 
 	co::int64 installEventHandler( const qt::Object& watched, qt::IEventHandler* handler )

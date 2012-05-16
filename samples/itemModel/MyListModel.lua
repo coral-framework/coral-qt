@@ -1,32 +1,32 @@
 local qt = require "qt"
-local AbstractListModel = require "qt.AbstractListModel"
+local AbstractListModelDelegate = require "qt.AbstractListModelDelegate"
 
-local MyListModel = AbstractListModel( "qt.samples.MyListModel" )
+local MyListModelDelegate = AbstractListModelDelegate( "qt.samples.MyListModel" )
 
-function MyListModel:getData( index, role )
+function MyListModelDelegate:getData( index, role )
 	if role == "DisplayRole" or role == "EditRole" then
 		return self.data[index]
 	end
 	return nil
 end
 
-function MyListModel:getFlags( index )
+function MyListModelDelegate:getFlags( index )
 	return qt.ItemIsSelectable + qt.ItemIsEnabled
 end
 
-function MyListModel:getHorizontalHeaderData( section, role )
+function MyListModelDelegate:getHorizontalHeaderData( section, role )
 	return nil
 end
 
-function MyListModel:getVerticalHeaderData( section, role )
+function MyListModelDelegate:getVerticalHeaderData( section, role )
 	return nil
 end
 
-function MyListModel:getRowCount( parentIndex )
+function MyListModelDelegate:getRowCount( parentIndex )
 	return #self.data
 end
 
-function MyListModel:getRow( index )
+function MyListModelDelegate:getRow( index )
 	return index
 end
 
@@ -35,7 +35,7 @@ return function( data )
 	local model = co.new( "qt.AbstractItemModel" ).itemModel
 
 	-- creates a new instance of item model delegate along with a data setter function
-	local listDelegate = MyListModel{ data = data }
+	local listDelegate = MyListModelDelegate{ data = data }
 	
 	-- sets the list delegate into the model
 	model.delegate = listDelegate.delegate
