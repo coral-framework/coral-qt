@@ -5,14 +5,16 @@
 
 #include "AbstractItemModel.h"
 #include <ValueConverters.h>
-#include <co/Exception.h>
-#include <QTextDocument>
 #include <qt/Variant.h>
+
+#include <QMimeData>
+#include <QTextDocument>
+#include <QAbstractItemView>
+
 #include <sstream>
 
 #include <co/Exception.h>
 #include <co/IllegalArgumentException.h>
-#include <QAbstractItemView>
 
 namespace
 {
@@ -29,6 +31,7 @@ namespace qt {
 AbstractItemModel::AbstractItemModel()
 {
 	_delegate = 0;
+	_selectionModel = new QItemSelectionModel( this );
 }
 
 AbstractItemModel::~AbstractItemModel()
@@ -42,6 +45,7 @@ void AbstractItemModel::installModel( const Object& view )
 
 	// connect AbstractItemView slots to model signals (to allow signal forwarding to delegate of IAbstractItemModel)
 	QObject::connect( this, SIGNAL( dataChanged( QModelIndex,QModelIndex )), qtView, SLOT( dataChanged(QModelIndex,QModelIndex) ) );
+
 	QObject::connect( qtView, SIGNAL( activated( const QModelIndex& ) ), this, SLOT( activated( const QModelIndex& ) ) );
 	QObject::connect( qtView, SIGNAL( clicked( const QModelIndex& ) ), this, SLOT( clicked( const QModelIndex& ) ) );
 	QObject::connect( qtView, SIGNAL( doubleClicked( const QModelIndex& ) ), this, SLOT( doubleClicked( const QModelIndex& ) ) );
@@ -68,14 +72,27 @@ int	AbstractItemModel::columnCount( const QModelIndex& parent ) const
 	return _delegate->getColumnCount( getInternalId( parent ) );
 }
 
+bool AbstractItemModel::setData( const QModelIndex& index, const QVariant& data, int role )
+{
+	assertDelegateValid();
+
+	co::Any value;
+	variantToAny( data, value );
+	bool ok = _delegate->setData( getInternalId( index ), value, role );
+	if( ok )
+	{
+		emit dataChanged( index, index );
+	}
+
+	return ok;
+}
+
 QVariant AbstractItemModel::data( const QModelIndex& index, int role ) const
 {
 	assertDelegateValid();
 
-	qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
-
 	co::Any value;
-	_delegate->getData( getInternalId( index ), itemRole, value );
+	_delegate->getData( getInternalId( index ), role, value );
 
 	QVariant result;
 	anyToVariant( value, QMetaType::QVariant, result );
@@ -86,13 +103,11 @@ QVariant AbstractItemModel::headerData( int section, Qt::Orientation orientation
 {
 	assertDelegateValid();
 
-	qt::ItemDataRole itemRole = static_cast<qt::ItemDataRole>( role );
-
 	co::Any value;
 	if( orientation == Qt::Horizontal )
-		_delegate->getHorizontalHeaderData( section, itemRole, value );
+		_delegate->getHorizontalHeaderData( section, role, value );
 	else
-		_delegate->getVerticalHeaderData( section, itemRole, value );
+		_delegate->getVerticalHeaderData( section, role, value );
 
 	QVariant result;
 	anyToVariant( value, QMetaType::QVariant, result );
@@ -159,6 +174,59 @@ Qt::ItemFlags AbstractItemModel::flags( const QModelIndex& index ) const
 	return qtFlags;
 }
 
+ QStringList AbstractItemModel::mimeTypes() const
+ {
+     QStringList types;
+     types << "application/vnd.text.list";
+     return types;
+ }
+
+bool AbstractItemModel::dropMimeData( const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent )
+{
+	assertDelegateValid();
+
+	 if( action == Qt::IgnoreAction )
+         return true;
+
+	 // only text list supported by now
+     if ( !data->hasFormat( "application/vnd.text.list" ) )
+         return false;
+
+	QByteArray encodedData = data->data( "application/vnd.text.list" );
+	QDataStream stream( &encodedData, QIODevice::ReadOnly );
+	std::vector<std::string> items;
+	while( !stream.atEnd() ) 
+	{
+		QString text;
+		stream >> text;
+		items.push_back( text.toLatin1().data() );
+	}
+
+	return _delegate->dropMimeData( items, action, row, column, static_cast<co::int32>( parent.internalId() ) );
+}
+
+QMimeData* AbstractItemModel::mimeData( const QModelIndexList& indexes ) const
+{
+	QMimeData *mimeData = new QMimeData();
+    QByteArray encodedData;
+	QDataStream stream( &encodedData, QIODevice::WriteOnly );
+	foreach( const QModelIndex &index, indexes ) 
+	{
+		if ( index.isValid() )
+		{
+			stream << QString::number( static_cast<co::int32>( index.internalId() ) );
+		}
+    }
+
+    mimeData->setData( "application/vnd.text.list", encodedData );
+	return mimeData;	
+}
+
+ Qt::DropActions AbstractItemModel::supportedDropActions() const
+ {
+	return Qt::MoveAction | Qt::CopyAction;
+ }
+
 qt::IAbstractItemModelDelegate* AbstractItemModel::getDelegate()
 {
 	return _delegate.get();
@@ -180,9 +248,8 @@ void AbstractItemModel::beginInsertColumns( co::int32 parentIndex, co::int32 sta
 {
     assertDelegateValid();
     
-    // by now just notify columns are inserted using begin and end (the model has already been modified)
+	// check whether parent index is a valid index. Otherwise it has no column or row (root index)
     QModelIndex parent;
-    // check whether parent index is a valid index. Otherwise it has no column or row (root index)
     if( parentIndex != ID_INVALID  )
         parent = makeIndex( _delegate->getRow( parentIndex ), _delegate->getColumn( parentIndex ), parentIndex );
     QAbstractItemModel::beginInsertColumns( parent, startCol, endCol );
@@ -197,11 +264,11 @@ void AbstractItemModel::beginRemoveColumns( co::int32 parentIndex, co::int32 sta
 {
     assertDelegateValid();
     
-    // by now just notify begin and end (the model has already been modified)
-    QModelIndex parent;
     // check whether parent index is a valid index. Otherwise it has no column or row (root index)
+	QModelIndex parent;
     if( parentIndex != ID_INVALID )
         parent = makeIndex( _delegate->getRow( parentIndex ), _delegate->getColumn( parentIndex ), parentIndex );
+
     QAbstractItemModel::beginRemoveColumns( parent, startCol, endCol );
 }
     
@@ -214,11 +281,11 @@ void AbstractItemModel::beginInsertRows( co::int32 parentIndex, co::int32 startR
 {
     assertDelegateValid();
     
-    // by now just notify begin and end (the model has already been modified)
-    QModelIndex parent;
     // check whether parent index is a valid index. Otherwise it has no column or row (root index)
+    QModelIndex parent;
     if( parentIndex != ID_INVALID  )
         parent = makeIndex( _delegate->getRow( parentIndex ), _delegate->getColumn( parentIndex ), parentIndex );
+
     QAbstractItemModel::beginInsertRows( parent, startRow, endRow );
 }
     
@@ -236,6 +303,7 @@ void AbstractItemModel::beginRemoveRows( co::int32 parentIndex, co::int32 startR
     // check whether parent index is a valid index. Otherwise it has no column or row (root index)
     if( parentIndex != ID_INVALID )
         parent = makeIndex( _delegate->getRow( parentIndex ), _delegate->getColumn( parentIndex ), parentIndex );
+
     QAbstractItemModel::beginRemoveRows( parent, startRow, endRow );
 }
     

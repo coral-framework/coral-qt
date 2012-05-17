@@ -14,7 +14,6 @@
 #include <co/IllegalArgumentException.h>
 
 #include <qt/Exception.h>
-#include <qt/ItemDataRole.h>
 #include <qt/ITimerCallback.h>
 #include <qt/IAbstractItemModel.h>
 #include <qt/IItemSelectionModel.h>

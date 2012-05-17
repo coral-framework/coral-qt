@@ -10,7 +10,9 @@ return function( componentName )
 	AbstractItemModelDelegate.itemDoubleClicked = function( self, view, index ) end
 	AbstractItemModelDelegate.itemEntered = function( self, view, index ) end
 	AbstractItemModelDelegate.itemPressed = function( self, view, index ) end
-
+	AbstractItemModelDelegate.setData = function( self, index, data, role ) end
+	AbstractItemModelDelegate.dropMimeData( self, mimeDataList, action, row, column, parentIndex ) return false end
+	
 	return AbstractItemModelDelegate
 end
 

@@ -216,14 +216,8 @@ function MT.setModel( view, model )
 	system:assignModelToView( view._obj, model._obj or model )
 end
 
-function MT.setItemSelection( view, index, selectionState )
-	local model = system:getModelFromView( view._obj )
-	model:setItemSelection( view._obj, index, selectionState )
-end
-
-function MT.clearSelection( view )
-	local model = system:getModelFromView( view._obj )
-	model:clearSelection( view._obj )
+function MT.setSelectionModel( view, model )
+	system:assignSelectionModelToView( view._obj, model._obj or model )
 end
 
 function MT.setCursor( widget, cursor )

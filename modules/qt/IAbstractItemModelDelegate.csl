@@ -33,19 +33,23 @@ interface IAbstractItemModelDelegate
 	// Returns the parent of the model item with the given itemIndex. If the 
 	// item has no parent, an invalid index is returned (i.e -1).
 	int32 getParentIndex( in int32 index );
+	
+	// Sets an specific data for the given role at the given index.
+	// Returns true if data was successful set and false otherwise.
+	bool setData( in int32 index, in any data, in int32 role );
 
 	// Returns the data stored under the given role for the item referred to 
 	// by index. If you do not have a value to return, return nil instead.
-	void getData( in int32 index, in ItemDataRole role, out any data );
+	void getData( in int32 index, in int32 role, out any data );
 
 	// Returns the flags for the given index.
 	int32 getFlags( in int32 index );
 
 	// Returns the data for the given role and column in the horizontal header.
-	void getHorizontalHeaderData( in int32 section, in ItemDataRole role, out any data );
+	void getHorizontalHeaderData( in int32 section, in int32 role, out any data );
 
 	// Returns the data for the given role and row in the vertical header.
-	void getVerticalHeaderData( in int32 section, in ItemDataRole role, out any data );
+	void getVerticalHeaderData( in int32 section, in int32 role, out any data );
 
 	/*
 		Returns the number of columns for the children of the given parent.
@@ -69,6 +73,10 @@ interface IAbstractItemModelDelegate
 
 	// Returns the current column of the item specified by the given indexItem.
 	uint32 getColumn( in int32 index );
+	
+	// Below method is called when a drag operation ends over the given index of row, col and parent.
+	// Returns true if the drop request can be handled.
+	bool dropMimeData( in string[] mimeDataList, in int32 action, in int32 row, in int32 column, in int32 parentIndex );
 
 	// AbstractItemView signals (see QAbstractItemView documentation for details).
 	void itemActivated( in Object view, in int32 index );

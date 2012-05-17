@@ -28,11 +28,42 @@ M.FormatOption.NoSampleBuffers			= 33554432
 M.FormatOption.NoDeprecatedFunctions	= 67108864
 
 -------------------------------------------------------------------------------
+-- Export QAbstractItemView::EditTrigger enum
+-------------------------------------------------------------------------------
+M.NoEditTriggers 	= 0
+M.CurrentChanged 	= 1
+M.DoubleClicked	 	= 2
+M.SelectedClicked 	= 4
+M.EditKeyPressed 	= 8
+M.AnyKeyPressed 	= 16
+M.AllEditTriggers 	= 3
+
+-------------------------------------------------------------------------------
 -- Export Qt:CheckState enum
 -------------------------------------------------------------------------------
 M.Unchecked	= 0
 M.PartiallyChecked = 1
 M.Checked = 2
+
+-------------------------------------------------------------------------------
+-- Export Qt:ItemDataRole enum
+-------------------------------------------------------------------------------
+M.DisplayRole				= 0
+M.DecorationRole			= 1
+M.EditRole					= 2
+M.ToolTipRole				= 3
+M.StatusTipRole				= 4
+M.WhatsThisRole				= 5
+M.SizeHintRole				= 13
+M.FontRole					= 6
+M.TextAlignmentRole			= 7	
+M.BackgroundRole			= 8
+M.BackgroundColorRole		= 8
+M.ForegroundRole			= 9
+M.TextColorRole				= 9
+M.CheckStateRole			= 10
+M.AccessibleTextRole		= 11
+M.AccessibleDescriptionRole	= 12
 
 -------------------------------------------------------------------------------
 -- Export Qt::MouseButton enum
@@ -63,6 +94,25 @@ M.ItemIsDropEnabled			= 8
 M.ItemIsUserCheckable		= 16
 M.ItemIsEnabled				= 32
 M.ItemIsTristate			= 64
+
+-------------------------------------------------------------------------------
+-- Export Qt::DropAction enum (see AbstractItemModelDelegate:getData())
+-------------------------------------------------------------------------------
+M.CopyAction 		= 0x1
+M.MoveAction 		= 0x2
+M.LinkAction 		= 0x04
+M.ActionMask 		= 0xff
+M.IgnoreAction 		= 0x0
+M.TargetMoveAction 	= 0x8002
+
+-------------------------------------------------------------------------------
+-- Export Qt::DragDropMode enum
+-------------------------------------------------------------------------------
+M.NoDragDrop	 = 0
+M.DragOnly		 = 1
+M.DropOnly		 = 2
+M.DragDrop		 = 3
+M.InternalMove	 = 4
 
 -------------------------------------------------------------------------------
 -- Export Qt::BrushStyle enum
