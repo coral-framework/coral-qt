@@ -3,7 +3,7 @@
 
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
-#include <QItemSelectionModel.h>
+#include <QItemSelectionModel>
 #include <qt/IItemSelectionModel.h>
 #include "AbstractItemModel_Base.h"
 #include <qt/IAbstractItemModelDelegate.h>
@@ -47,7 +47,7 @@ public:
 
 	virtual QMimeData* mimeData( const QModelIndexList& indexes ) const;
 
-	virtual Qt::DropActions AbstractItemModel::supportedDropActions() const;
+	virtual Qt::DropActions supportedDropActions() const;
 
 	virtual qt::IAbstractItemModelDelegate* getDelegate();
 
