@@ -520,10 +520,9 @@ public:
         TimerCallbackNotifier* tcn = _timers[cookie];
         assert( tcn );
         
-        tcn->start( milliseconds );
+        tcn->start( static_cast<int>( milliseconds ) );
     }
 	
-
     void stopTimer( co::int32 cookie )
     {
         assert( cookie < static_cast<co::int32>( _timers.size() ) );
