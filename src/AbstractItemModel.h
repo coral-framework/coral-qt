@@ -2,7 +2,7 @@
 #define _ABSTRACTITEMMODEL_H_
 
 #include <QAbstractItemModel>
-#include <QAbstractItemView.h>
+#include <QAbstractItemView>
 #include <QItemSelectionModel.h>
 #include <qt/IItemSelectionModel.h>
 #include "AbstractItemModel_Base.h"
