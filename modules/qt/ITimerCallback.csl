@@ -1,4 +1,5 @@
 interface ITimerCallback
 {
-	void timeUpdate( in double dt );
+	// Called with the ellapsed time (in seconds)
+	void onTimer( in double dt );
 };

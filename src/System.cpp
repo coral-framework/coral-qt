@@ -3,10 +3,10 @@
  * See copyright notice in LICENSE.md
  */
 
+#include "Timer.h"
 #include "EventHub.h"
 #include "System_Base.h"
 #include "ConnectionHub.h"
-#include "TimerCallbackNotifier.h"
 #include "AbstractItemModel.h"
 #include "ValueConverters.h"
 
@@ -167,7 +167,7 @@ public:
 														 caption.c_str(), initialDir.c_str(), filter.c_str() );
 		selectedFile = file.toStdString();
 	}
-	
+
 	void newInstanceOf( const std::string& className, const qt::Object& parent, qt::Object& object )
 	{
 		QUiLoader loader;
@@ -277,7 +277,7 @@ public:
 		QWidget* qWidget = tryCastObject<QWidget>( widget, "cannot set central widget" );
 		qMainWindow->setCentralWidget( qWidget );
 	}
-    
+
     void getCentralWidget( const qt::Object& parent, qt::Object& widget )
 	{
 		QMainWindow* qMainWindow = tryCastObject<QMainWindow>( parent, "cannot get central widget" );
@@ -326,7 +326,7 @@ public:
 		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot get layout" );
 		layout.set( qwidget->layout() );
 	}
-	
+
 	void addActionIntoGroup( const qt::Object& actionGroup, const qt::Object& action )
 	{
 		QActionGroup* qActionGroup = tryCastObject<QActionGroup>( actionGroup, "cannot insert action into group" );
@@ -503,48 +503,39 @@ public:
 
 		qwidget->releaseMouse();
 	}
-    
-    co::int32 addTimer( ITimerCallback* callback )
+
+    co::int32 createTimer( ITimerCallback* callback )
     {
-        TimerCallbackNotifier* tcn = new TimerCallbackNotifier();
-        tcn->setCallback( callback );
-        _timers.push_back( tcn );
-        
-        return _timers.size() - 1;
-    }
-                          
-    void startTimer( co::int32 cookie, double milliseconds )
-    {
-        assert( cookie < static_cast<co::int32>( _timers.size() ) );
-        
-        TimerCallbackNotifier* tcn = _timers[cookie];
-        assert( tcn );
-        
-        tcn->start( static_cast<int>( milliseconds ) );
-    }
-	
-    void stopTimer( co::int32 cookie )
-    {
-        assert( cookie < static_cast<co::int32>( _timers.size() ) );
-        
-        TimerCallbackNotifier* tcn = _timers[cookie];
-        assert( tcn );
-        
-        tcn->stop();
+		Timer* timer = new Timer( callback );
+		co::int32 timerId = static_cast<co::int32>( _timers.size() );
+		_timers[timerId] = timer;
+		return timerId;
     }
 
-    void deleteTimer( co::int32 cookie )
+    void startTimer( co::int32 timerId, double milliseconds )
     {
-        assert( cookie < static_cast<co::int32>( _timers.size() ) );
-        
-        TimerCallbackNotifier* tcn = _timers[cookie];
-        assert( tcn );
-        
-        tcn->stop();
-        
-        delete tcn;
+        assert( _timers.count( timerId ) );
+        Timer* timer = _timers[timerId];
+        assert( timer );
+        timer->start( milliseconds );
+    }
 
-        _timers[cookie] = NULL;
+    void stopTimer( co::int32 timerId )
+    {
+        assert( _timers.count( timerId ) );
+        Timer* timer = _timers[timerId];
+        assert( timer );
+        timer->stop();
+    }
+
+    void deleteTimer( co::int32 timerId )
+    {
+        assert( _timers.count( timerId ) );
+        Timer* timer = _timers[timerId];
+        assert( timer );
+        timer->stop();
+        delete timer;
+        _timers.erase( timerId );
     }
 
 	co::int32 connect( const qt::Object& sender, const std::string& signal, qt::IConnectionHandler* handler )
@@ -556,10 +547,10 @@ public:
 	{
 		_connectionHub.disconnect( cookie );
 	}
-	
-	void exec()
+
+	co::int32 exec()
 	{
-		_app->exec();
+		return _app->exec();
 	}
 
 	void processEvents()
@@ -577,8 +568,7 @@ private:
 	qt::Object _appObj;
 	EventHub _eventHub;
 	ConnectionHub _connectionHub;
-    typedef std::vector<TimerCallbackNotifier*> Timers;
-	Timers _timers;
+	std::map<co::int32, Timer*> _timers;
 };
 
 CORAL_EXPORT_COMPONENT( System, System )

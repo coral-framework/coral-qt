@@ -1,11 +1,14 @@
 /*
-	Component that provides an OpenGL widget.
-	Also dispatches the widget events to its delegate interfaces.
+	A QGLWidget wrapped as a component.
 */
 component GLWidget
 {
-	provides IObjectSource self; //< QObject reference
-	provides IGLContext context; //< OpenGL rendering context
-	receives IPainter painter;   //< Painter delegate
-	receives IInputListener inputListener; //<< Input event delegate
+	// OpenGL context (as a QGLWidget)
+	provides IGLWidget glContext;
+
+	// Service responsible for painting.
+	receives IPainter painter;
+
+	// Service responsible for handling mouse/keyboard input.
+	receives IInputListener inputListener;
 };

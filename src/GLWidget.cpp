@@ -20,6 +20,46 @@ GLWidget::~GLWidget()
 	// empty
 }
 
+void GLWidget::setAutoSwapBuffers( bool autoSwapBuffers )
+{
+	setAutoBufferSwap( autoSwapBuffers );
+}
+
+bool GLWidget::getAutoSwapBuffers()
+{
+	return autoBufferSwap();
+}
+
+void GLWidget::setFormat( co::int32 desiredFormat )
+{
+	QGLWidget::setFormat( QGLFormat( static_cast<QGL::FormatOption>( desiredFormat ) ) );
+}
+
+void GLWidget::swapBuffers()
+{
+	QGLWidget::swapBuffers();
+}
+
+void GLWidget::makeCurrent()
+{
+	QGLWidget::makeCurrent();
+}
+
+void GLWidget::update()
+{
+	QGLWidget::update();
+}
+
+bool GLWidget::getIsValid()
+{
+	return QGLWidget::isValid();
+}
+
+const qt::Object& GLWidget::getWidget()
+{
+	return _wrapper;
+}
+
 void GLWidget::initializeGL()
 {
 	if( _painter.get() )
@@ -126,54 +166,14 @@ void GLWidget::wheelEvent( QWheelEvent* event )
 		event->ignore();
 }
 
-void GLWidget::setAutoSwapBuffers( bool autoSwapBuffers )
+qt::IPainter* GLWidget::getPainterService()
 {
-	setAutoBufferSwap( autoSwapBuffers );
-}
-
-bool GLWidget::getAutoSwapBuffers()
-{
-	return autoBufferSwap();
-}
-
-void GLWidget::setFormat( co::int32 desiredFormat )
-{
-	QGLWidget::setFormat( QGLFormat( static_cast<QGL::FormatOption>( desiredFormat ) ) );
-}
-
-void GLWidget::swapBuffers()
-{
-	QGLWidget::swapBuffers();
-}
-
-void GLWidget::makeCurrent()
-{
-	QGLWidget::makeCurrent();
-}
-
-void GLWidget::update()
-{
-	QGLWidget::update();
-}
-
-bool GLWidget::isValid()
-{
-	return QGLWidget::isValid();
-}
-
-const qt::Object& GLWidget::getObject()
-{
-	return _wrapper;
+	return _painter.get();
 }
 
 void GLWidget::setPainterService( IPainter* painter )
 {
 	_painter = painter;
-}
-
-qt::IPainter* GLWidget::getPainterService()
-{
-	return _painter.get();
 }
 
 IInputListener* GLWidget::getInputListenerService()

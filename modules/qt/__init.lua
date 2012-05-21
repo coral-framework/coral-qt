@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------
 -- Required modules
 -------------------------------------------------------------------------------
+
 local path = require "lua.path"
 local types = require "qt.Types"
 local eventHandler = require "qt.EventHandler"
@@ -9,11 +10,12 @@ local connectionHandler = require "qt.ConnectionHandler"
 -------------------------------------------------------------------------------
 -- Coral-Qt system service registration
 -------------------------------------------------------------------------------
--- For now we're manually registering the qt.ISystem service here.
-co.system.services:addServiceProvider( co.Type "qt.ISystem", "qt.System" )
-local system = co.getService( "qt.ISystem" )
 
-local M = {}
+-- For now we're manually registering the qt.ISystem service here.
+local system = co.new( "qt.System" ).system
+co.system.services:addService( co.Type "qt.ISystem", system )
+
+local M = { system = system }
 
 -------------------------------------------------------------------------------
 -- ObjectWrapper
@@ -27,7 +29,7 @@ local function ObjectWrapper( object )
 	if not M.wrappedInstances[object.hash] then
 		M.wrappedInstances[object.hash] = setmetatable( { _obj = object, hash = object.hash }, MT )
 	end
-	
+
 	return M.wrappedInstances[object.hash]
 end
 
@@ -42,7 +44,7 @@ end
 function MT.__index( wrapper, name )
 	-- returns one of the ObjectWrapper utility functions
 	if MT[name] then return MT[name] end
-	
+
 	if name:sub( 1, 1 ) == '_' then
 		return wrapper[name]
 	end
@@ -73,7 +75,7 @@ function MT.__newindex( wrapper, name, value )
 end
 
 -------------------------------------------------------------------------------
--- ObjectWrapper utility functions that provides access to QWidget, QAction, 
+-- ObjectWrapper utility functions that provides access to QWidget, QAction,
 -- QLayout and QMenu specific operations through ISystem interface.
 -------------------------------------------------------------------------------
 function MT.addWidget( parent, widget )
@@ -122,14 +124,14 @@ function MT.setLayout( widget, layout )
 	local layoutInstance = layout
 	if type( layout ) == "string" then
 		--[[
-			creates the layout specified by the given layout name using 'widget' 
+			creates the layout specified by the given layout name using 'widget'
 			as parent: Qt forces a non-null parent in Debug using an Q_ASSERT
-			for some unknown reason. It is not pointed in the documentation of 
+			for some unknown reason. It is not pointed in the documentation of
 			QUiLoader::createLayout().
 		  ]]
 		layoutInstance = M.new( layout, widget )
 	end
-	
+
 	system:setLayout( widget._obj, layoutInstance._obj )
 	return layoutInstance
 end
@@ -139,7 +141,7 @@ function MT.getLayout( widget )
 end
 
 function MT.addAction( widget, v, icon )
-	-- adds support for adding an action both from text 
+	-- adds support for adding an action both from text
 	-- and icon as well as from an actual QAction instance
 	local actionInstance = v
 	if type( v ) == "string" then
@@ -150,7 +152,7 @@ function MT.addAction( widget, v, icon )
 		end
 		actionInstance.text = v or ""
 	end
-	
+
 	system:insertAction( widget._obj, -1, actionInstance._obj )
 	return actionInstance
 end
@@ -169,9 +171,9 @@ function MT.addActionIntoGroup( actionGroup, action )
 end
 
 function MT.insertAction( widget, beforeActionIndex, v, icon )
-	-- adds support for inserting an action both from text 
-	-- and icon as well as from an actual QAction instance	
-	local actionInstance = v	
+	-- adds support for inserting an action both from text
+	-- and icon as well as from an actual QAction instance
+	local actionInstance = v
 	if type( v ) == "string" then
 		actionInstance = M.new( "QAction" )
 		if icon then
@@ -180,7 +182,7 @@ function MT.insertAction( widget, beforeActionIndex, v, icon )
 		end
 		actionInstance.text = v or ""
 	end
-	
+
 	system:insertAction( widget._obj, beforeActionIndex, actionInstance._obj )
 	return actionInstance
 end
@@ -253,18 +255,10 @@ function MT.releaseMouse( widget )
 end
 
 -------------------------------------------------------------------------------
--- Casts IObjectSource components into an ObjectWrapper
--------------------------------------------------------------------------------
-function M.objectCast( component )
-	-- By now, just assume that the component passed
-	-- has an IObjectSource facet called 'self'
-	return ObjectWrapper( component.self.object )
-end
-
--------------------------------------------------------------------------------
 -- Export Module
 -------------------------------------------------------------------------------
 M.app = ObjectWrapper( system.app )
+M.wrap = ObjectWrapper
 
 function M.new( className, parent, object )
 	local parentInstance = parent
@@ -317,22 +311,6 @@ function M.setSearchPaths( prefix, paths )
 	end
 end
 
-function M.addTimer( callback )
-	return system:addTimer( callback )
-end
-
-function M.startTimer( cookie, milliseconds )
-	system:startTimer( cookie, milliseconds )
-end
-
-function M.stopTimer( cookie )
-	system:stopTimer( cookie )
-end
-
-function M.deleteTimer( cookie )
-	system:deleteTimer( cookie )
-end
-
 function M.exec()
 	return system:exec()
 end
@@ -375,7 +353,7 @@ local function makeNamedSlotsTable( slotsTable )
 			end
 		end
 	end
-	
+
 	return namedSlotsTable
 end
 
@@ -387,7 +365,7 @@ function M.connectSlotsByName( wrapper, slotsTable )
 		if child and child._obj then
 			child:connect( signalSignature, v.closure )
 		else
-			local msg = "connectSlotsByName: warning: no match child QObject for given slot'" .. signalSignature 
+			local msg = "connectSlotsByName: warning: no match child QObject for given slot'" .. signalSignature
 			msg = msg .. "'. You might have mistyped signal name. Closures signature must be of form on_(child QObject name)_(signal name)[__type1_type2_...typeN]"
 			print( msg )
 		end

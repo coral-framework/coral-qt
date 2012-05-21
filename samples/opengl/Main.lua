@@ -8,12 +8,14 @@ qt.setSearchPaths( "coral", co.getPaths() )
 -------------------------------------------------------------------------------
 -- Creates all the necessary stuff
 local mainWindow = qt.loadUi "coral:/opengl/MainWindow.ui"
-local glWidget   = co.new "qt.GLWidget"
 local cubeSample = co.new "opengl.BasicCubeSample"
+local glWidgetObject = co.new "qt.GLWidget"
+local glContext = glWidgetObject.context
+local glWidget = qt.wrap( glContext.widget )
 
 -------------------------------------------------------------------------------
 -- Sets the widget format
-glWidget.context:setFormat( qt.FormatOption.Rgba + qt.FormatOption.DoubleBuffer + qt.FormatOption.AlphaChannel )
+glContext:setFormat( qt.FormatOption.Rgba + qt.FormatOption.DoubleBuffer + qt.FormatOption.AlphaChannel )
 
 -------------------------------------------------------------------------------
 -- Creates and configures the InputListener for the sample
@@ -27,7 +29,7 @@ local SampleInputListener = co.Component {
 -- Internal attributes
 SampleInputListener.lastx = 0  -- Last drag x coordinate
 SampleInputListener.lasty = 0  -- Last drag y coordinate
-SampleInputListener.target = qt.objectCast( glWidget ) -- Target widget
+SampleInputListener.target = glWidget -- Target widget
 SampleInputListener.target.focusPolicy = qt.StrongFocus -- necessary for good keyboard interaction
 SampleInputListener._params = nil -- internal reference of the opengl.ICubeParameters interface
 
@@ -71,11 +73,11 @@ local sampleListener = SampleInputListener{}
 
 -- Adds the widget to the main window
 local layout = mainWindow.centralwidget:setLayout( "QVBoxLayout" )
-layout:addWidget( qt.objectCast( glWidget ) )
+layout:addWidget( glWidget )
 
 -- Sets the sample painter
-glWidget.painter = cubeSample.painter
-glWidget.inputListener = sampleListener.listener
+glWidgetObject.painter = cubeSample.painter
+glWidgetObject.inputListener = sampleListener.listener
 sampleListener.parameters = cubeSample.parameters
 
 -------------------------------------------------------------------------------

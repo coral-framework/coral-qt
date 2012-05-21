@@ -10,10 +10,10 @@ FILE( GLOB _SOURCE_FILES *.cpp )
 FILE( GLOB _HEADER_FILES *.h )
 
 SET( _MOC_HEADERS
+	AbstractItemModel.h
 	EventHub.h
 	GLWidget.h
-	AbstractItemModel.h
-	TimerCallbackNotifier.h
+	Timer.h
 )
 
 # Generate moc_*.cpp files from mocable headers

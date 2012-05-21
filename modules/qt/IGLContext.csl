@@ -1,24 +1,23 @@
 /*
-	Encapsulates an OpenGL rendering context.
-	Provided by the GLWidget component.
+	An OpenGL rendering context.
  */
 interface IGLContext
 {
-	//! Defines whether the widget will automatically swap buffers
+	// Defines whether the widget will automatically swap buffers
 	bool autoSwapBuffers;
 
-	//! Changes the pixel format of the widget.
+	// Whether the OpenGL context is currently valid.
+	readonly bool isValid;
+
+	// Changes the pixel format of the widget.
 	void setFormat( in int32 desiredFormat );
 
-	//! Triggers a buffer swap in a double-buffered widget.
+	// Triggers a buffer swap in a double-buffered widget.
 	void swapBuffers();
 
-	//! Makes this rendering context the current context.
+	// Makes this rendering context the current context.
 	void makeCurrent();
 
-	//! Triggers a redraw of the widget;
+	// Triggers a redraw of the widget;
 	void update();
-
-	//! Retrieves whether the 
-	bool isValid();
 };

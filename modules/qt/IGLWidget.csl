@@ -1,0 +1,5 @@
+interface IGLWidget extends IGLContext
+{
+	// The QGLWidget instance.
+	readonly Object widget;
+};
