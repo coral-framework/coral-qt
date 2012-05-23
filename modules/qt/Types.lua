@@ -28,6 +28,15 @@ M.FormatOption.NoSampleBuffers			= 33554432
 M.FormatOption.NoDeprecatedFunctions	= 67108864
 
 -------------------------------------------------------------------------------
+-- Export QAbstractItemView::SelectionMode enum
+-------------------------------------------------------------------------------
+M.SingleSelection		= 1
+M.ContiguousSelection	= 4
+M.ExtendedSelection		= 3
+M.MultiSelection		= 2
+M.NoSelection			= 0
+
+-------------------------------------------------------------------------------
 -- Export QAbstractItemView::EditTrigger enum
 -------------------------------------------------------------------------------
 M.NoEditTriggers 	= 0
