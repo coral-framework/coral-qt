@@ -2,7 +2,7 @@
 --- Required modules
 -------------------------------------------------------------------------------
 local qt = require "qt"
-local AbstractListModel = require "qt.AbstractListModel"
+local AbstractListModel = require "qt.AbstractListModelDelegate"
 
 local M = {}
 

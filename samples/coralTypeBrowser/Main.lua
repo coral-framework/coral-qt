@@ -3,8 +3,8 @@
 -------------------------------------------------------------------------------
 local qt = require "qt"
 local lfs = require "lfs"
-local path = require "path"
-local AbstractItemModel = require "qt.AbstractItemModel"
+local path = require "lua.path"
+local AbstractItemModel = require "qt.AbstractItemModelDelegate"
 local coralPathEditor = require "coralPathEditor.CoralPathEditorDialog"
 
 local M = {}
@@ -210,9 +210,9 @@ end
 
 function getDocs( coType, memberName )
 	if memberName then
-		return co.system.types:getDocumentation( coType.fullName .. ":" .. memberName )
+		return "" --co.system.types:getDocumentation( coType.fullName .. ":" .. memberName )
 	else
-		return co.system.types:getDocumentation( coType.fullName )
+		return ""--co.system.types:getDocumentation( coType.fullName )
 	end
 end
 
@@ -430,7 +430,7 @@ end
 
 local function generateHtmlInformation( fullName, elementType, docs )
 	local docsHtml = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">"
-	docsHtml = docsHtml .. "<html><head><meta name=\"qrichtext\" content=\"1\ /><style type=\"text/css\">p, li { white-space: pre-wrap; } </style></head>"
+	docsHtml = docsHtml .. "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">p, li { white-space: pre-wrap; } </style></head>"
 	docsHtml = docsHtml .. "<body style=\" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;\">"
 	if fullName and fullName ~= "" then
 		docsHtml = docsHtml .. "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
