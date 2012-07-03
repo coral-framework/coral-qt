@@ -68,7 +68,7 @@ function MT.__newindex( wrapper, name, value )
 	-- if name is an special name, then just set the property within the owner table
 	-- and returns (do not accept qt properties beggining with underscore symbol)
 	if name:sub( 1, 1 ) == '_' then
-		wrapper[name] = value
+		rawset( wrapper, name, value )
 		return
 	end
 	wrapper._obj:setProperty( name, value )
