@@ -1,0 +1,27 @@
+/*
+	Wraps a QVariant.
+ */
+@co.Include( "QMimeData" )
+native class MimeData
+{
+	<c++
+		// Forward Declaration:
+		class QMimeData;
+		// Definition of a wrapper (QMimeData has no copy constructors)
+		namespace qt {
+		class MimeData
+		{
+			public:
+				inline MimeData( QMimeData* obj ) : _obj( obj ) {;}
+				inline MimeData() : _obj( 0 ) {;}
+				inline void set( QMimeData* obj ) { _obj = obj; }
+				inline QMimeData* get() const { return _obj; }
+			private:
+				QMimeData* _obj;
+			};
+		} // namespace qt
+	c++>
+		
+	void getData( in string mimeType, out string[] data );
+	void setData( in string mimeType, in string[] data );
+};

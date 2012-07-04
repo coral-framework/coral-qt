@@ -33,8 +33,10 @@ local function ObjectWrapper( object )
 	return M.wrappedInstances[object.hash]
 end
 
-function MT.connect( wrapper, signal, handlerClosure )
-	connectionHandler.connect( wrapper, signal, handlerClosure )
+-- if handlerInstance is not nill then handlerClosureOrClosureName must be a name
+-- of a closure in it and will be called passing the table as self argument.
+function MT.connect( wrapper, signal, handlerClosureOrClosureName, handlerInstance )
+	connectionHandler.connect( wrapper, signal, handlerClosureOrClosureName, handlerInstance )
 end
 
 function MT.invoke( wrapper, name, a1, a2, a3, a4, a5, a6, a7 )

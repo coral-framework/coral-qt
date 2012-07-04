@@ -6,6 +6,7 @@
 #include "AbstractItemModel.h"
 #include <ValueConverters.h>
 #include <qt/Variant.h>
+#include <qt/MimeData.h>
 
 #include <QMimeData>
 #include <QTextDocument>
@@ -176,49 +177,36 @@ Qt::ItemFlags AbstractItemModel::flags( const QModelIndex& index ) const
 
  QStringList AbstractItemModel::mimeTypes() const
  {
-     QStringList types;
-     types << "application/vnd.text.list";
-     return types;
+	 assertDelegateValid();
+
+      std::vector<std::string> result;
+	 _delegate->mimeTypes( result );
+
+	 QStringList types;
+	 for( int i = 0; i < result.size(); ++i )
+		 types.push_back( result[i].c_str() ); 
+
+	 return types;
  }
 
 bool AbstractItemModel::dropMimeData( const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent )
 {
 	assertDelegateValid();
-
-	 if( action == Qt::IgnoreAction )
-         return true;
-
-	 // only text list supported by now
-     if ( !data->hasFormat( "application/vnd.text.list" ) )
-         return false;
-
-	QByteArray encodedData = data->data( "application/vnd.text.list" );
-	QDataStream stream( &encodedData, QIODevice::ReadOnly );
-	std::vector<std::string> items;
-	while( !stream.atEnd() ) 
-	{
-		QString text;
-		stream >> text;
-		items.push_back( text.toLatin1().data() );
-	}
-
-	return _delegate->dropMimeData( items, action, row, column, static_cast<co::int32>( parent.internalId() ) );
+	return _delegate->dropMimeData( qt::MimeData( const_cast<QMimeData*>( data ) ), action, row, column, static_cast<co::int32>( parent.internalId() ) );
 }
 
 QMimeData* AbstractItemModel::mimeData( const QModelIndexList& indexes ) const
 {
-	QMimeData *mimeData = new QMimeData();
-    QByteArray encodedData;
-	QDataStream stream( &encodedData, QIODevice::WriteOnly );
-	foreach( const QModelIndex &index, indexes ) 
-	{
-		if ( index.isValid() )
-		{
-			stream << QString::number( static_cast<co::int32>( index.internalId() ) );
-		}
-    }
+	assertDelegateValid();
 
-    mimeData->setData( "application/vnd.text.list", encodedData );
+	QMimeData* mimeData = new QMimeData();
+	std::vector<co::int32> indices;
+	foreach( const QModelIndex indice, indexes )
+	{
+		indices.push_back( getInternalId( indice ) );
+	}
+
+	_delegate->mimeData( indices, qt::MimeData( mimeData ) );
 	return mimeData;	
 }
 

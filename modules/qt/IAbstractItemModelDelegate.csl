@@ -74,9 +74,15 @@ interface IAbstractItemModelDelegate
 	// Returns the current column of the item specified by the given indexItem.
 	uint32 getColumn( in int32 index );
 	
+	// Returns an object that contains serialized items of data corresponding to the list of indexes specified. 
+	void mimeData( in int32[] indexes, inout MimeData mimeData );
+	
+	// Returns a list of MIME types that can be used to describe a list of model indexes.
+	void mimeTypes( out string[] result );
+	
 	// Below method is called when a drag operation ends over the given index of row, col and parent.
 	// Returns true if the drop request can be handled.
-	bool dropMimeData( in string[] mimeDataList, in int32 action, in int32 row, in int32 column, in int32 parentIndex );
+	bool dropMimeData( in MimeData mimeData, in int32 action, in int32 row, in int32 column, in int32 parentIndex );
 
 	// AbstractItemView signals (see QAbstractItemView documentation for details).
 	void itemActivated( in Object view, in int32 index );

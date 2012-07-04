@@ -11,7 +11,9 @@ return function( componentName )
 	AbstractItemModelDelegate.itemEntered = function( self, view, index ) end
 	AbstractItemModelDelegate.itemPressed = function( self, view, index ) end
 	AbstractItemModelDelegate.setData = function( self, index, data, role ) end
-	AbstractItemModelDelegate.dropMimeData = function( self, mimeDataList, action, row, column, parentIndex ) return false end
+	AbstractItemModelDelegate.mimeData = function( self, indexes, mimeData ) end
+	AbstractItemModelDelegate.mimeTypes = function( self, result ) return {} end
+	AbstractItemModelDelegate.dropMimeData = function( self, mimeDta, action, row, column, parentIndex ) return false end
 	
 	return AbstractItemModelDelegate
 end
