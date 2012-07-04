@@ -15,6 +15,7 @@
 #include <QAbstractItemView>
 
 #include <sstream>
+#include <vector>
 
 #include <co/Exception.h>
 #include <co/IllegalArgumentException.h>
