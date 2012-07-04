@@ -171,7 +171,7 @@ public:
 
 	bool getInputText ( const qt::Object& parent, const std::string& dialogTitle, const std::string& label, const std::string& text, std::string& result )
 	{
-		bool ok;
+		bool ok = false;
 		QString ret = QInputDialog::getText( qobject_cast<QWidget*>( parent.get() ), QObject::tr( label.c_str() ),
 											  QObject::tr( label.c_str() ), QLineEdit::Normal, text.c_str(), &ok );
 
