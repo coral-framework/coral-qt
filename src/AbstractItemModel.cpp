@@ -202,7 +202,7 @@ QMimeData* AbstractItemModel::mimeData( const QModelIndexList& indexes ) const
 	assertDelegateValid();
 
 	QMimeData* mimeData = new QMimeData();
-	std::vector<co::int32> indices;
+	std::vector<const co::int32> indices;
 	foreach( const QModelIndex indice, indexes )
 	{
 		indices.push_back( getInternalId( indice ) );
