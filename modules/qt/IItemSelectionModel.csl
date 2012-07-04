@@ -9,6 +9,9 @@ interface IItemSelectionModel
 	 */	
 	void setItemSelection( in int32 index, in bool selectionState );
 
+	// Returns the indexes in the given row for columns where all rows are selected.
+	void getSelection( out int32[] indexes );
+	
 	/*!
 		Clears all selections.
 	 */	

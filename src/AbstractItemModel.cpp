@@ -206,7 +206,7 @@ QMimeData* AbstractItemModel::mimeData( const QModelIndexList& indexes ) const
 		indices.push_back( getInternalId( indice ) );
 	}
 
-	_delegate->mimeData( indices, qt::MimeData( mimeData ) );
+	_delegate->mimeData( co::Range( indices ), qt::MimeData( mimeData ) );
 	return mimeData;	
 }
 
@@ -319,6 +319,19 @@ void AbstractItemModel::setItemSelection( co::int32 index, bool selectionState )
 		return;
 
 	_selectionModel->select( makeIndex( _delegate->getRow( index ), _delegate->getColumn( index ), index ), selectionState?QItemSelectionModel::Select:QItemSelectionModel::Deselect );
+}
+
+void AbstractItemModel::getSelection( std::vector<co::int32>& indexes )
+{
+	if( !_selectionModel )
+		return;
+
+	const QItemSelection sel = _selectionModel->selection();
+	QModelIndexList mil = sel.indexes();
+	foreach( const QModelIndex indice, mil )
+	{
+		indexes.push_back( getInternalId( indice ) );
+	}
 }
 
 void AbstractItemModel::clearSelection()

@@ -69,7 +69,7 @@ public:
 	void notifyDataChanged( co::int32 fromIndex, co::int32 toIndex );
 
 	void setItemSelection( co::int32 index, bool selectionState );
-
+	void getSelection( std::vector<co::int32>& indexes );
 	void clearSelection();
 
 public slots:
