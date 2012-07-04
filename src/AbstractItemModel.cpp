@@ -208,7 +208,7 @@ QMimeData* AbstractItemModel::mimeData( const QModelIndexList& indexes ) const
 		indices.push_back( getInternalId( indice ) );
 	}
 
-	_delegate->mimeData( co::Range<const co::int32>( indices ), qt::MimeData( mimeData ) );
+	_delegate->mimeData( co::Range<co::int32 const>( indices ), qt::MimeData( mimeData ) );
 	return mimeData;	
 }
 
