@@ -8,6 +8,8 @@
 #include <qt/Variant.h>
 #include <qt/MimeData.h>
 
+#include <co/Range.h>
+
 #include <QMimeData>
 #include <QTextDocument>
 #include <QAbstractItemView>
@@ -206,7 +208,7 @@ QMimeData* AbstractItemModel::mimeData( const QModelIndexList& indexes ) const
 		indices.push_back( getInternalId( indice ) );
 	}
 
-	_delegate->mimeData( co::Range( indices ), qt::MimeData( mimeData ) );
+	_delegate->mimeData( indices, qt::MimeData( mimeData ) );
 	return mimeData;	
 }
 
