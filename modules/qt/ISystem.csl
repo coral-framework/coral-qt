@@ -36,6 +36,9 @@ interface ISystem
 
 	// Opens a file saving dialog and returns the fileName
 	void getSaveFileName( in Object parent, in string caption, in string initialDir, in string filter, out string selectedFile );
+	
+	// Shows a QInputDialog for text (see QInputDialog).
+	bool getInputText( in Object parent, in string dialogTitle, in string label, in string text, out string result );
 
 	/*!
 		Creates a new object using the class specified by className. This

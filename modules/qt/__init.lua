@@ -291,6 +291,9 @@ end
 function M.getSaveFileName( parent, caption, initialDir, filter )
 	return system:getSaveFileName( parent._obj, caption, initialDir, filter )
 end
+function M.getInputText( parent, dialogTitle, label, text )
+	return system:getInputText( parent._obj, dialogTitle, label, text )
+end
 
 function M.setSearchPaths( prefix, paths )
 	if type( paths ) == "table" then

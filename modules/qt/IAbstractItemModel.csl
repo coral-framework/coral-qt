@@ -17,7 +17,8 @@ interface IAbstractItemModel
 	/**** Below methods are used to notify UI of changes in the model ****/
 	
 	//! Notifies that the model was reset.
-	void reset();
+	void beginReset();
+   	void endReset();    
 	
 	//! Notifies UI of model columns/rows insertion or removal.
 	void beginInsertColumns( in int32 parentIndex, in int32 startCol, in int32 endCol );

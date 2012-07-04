@@ -53,7 +53,9 @@ public:
 
 	void setDelegate( qt::IAbstractItemModelDelegate* delegate );
     
-    void reset();
+    void beginReset();
+   
+	void endReset();
     
     void beginInsertColumns( co::int32 parentIndex, co::int32 startCol, co::int32 endCol );
 	void endInsertColumns();

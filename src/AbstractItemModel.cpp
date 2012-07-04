@@ -237,11 +237,15 @@ void AbstractItemModel::setDelegate( qt::IAbstractItemModelDelegate* delegate )
 	_delegate = delegate;
 }
     
-void AbstractItemModel::reset()
+void AbstractItemModel::beginReset()
 {
     // by now just notify begin and end (the model has already been modified)
     beginResetModel();
-    endResetModel();
+}
+
+void AbstractItemModel::endReset()
+{
+	endResetModel();
 }
 
 void AbstractItemModel::beginInsertColumns( co::int32 parentIndex, co::int32 startCol, co::int32 endCol )

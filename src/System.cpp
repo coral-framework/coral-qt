@@ -24,6 +24,7 @@
 #include <QStringListModel>
 #include <QStackedLayout>
 #include <QApplication>
+#include <QInputDialog>
 #include <QMainWindow>
 #include <QDockWidget>
 #include <QMessageBox>
@@ -166,6 +167,16 @@ public:
 		QString file = QFileDialog::getSaveFileName( qobject_cast<QWidget*>( parent.get() ),
 														 caption.c_str(), initialDir.c_str(), filter.c_str() );
 		selectedFile = file.toStdString();
+	}
+
+	bool getInputText ( const qt::Object& parent, const std::string& dialogTitle, const std::string& label, const std::string& text, std::string& result )
+	{
+		bool ok;
+		QString ret = QInputDialog::getText( qobject_cast<QWidget*>( parent.get() ), QObject::tr( label.c_str() ),
+											  QObject::tr( label.c_str() ), QLineEdit::Normal, text.c_str(), &ok );
+
+		result = ret.toStdString();
+		return ok;
 	}
 
 	void newInstanceOf( const std::string& className, const qt::Object& parent, qt::Object& object )
