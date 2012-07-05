@@ -189,11 +189,16 @@ function MT.insertAction( widget, beforeActionIndex, v, icon )
 	return actionInstance
 end
 
-function MT.insertSeparator( widget, beforeAction )
+function MT.insertSeparator( widget, beforeActionIndex )
 	local action = M.new( "QAction" )
-	system:setSeparator( action )
-	system:insertAction( widget._obj, beforeAction, action._obj )
+	system:makeSeparator( action._obj )
+	system:insertAction( widget._obj, beforeActionIndex, action._obj )
 	return action
+end
+
+function MT.makeSeparator( widget )
+	system:makeSeparator( widget._obj )
+	return widget
 end
 
 function MT.exec( menu, x, y )
