@@ -210,8 +210,8 @@ QMimeData* AbstractItemModel::mimeData( const QModelIndexList& indexes ) const
 	}
 
 	qt::MimeData mimeDataWrapper( mimeData );
-	_delegate->mimeData( co::Range<const int>( indices ), mimeDataWrapper );
-	return mimeData;	
+	_delegate->mimeData( indices, mimeDataWrapper );
+	return mimeData;
 }
 
  Qt::DropActions AbstractItemModel::supportedDropActions() const
