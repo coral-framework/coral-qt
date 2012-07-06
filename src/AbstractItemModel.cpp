@@ -203,14 +203,14 @@ QMimeData* AbstractItemModel::mimeData( const QModelIndexList& indexes ) const
 	assertDelegateValid();
 
 	QMimeData* mimeData = new QMimeData();
-	std::vector<co::int32 const> indices;
+	std::vector<co::int32> indices;
 	foreach( const QModelIndex indice, indexes )
 	{
 		indices.push_back( getInternalId( indice ) );
 	}
 
 	qt::MimeData mimeDataWrapper( mimeData );
-	_delegate->mimeData( indices, mimeDataWrapper );
+	_delegate->mimeData( co::Range<const int>( indices ), mimeDataWrapper );
 	return mimeData;
 }
 
