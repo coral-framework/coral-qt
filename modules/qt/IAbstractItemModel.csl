@@ -23,13 +23,10 @@ interface IAbstractItemModel
 	//! Notifies UI of model columns/rows insertion or removal.
 	void beginInsertColumns( in int32 parentIndex, in int32 startCol, in int32 endCol );
 	void endInsertColumns();
-	
 	void beginRemoveColumns( in int32 parentIndex, in int32 startCol, in int32 endCol );
 	void endRemoveColumns();
-	
 	void beginInsertRows( in int32 parentIndex, in int32 startRow, in int32 endRow );
 	void endInsertRows();
-	
 	void beginRemoveRows( in int32 parentIndex, in int32 startRow, in int32 endRow );
 	void endRemoveRows();
 

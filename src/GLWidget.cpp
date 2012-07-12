@@ -85,11 +85,14 @@ void GLWidget::keyPressEvent( QKeyEvent* event )
 		event->ignore();
 		return;
 	}
+	
+	qt::KeyboardModifiers km;
+	EventHub::fillKeyboardModifiers( event->modifiers(), km );
 
 	co::Any keyCode;
 	EventHub::fillKeyCodeString( event->key(), keyCode );
 
-	_inputListener->keyPressed( keyCode.get<std::string&>() );
+	_inputListener->keyPressed( keyCode.get<std::string&>(), event->text().toStdString(), km );
 }
 
 void GLWidget::keyReleaseEvent( QKeyEvent* event )
@@ -100,10 +103,13 @@ void GLWidget::keyReleaseEvent( QKeyEvent* event )
 		return;
 	}
 
+	qt::KeyboardModifiers km;
+	EventHub::fillKeyboardModifiers( event->modifiers(), km );
+
 	co::Any keyCode;
 	EventHub::fillKeyCodeString( event->key(), keyCode );
 
-	_inputListener->keyReleased( keyCode.get<std::string&>() );
+	_inputListener->keyReleased( keyCode.get<std::string&>(), event->text().toStdString(), km );
 }
 
 void GLWidget::mousePressEvent( QMouseEvent* event )

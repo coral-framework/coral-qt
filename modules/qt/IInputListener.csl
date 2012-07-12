@@ -3,8 +3,9 @@
  */
 interface IInputListener
 {
-	void keyPressed( in string key );
-	void keyReleased( in string key );
+	// See QKeyEvent::text() and QKeyEvent::key().
+	void keyPressed( in string key, in string text, in KeyboardModifiers modifiers );
+	void keyReleased( in string key, in string text, in KeyboardModifiers modifiers );
 	void mousePressed( in int32 x, in int32 y, in uint32 button, in KeyboardModifiers modifiers );
 	void mouseReleased( in int32 x, in int32 y, in uint32 button, in KeyboardModifiers modifiers );
 	void mouseDoubleClicked( in int32 x, in int32 y, in uint32 button, in KeyboardModifiers modifiers );

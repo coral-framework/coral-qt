@@ -71,7 +71,7 @@ T* tryCastObject( const qt::Object& instance, const std::string& errorMsg )
 		if( instance.get() )
 			objName = instance.get()->objectName();
 
-		CORAL_THROW( co::IllegalArgumentException, errorMsg << ": '" << objName.toLatin1().data() << "' is not a valid instance" );
+		CORAL_THROW( co::IllegalArgumentException, errorMsg << ": '" << objName.toLatin1().data() << "' is not a valid instance: " << instance.get() );
 	}
 
 	return t;
@@ -264,7 +264,7 @@ public:
 
 	void removeWidget( const qt::Object& parent, const qt::Object& widget )
 	{
-		QWidget* qwidget = tryCastObject<QWidget>( parent, "cannot remove widget" );
+		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot remove widget" );
 
 		QBoxLayout* qlayout = qobject_cast<QBoxLayout*>( parent.get() );
 		QStatusBar* qstatusBar = qobject_cast<QStatusBar*>( parent.get() );
