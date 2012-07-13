@@ -3,7 +3,6 @@
 -------------------------------------------------------------------------------
 
 local system = require( "qt" ).system
-
 -------------------------------------------------------------------------------
 -- Dispatcher component (forwards timer events to a Lua closure)
 -------------------------------------------------------------------------------
@@ -39,7 +38,6 @@ local MT = { __gc = Timer.__finalize, __index = Timer }
 
 -- module returns the Timer class constructor
 return function( timerCallback )
-	print( "registering function", timerCallback )
 	-- handle Lua closures by creating a dispatcher
 	if type( timerCallback ) == 'function' then
 		timerCallback = Dispatcher{ closure = timerCallback }.callback
