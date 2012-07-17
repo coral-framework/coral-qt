@@ -1,0 +1,9 @@
+interface ITreeItemObserver
+{
+	// AbstractItemView signals (see QAbstractItemView documentation for details).
+	void itemActivated( in Object view, in int32 index, in qt.IAbstractItemModelDelegate model );
+	void itemClicked( in Object view, in int32 index, in qt.IAbstractItemModelDelegate model );
+	void itemDoubleClicked( in Object view, in int32 index, in qt.IAbstractItemModelDelegate model );
+	void itemEntered( in Object view, in int32 index, in qt.IAbstractItemModelDelegate model );
+	void itemPressed( in Object view, in int32 index, in qt.IAbstractItemModelDelegate model );
+};

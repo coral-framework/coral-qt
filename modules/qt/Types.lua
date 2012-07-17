@@ -73,6 +73,7 @@ M.TextColorRole				= 9
 M.CheckStateRole			= 10
 M.AccessibleTextRole		= 11
 M.AccessibleDescriptionRole	= 12
+M.UserRole					= 32
 
 -------------------------------------------------------------------------------
 -- Export Qt::MouseButton enum

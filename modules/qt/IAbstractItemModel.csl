@@ -3,8 +3,8 @@
  */
 interface IAbstractItemModel
 {
-	//! Installs the concrete Qt model implementation into Qt subsystem.
-	void installModel( in Object view );
+	// A delegate so observers can listen to tree item events, such as itemClicked().
+	ITreeItemObserver treeItemObserver;
 	
 	/* 
 		Data delegate for model instance.
@@ -13,6 +13,9 @@ interface IAbstractItemModel
 		
 	 */
 	IAbstractItemModelDelegate delegate;
+	
+	//! Installs the concrete Qt model implementation into Qt subsystem.
+	void installModel( in Object view );
 	
 	/**** Below methods are used to notify UI of changes in the model ****/
 	

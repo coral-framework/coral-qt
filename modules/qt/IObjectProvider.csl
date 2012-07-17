@@ -1,0 +1,4 @@
+interface IObjectProvider
+{
+	readonly qt.Object widget;
+};

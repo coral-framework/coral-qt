@@ -35,6 +35,7 @@ namespace qt {
 AbstractItemModel::AbstractItemModel()
 {
 	_delegate = 0;
+	_itemObserver = 0;
 	_selectionModel = new QItemSelectionModel( this );
 }
 
@@ -227,6 +228,8 @@ qt::IAbstractItemModelDelegate* AbstractItemModel::getDelegate()
 void AbstractItemModel::setDelegate( qt::IAbstractItemModelDelegate* delegate )
 {
 	_delegate = delegate;
+	if( delegate )
+		delegate->setOwner( this );
 }
     
 void AbstractItemModel::beginReset()
@@ -348,32 +351,42 @@ void AbstractItemModel::clearSelection()
 
 void AbstractItemModel::activated( const QModelIndex& index )
 {
-	assertDelegateValid();
-	_delegate->itemActivated( qt::Object( QObject::sender() ), getInternalId( index ) );
+	if( _itemObserver.get() )
+		_itemObserver->itemActivated( qt::Object( QObject::sender() ), getInternalId( index ), _delegate.get() );
 }
 
 void AbstractItemModel::clicked( const QModelIndex& index )
 {
-	assertDelegateValid();
-	_delegate->itemClicked( qt::Object( QObject::sender() ), getInternalId( index ) );
+	if( _itemObserver.get() )
+		_itemObserver->itemClicked( qt::Object( QObject::sender() ), getInternalId( index ), _delegate.get() );
 }
 
 void AbstractItemModel::doubleClicked( const QModelIndex& index )
 {
-	assertDelegateValid();
-	_delegate->itemDoubleClicked( qt::Object( QObject::sender() ), getInternalId( index ) );
+	if( _itemObserver.get() )
+		_itemObserver->itemDoubleClicked( qt::Object( QObject::sender() ), getInternalId( index ), _delegate.get() );
 }
 
 void AbstractItemModel::entered( const QModelIndex& index )
 {
-	assertDelegateValid();
-	_delegate->itemEntered( qt::Object( QObject::sender() ), getInternalId( index ) );
+	if( _itemObserver.get() )
+		_itemObserver->itemEntered( qt::Object( QObject::sender() ), getInternalId( index ), _delegate.get() );
 }
 
 void AbstractItemModel::pressed( const QModelIndex& index )
 {
-	assertDelegateValid();
-	_delegate->itemPressed( qt::Object( QObject::sender() ), getInternalId( index ) );
+	if( _itemObserver.get() )
+		_itemObserver->itemPressed( qt::Object( QObject::sender() ), getInternalId( index ), _delegate.get() );
+}
+
+void AbstractItemModel::setTreeItemObserver( qt::ITreeItemObserver* itemObserver )
+{
+	_itemObserver = itemObserver;
+}
+
+qt::ITreeItemObserver* AbstractItemModel::getTreeItemObserver()
+{
+	return _itemObserver.get();
 }
 
 void AbstractItemModel::assertDelegateValid() const
@@ -383,5 +396,4 @@ void AbstractItemModel::assertDelegateValid() const
 }
 
 CORAL_EXPORT_COMPONENT( AbstractItemModel, AbstractItemModel )
-
 } // namespace qt

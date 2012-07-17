@@ -81,45 +81,45 @@ end
 -- QLayout and QMenu specific operations through ISystem interface.
 -------------------------------------------------------------------------------
 function MT.addWidget( parent, widget )
-	system:insertWidget( parent._obj, -1, widget._obj )
+	system:insertWidget( parent._obj or parent, -1, widget._obj or widget )
 	return widget
 end
 
 function MT.insertWidget( parent, widget, pos )
-	system:insertWidget( parent._obj, pos, widget._obj )
+	system:insertWidget( parent._obj or parent, pos, widget._obj or widget )
 	return widget
 end
 
 function MT.removeWidget( parent, widget )
-	system:removeWidget( parent._obj, widget._obj )
+	system:removeWidget( parent._obj or parent, widget._obj or widget )
 	return widget
 end
 
 function MT.addDockWidget( mainWindow, area, dockWidget )
-	system:addDockWidget( mainWindow._obj, area, dockWidget._obj )
+	system:addDockWidget( mainWindow._obj or mainWindow, area, dockWidget._obj or dockWidget )
 	return mainWindow
 end
 
 function MT.setCorner( mainWindow, corner, area )
-	system:setCorner( mainWindow._obj, corner, area )
+	system:setCorner( mainWindow._obj or mainWindow, corner, area )
 	return mainWindow
 end
 
 function MT.getToggleViewAction( dockWidget )
-	return ObjectWrapper( system:getToggleViewAction( dockWidget._obj ) )
+	return ObjectWrapper( system:getToggleViewAction( dockWidget._obj or dockWidget ) )
 end
 
 function MT.setWidget( dockWidget, widget )
-	system:setWidget( dockWidget._obj, widget._obj )
+	system:setWidget( dockWidget._obj or dockWidget, widget._obj or widget )
 	return dockWidget
 end
 
 function MT.setCentralWidget( mainWindow, centralWidget )
-	system:setCentralWidget( mainWindow._obj, centralWidget._obj )
+	system:setCentralWidget( mainWindow._obj or mainWindow, centralWidget._obj or centralWidget )
 end
 
 function MT.getCentralWidget( mainWindow )
-	return ObjectWrapper( system:getCentralWidget( mainWindow._obj ) )
+	return ObjectWrapper( system:getCentralWidget( mainWindow._obj or mainWindow ) )
 end
 
 function MT.setLayout( widget, layout )
@@ -134,12 +134,12 @@ function MT.setLayout( widget, layout )
 		layoutInstance = M.new( layout, widget )
 	end
 
-	system:setLayout( widget._obj, layoutInstance._obj )
+	system:setLayout( widget._obj or widget, layoutInstance._obj or layoutInstance )
 	return layoutInstance
 end
 
 function MT.getLayout( widget )
-	return ObjectWrapper( system:getLayout( widget._obj ) )
+	return ObjectWrapper( system:getLayout( widget._obj or widget ) )
 end
 
 function MT.addAction( widget, v, icon )
@@ -155,21 +155,21 @@ function MT.addAction( widget, v, icon )
 		actionInstance.text = v or ""
 	end
 
-	system:insertAction( widget._obj, -1, actionInstance._obj )
+	system:insertAction( widget._obj or widget, -1, actionInstance._obj or actionInstance )
 	return actionInstance
 end
 
 function MT.removeAction( widget, action )
-	system:removeAction( widget._obj, action._obj )
+	system:removeAction( widget._obj or widget, action._obj or widget )
 end
 
 function MT.setMenu( action, menu )
-	system:setMenu( action._obj, menu._obj )
+	system:setMenu( action._obj or action, menu._obj or menu )
 	return menu
 end
 
 function MT.addActionIntoGroup( actionGroup, action )
-	system:addActionIntoGroup( actionGroup._obj, action._obj )
+	system:addActionIntoGroup( actionGroup._obj or actionGroup, action._obj or action )
 end
 
 function MT.insertAction( widget, beforeActionIndex, v, icon )
@@ -185,7 +185,7 @@ function MT.insertAction( widget, beforeActionIndex, v, icon )
 		actionInstance.text = v or ""
 	end
 
-	system:insertAction( widget._obj, beforeActionIndex, actionInstance._obj )
+	system:insertAction( widget._obj or widget, beforeActionIndex, actionInstance._obj or actionInstance )
 	return actionInstance
 end
 
@@ -266,6 +266,7 @@ end
 -------------------------------------------------------------------------------
 M.app = ObjectWrapper( system.app )
 M.wrap = ObjectWrapper
+M.unwrap = function( wrappedObject ) return wrappedObject._obj end
 
 function M.new( className, parent, object )
 	local parentInstance = parent
@@ -299,7 +300,7 @@ function M.getSaveFileName( parent, caption, initialDir, filter )
 	return system:getSaveFileName( parent._obj, caption, initialDir, filter )
 end
 function M.getInputText( parent, dialogTitle, label, text )
-	return system:getInputText( parent._obj, dialogTitle, label, text )
+	return system:getInputText( parent._obj or parent, dialogTitle, label, text )
 end
 
 function M.setSearchPaths( prefix, paths )

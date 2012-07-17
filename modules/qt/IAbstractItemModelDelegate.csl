@@ -1,8 +1,8 @@
 /*
-	Delegate for IAbstractItemModel interface and for Qt AbstractItemView
+	Delegate for IAbstractItemModelDelegate interface and for Qt AbstractItemView
 	signals.
 
-	IAbstractItemModel behavior:
+	IAbstractItemModelDelegate behavior:
 
 	Like Qt's AbstractItemModel class, this interface has a convention that 
 	underlying data model is exposed as a hierarchy of tables. However,
@@ -24,7 +24,10 @@
  */
 interface IAbstractItemModelDelegate
 {
-	// IAbstractItemModel methods:
+	// This field should be set automatically when a delegate field is set on IAbstractItemModel.
+	IAbstractItemModel owner;
+	
+	// IAbstractItemModelDelegate methods:
 
 	// Returns the index of the item in the model specified by the given row, 
 	// column and parent index. 
@@ -83,11 +86,4 @@ interface IAbstractItemModelDelegate
 	// Below method is called when a drag operation ends over the given index of row, col and parent.
 	// Returns true if the drop request can be handled.
 	bool dropMimeData( in MimeData mimeData, in int32 action, in int32 row, in int32 column, in int32 parentIndex );
-
-	// AbstractItemView signals (see QAbstractItemView documentation for details).
-	void itemActivated( in Object view, in int32 index );
-	void itemClicked( in Object view, in int32 index );
-	void itemDoubleClicked( in Object view, in int32 index );
-	void itemEntered( in Object view, in int32 index );
-	void itemPressed( in Object view, in int32 index );
 };
