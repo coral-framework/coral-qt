@@ -56,6 +56,8 @@ void AbstractItemModel::installModel( const Object& view )
 	QObject::connect( qtView, SIGNAL( doubleClicked( const QModelIndex& ) ), this, SLOT( doubleClicked( const QModelIndex& ) ) );
 	QObject::connect( qtView, SIGNAL( entered( const QModelIndex& ) ), this, SLOT( entered( const QModelIndex& ) ) );
 	QObject::connect( qtView, SIGNAL( pressed( const QModelIndex& ) ), this, SLOT( pressed( const QModelIndex& ) ) );
+
+	installSelectionModel( view );
 }
 
 void AbstractItemModel::installSelectionModel( const Object& view )

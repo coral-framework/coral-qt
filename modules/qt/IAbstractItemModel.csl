@@ -40,4 +40,19 @@ interface IAbstractItemModel
 		rows/columnd use columnsInserted or columnsRemoved.
 	 */
 	void notifyDataChanged( in int32 fromIndex, in int32 toIndex );
+	
+	
+	/**** Below methods are used to handle selection in one or more views ****/
+	/*!
+		Sets element selection at \a index position to \a selectionState.
+	 */	
+	void setItemSelection( in int32 index, in bool selectionState );
+
+	// Returns the indexes in the given row for columns where all rows are selected.
+	void getSelection( out int32[] indexes );
+	
+	/*!
+		Clears all selections.
+	 */	
+	void clearSelection();
 };

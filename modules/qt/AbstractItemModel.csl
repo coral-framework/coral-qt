@@ -6,5 +6,4 @@
 component AbstractItemModel
 {
 	provides IAbstractItemModel itemModel;
-	provides IItemSelectionModel selectionModel;
 };
