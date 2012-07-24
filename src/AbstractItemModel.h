@@ -4,7 +4,6 @@
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
 #include <QItemSelectionModel>
-#include <qt/IItemSelectionModel.h>
 #include "AbstractItemModel_Base.h"
 #include <qt/ITreeItemObserver.h>
 #include <qt/IAbstractItemModelDelegate.h>

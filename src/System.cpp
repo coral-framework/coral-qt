@@ -16,7 +16,6 @@
 #include <qt/Exception.h>
 #include <qt/ITimerCallback.h>
 #include <qt/IAbstractItemModel.h>
-#include <qt/IItemSelectionModel.h>
 #include <qt/IAbstractItemModelDelegate.h>
 
 #include <QAbstractItemView>
@@ -474,24 +473,10 @@ public:
 		model->installModel( qtView );
 	}
 
-	void assignSelectionModelToView( qt::Object& view, qt::IItemSelectionModel* model )
-	{
-		QAbstractItemView* qtView = tryCastObject<QAbstractItemView>( view, "cannot assign model to view" );
-		model->installSelectionModel( qtView );
-	}
-
 	void getModelFromView( const qt::Object& view, qt::IAbstractItemModel*& model  )
 	{
 		QAbstractItemView* qtView = tryCastObject<QAbstractItemView>( view, "cannot retrieve model from view" );
 		qt::IAbstractItemModel* ptr = dynamic_cast<qt::IAbstractItemModel*>( qtView->model() );
-		assert( ptr );
-		model = ptr;
-	}
-
-	void getSelectionModelFromView( const qt::Object& view, qt::IItemSelectionModel*& model  )
-	{
-		QAbstractItemView* qtView = tryCastObject<QAbstractItemView>( view, "cannot retrieve model from view" );
-		qt::IItemSelectionModel* ptr = dynamic_cast<qt::IItemSelectionModel*>( qtView->selectionModel() );
 		assert( ptr );
 		model = ptr;
 	}
