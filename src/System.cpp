@@ -25,6 +25,7 @@
 #include <QApplication>
 #include <QInputDialog>
 #include <QMainWindow>
+#include <QSpacerItem>
 #include <QDockWidget>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -149,6 +150,15 @@ public:
 		selectedDir = dir.toStdString();
 	}
 
+	void getOpenFileName( const qt::Object& parent, const std::string& caption, const std::string& initialDir,
+												const std::string& filter, std::string& selectedFile )
+	{
+		QString file = QFileDialog::getOpenFileName( qobject_cast<QWidget*>( parent.get() ),
+																											caption.c_str(), initialDir.c_str(), filter.c_str() );
+
+		selectedFile = file.toStdString();
+	}
+
 	void getOpenFileNames( const qt::Object& parent, const std::string& caption, const std::string& initialDir,
 						   const std::string& filter, std::vector<std::string>& selectedFiles )
 	{
@@ -211,20 +221,6 @@ public:
 		}
 	}
 
-	void addWidget( const qt::Object& parent, const qt::Object& widget )
-	{
-		QWidget* qwidget = tryCastObject<QWidget>( parent, "cannot add widget" );
-
-		QLayout* qlayout = qobject_cast<QLayout*>( parent.get() );
-		QSplitter* qsplitter = qobject_cast<QSplitter*>( parent.get() );
-		if( qlayout )
-			qlayout->addWidget( qwidget );
-		else if( qsplitter )
-			qsplitter->addWidget( qwidget );
-		else
-			CORAL_THROW( co::IllegalArgumentException, "cannot add widget: 'parent' is not an instace of QLayout nor QSplitter classs" );
-	}
-
 	void insertWidget( const qt::Object& parent, co::int32 beforeIndex, const qt::Object& widget )
 	{
 		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot insert widget" );
@@ -257,7 +253,7 @@ public:
 			INSERT_WIDGET( qstackedLayout, beforeIndex, qwidget );
 		}
 		else
-			CORAL_THROW( co::IllegalArgumentException, "cannot insert widget: 'parent' is not an instace of QSplitter, "
+			CORAL_THROW( co::IllegalArgumentException, "cannot insert widget: 'parent' is not an instance of QSplitter, "
 													   "QBoxLayout, QStatusBar nor QStackedLayout classs" );
 	}
 
@@ -335,6 +331,18 @@ public:
 	{
 		QWidget* qwidget = tryCastObject<QWidget>( widget, "cannot get layout" );
 		layout.set( qwidget->layout() );
+	}
+	
+	void insertSpacing( const qt::Object& layout, co::int32 beforeIndex, co::int32 size )
+	{
+		QBoxLayout* qlayout = tryCastObject<QBoxLayout>( layout, "cannot set layout" );
+		qlayout->insertSpacing( beforeIndex, size );
+	}
+	
+	void insertStretch( const qt::Object& layout, co::int32 beforeIndex, co::int32 stretch )
+	{
+		QBoxLayout* qlayout = tryCastObject<QBoxLayout>( layout, "cannot set layout" );
+		qlayout->insertStretch( beforeIndex, stretch );
 	}
 
 	void addActionIntoGroup( const qt::Object& actionGroup, const qt::Object& action )

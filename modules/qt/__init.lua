@@ -138,6 +138,14 @@ function MT.setLayout( widget, layout )
 	return layoutInstance
 end
 
+function MT.insertSpacing( layout, beforeIndex, size )
+	system:insertSpacing( layout._obj or layout, beforeIndex, size )
+end
+
+function MT.insertStretch( layout, beforeIndex, stretch )
+	system:insertStretch( layout._obj or layout, beforeIndex or -1, size or 0 )
+end
+
 function MT.getLayout( widget )
 	return ObjectWrapper( system:getLayout( widget._obj or widget ) )
 end
@@ -290,6 +298,10 @@ end
 
 function M.getExistingDirectory( parent, caption, initialDir )
 	return system:getExistingDirectory( parent._obj, caption, initialDir )
+end
+
+function M.getOpenFileName( parent, caption, initialDir, filter )
+	return system:getOpenFileName( parent._obj, caption, initialDir, filter )
 end
 
 function M.getOpenFileNames( parent, caption, initialDir, filter )

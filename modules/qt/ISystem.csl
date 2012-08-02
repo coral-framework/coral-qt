@@ -30,6 +30,10 @@ interface ISystem
 	// an empty string if no directory was selected.
 	void getExistingDirectory( in Object parent, in string caption, in string initialDir, out string selectedDir );
 
+	// Opens a file selection dialog and returns the selected file or an empty
+	// string if no file was selected
+	void getOpenFileName( in Object parent, in string caption, in string initialDir, in string filter, out string selectedFile );
+
 	// Opens a file selection dialog and returns the selected files or an empty
 	// list if no file was selected
 	void getOpenFileNames( in Object parent, in string caption, in string initialDir, in string filter, out string[] selectedFiles );
@@ -155,6 +159,24 @@ interface ISystem
 	 */
 	void getLayout( in Object widget, out Object layout ) raises IllegalArgumentException;
 
+	/*!
+		Inserts a non-stretchable space at position \a beforeIndex, with size \a size. 
+		If \a beforeIndex is negative the space is added at the end.
+
+		\throw co.IllegalArgumentException if the \a layout is not instance of
+		QBoxLayout.
+	 */
+	void insertSpacing( in Object layout, in int32 beforeIndex, in int32 size ) raises IllegalArgumentException;
+
+	/*!
+		Inserts a stretchable space at position \a beforeIndex, with zero minimum size and stretch factor \a stretch. 
+		If index is negative the space is added at the end.
+
+		\throw co.IllegalArgumentException if the \a layout is not instance of
+		QBoxLayout.
+	 */
+	void insertStretch( in Object layout, in int32 beforeIndex, in int32 stretch ) raises IllegalArgumentException;
+	
 	/*!
 		Adds an action into an action group.
 
